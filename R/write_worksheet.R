@@ -91,6 +91,19 @@ write_worksheet.Pub_table <- function(
 }
 
 
+#' Title
+#'
+#' @param dat
+#' @param wb
+#' @param sheet
+#' @param append
+#' @param start_row
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
 write_worksheet.Comp_table <- function(
   dat,
   wb,
