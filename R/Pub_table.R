@@ -62,7 +62,11 @@ pub_table <- function(dat, meta = NULL){
 print.Pub_table <- function(dat, ...){
   dd    <- data.table::copy(dat)
   meta  <- attr(dd, 'meta')
-  cat(make_pub_table_print_title(meta), '\n\n')
+
+  if(!is.null(meta)){
+    cat(make_pub_table_print_title(meta), '\n\n')
+  }
+
   print(data.table::as.data.table(dd), ...)
 }
 

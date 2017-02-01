@@ -56,9 +56,6 @@ write_worksheet.Pub_table <- function(
   meta <- attr(dat, 'meta')
   openxlsx::addWorksheet(wb, sheet)
 
-  cat('ww pub table')
-
-
   # Construct header
   crow <- start_row
 
@@ -113,7 +110,6 @@ write_worksheet.Comp_table <- function(
   ...
 ){
   wb %assert_class% 'Workbook'
-  cat('ww comp table')
 
   if(!append){
     openxlsx::addWorksheet(wb, sheet)
@@ -121,7 +117,8 @@ write_worksheet.Comp_table <- function(
 
   crow <- start_row
 
-  titles <- attr(dat, 'titles')
+  titles  <- attr(dat, 'titles')
+
   assert_that(titles %identical% sort(titles))
 
   title_row <- vector(mode = 'list', length = ncol(dat))

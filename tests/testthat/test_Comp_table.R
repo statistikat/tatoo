@@ -1,34 +1,77 @@
 context("Comp_table")
 
 
+
 test_that("Comp_table works as expected", {
   tdat <- list()
   for(i in seq_len(3)){
     tdat[[i]] <- data.frame(
+      id = 1:6,
       small = letters[i:(i+5)],
       tall = LETTERS[i:(i+5)]
     )
   }
 
+  # Ursula wants to combine several tables to a Comp_table (side-by-side tables)
 
-  # titles must be specified (otherwise comp_table would just be a wrapper for
-  # cbdind)
-  expect_error(tres <- comp_table(tdat))
+  ## Titles must be specified (otherwise comp_table would just be a wrapper for
+  ## cbdind)
+    expect_error(tres <- comp_table(tdat))
 
-  # Test that comp table does not fail on legal input
+  ## If "tables" is a named list, titles are automatically set to element names
+    names(tdat) <- c('a', 'b', 'c')
+    expect_silent(tres <- comp_table(tdat))
+    expect_s3_class(tres, 'Comp_table')
+
+  ## Alternatively, table names can be specified manually
+    names(tdat) <- NULL
+    expect_silent(tres <- comp_table(
+      tdat,
+      titles = c('tab1', 'tab2', 'tab3')
+    ))
+    expect_s3_class(tres, 'Comp_table')
+
+
+  # Ursulas table have an ID column. She wants to merge them, instead of
+  # cbinding them. This has the advantage of avoiding duplicate ID columns
+  # and ensuring data integrity
   expect_silent(tres <- comp_table(
     tdat,
-    titles = c('tab1', 'tab2', 'tab3')
+    titles = c('tab1', 'tab2', 'tab3'),
+    by = 'id'
   ))
-  expect_s3_class(tres, 'Comp_table')
-
-
-  # xlsx output should work
-  td <- tempdir()
-  wb <- as_workbook(tres)
-
-
-  outfile <- file.path(td, 'comp_table.xlsx')
-  expect_silent(openxlsx::saveWorkbook(wb, outfile, overwrite = TRUE))
 })
 
+
+
+test_that("xlsx output for comp_tables works", {
+  tdat <- list()
+  for(i in seq_len(3)){
+    tdat[[i]] <- data.frame(
+      id = 1:6,
+      small = letters[i:(i+5)],
+      tall = LETTERS[i:(i+5)]
+    )
+  }
+
+  pub_tres <- pub_table(
+    tres,
+    pub_table_meta(
+      't1',
+      'comp pub tab',
+      'a composite pub table',
+      'for a testing purpose'
+  ))
+
+  # Ursula wants to export her comp_table as .xlsx
+  # (the xlsx files have to be checked manually)
+  td <- tempdir()
+  wb <- as_workbook(tres)
+  outfile <- file.path(td, 'comp_table.xlsx')
+
+  expect_silent(openxlsx::saveWorkbook(wb, outfile, overwrite = TRUE))
+  pub_wb    <- as_workbook(pub_tres)
+  outfile <- file.path(td, 'pub_comp_table.xlsx')
+  expect_silent(openxlsx::saveWorkbook(pub_wb, outfile, overwrite = TRUE))
+  # hammr::excel(outfile)
+})

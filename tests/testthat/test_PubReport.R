@@ -3,7 +3,7 @@ context("Pub_report")
 tdat <- list()
 
 for(i in seq_len(3)){
-  meta <- pub_tableMeta(
+  meta <- pub_table_meta(
     paste0('T', i),
     'A table',
     'With a Long Title'

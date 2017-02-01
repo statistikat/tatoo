@@ -7,7 +7,12 @@
 #' @export
 #'
 #' @examples
-comp_table <- function(tables, titles = names(tables)){
+comp_table <- function(
+  tables,
+  titles = names(tables),
+  by = NULL
+){
+  # Pre-conditions
   tables %assert_class% 'list'
   assert_that(length(titles) %identical% length(tables))
   for(table in tables){
@@ -15,9 +20,42 @@ comp_table <- function(tables, titles = names(tables)){
     assert_that(nrow(table)  %identical% nrow(tables[[1]]))
   }
 
-  res          <- do.call(cbind, tables)
-  table_titles <- cumsum(unlist(lapply(tables, ncol)))
-  names(table_titles) <- titles
+
+  # Combine the tables
+  if(is.null(by)){
+    res          <- dplyr::bind_cols(tables)
+  } else {
+    merger <- function(x, y)  {suppressWarnings(
+        merge.data.frame(
+          x,
+          y,
+          by = by,
+          all = TRUE,
+          suffixes = c('', ''),
+          sort = FALSE)
+      )}
+    res <- Reduce(merger, tables)
+  }
+
+
+  # Generate table-title cell positions (for xlsx / latex export).
+  # if a "by" was specified, this has to be considered when creating the indices
+    table_titles <- vector('integer', length(tables))
+    for(i in seq_along(table_titles)){
+      if(i == 1){
+        table_titles[[i]] <- ncol(tables[[i]])
+      } else {
+        table_titles[[i]] <- ncol(tables[[i]]) - length(by)
+      }
+    }
+    table_titles <- cumsum(table_titles)
+    names(table_titles) <- titles
+
+  # post conditions
+    assert_that(max(table_titles) %identical% ncol(res))
+    assert_that(min(table_titles) %identical% ncol(tables[[1]]))
+    assert_that(table_titles %identical% sort(table_titles))
+
 
   class(res) <- union('Comp_table', class(res))
   attr(res, 'titles') <- table_titles
@@ -27,8 +65,6 @@ comp_table <- function(tables, titles = names(tables)){
 
 
 print.Comp_table <- function(dat){
-
-
   print(attr(dat, 'titles'))
   cat('\n')
   print.data.frame(dat)
