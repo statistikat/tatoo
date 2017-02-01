@@ -16,7 +16,7 @@
 #' for them. Look at the source code of the \code{gvroad} package for examples.
 #'
 #' @param dat a \code{data.frame}
-#' @param meta a \code{\link{pub_tableMeta}} object
+#' @param meta a \code{\link{pub_table_meta}} object
 #'
 #' @return An object of class 'Pub_table'
 #' @export
@@ -32,7 +32,7 @@
 #'
 #' dat <- pub_table(
 #'   dat,
-#'   pub_tableMeta(
+#'   pub_table_meta(
 #'     "tab1",
 #'     "grades",
 #'     "Grades of the final examination")
@@ -49,7 +49,6 @@
 pub_table <- function(dat, meta = NULL){
   dat <- data.table::copy(dat)
   if (!is.null(meta)){
-
     data.table::setattr(dat, 'meta', meta)
   }
 
@@ -79,7 +78,7 @@ print.Pub_table <- function(dat, ...){
 #' @param ...
 #'
 #' @export
-pub_tableMeta <- function(
+pub_table_meta <- function(
   tableId,
   title,
   longtitle = title,
@@ -101,7 +100,7 @@ pub_tableMeta <- function(
     ...
   )
 
-  class(res) <- c('Pub_tableMeta', 'list')
+  class(res) <- c('Pub_table_meta', 'list')
   return(res)
 }
 
@@ -122,7 +121,7 @@ pub_tableMaker <- function(fun, idVars){
 #' @export
 make_pub_table_print_title <- function(meta, subtitle = TRUE){
   assert_that(is.flag(subtitle))
-  meta %assert_class% 'Pub_tableMeta'
+  meta %assert_class% 'Pub_table_meta'
 
   title <- meta$tableId
 

@@ -9,9 +9,85 @@
 #' @export
 #'
 #' @examples
-write_worksheet <- function(dat, wb, sheet, ...){
+write_worksheet <- function(
+  dat,
+  wb,
+  sheet,
+  append = FALSE,
+  start_row = 1L,
+  ...
+){
   assert_that(requireNamespace("openxlsx"))
   UseMethod('write_worksheet')
+}
+
+
+
+write_worksheet.default <- function(
+  dat,
+  wb,
+  sheet,
+  append = FALSE,
+  start_row = 1L,
+  ...
+){
+  openxlsx::writeData(wb = wb, sheet = sheet, x = dat, ...)
+}
+
+
+
+#' Write worksheet
+#'
+#' @param dat
+#' @param wb
+#' @param sheet
+#'
+#' @return
+#' @export
+#'
+#' @examples
+write_worksheet.Pub_table <- function(
+  dat,
+  wb,
+  sheet = sanitize_excel_sheet_names(attr(dat, 'meta')$tableId),
+  start_row = 1L
+){
+  wb %assert_class% 'Workbook'
+  meta <- attr(dat, 'meta')
+  openxlsx::addWorksheet(wb, sheet)
+
+  cat('ww pub table')
+
+
+  # Construct header
+  crow <- start_row
+
+  title    <- sprintf('%s: %s', meta$tableId, meta$title)
+  openxlsx::writeData(wb, sheet = sheet, title)
+  crow <- crow + 1
+
+  if(meta$longtitle != meta$title){
+    openxlsx::writeData(wb, sheet = sheet, startRow = crow, meta$longtitle)
+    crow <- crow + 1
+  }
+
+  if (!is.null(meta$subtitle)){
+    openxlsx::writeData(wb, sheet = sheet, startRow = crow, meta$subtitle)
+    crow <- crow + 1
+  }
+
+
+  # Write Data
+  NextMethod(
+    generic = write_worksheet,
+    object = dat,
+    wb = wb,
+    sheet = sheet,
+    append = TRUE,
+    start_row = crow + 1
+  )
+
+  return(wb)
 }
 
 
@@ -19,11 +95,18 @@ write_worksheet.Comp_table <- function(
   dat,
   wb,
   sheet,
+  append = FALSE,
+  start_row = 1L,
   ...
 ){
   wb %assert_class% 'Workbook'
+  cat('ww comp table')
 
-  openxlsx::addWorksheet(wb, sheet)
+  if(!append){
+    openxlsx::addWorksheet(wb, sheet)
+  }
+
+  crow <- start_row
 
   titles <- attr(dat, 'titles')
   assert_that(titles %identical% sort(titles))
@@ -44,8 +127,11 @@ write_worksheet.Comp_table <- function(
     wb,
     sheet = sheet,
     as.data.frame(title_row),
-    colNames = FALSE
+    colNames = FALSE,
+    startRow = crow
   )
+
+  crow <- crow + 1
 
 
   for(i in seq_along(titles)){
@@ -62,7 +148,7 @@ write_worksheet.Comp_table <- function(
   openxlsx::writeData(
     wb,
     sheet = sheet,
-    startRow = 2,
+    startRow = crow,
     dat,
     colNames = TRUE
   )
@@ -72,51 +158,6 @@ write_worksheet.Comp_table <- function(
 
 
 
-#' Write worksheet
-#'
-#' @param dat
-#' @param wb
-#' @param sheet
-#'
-#' @return
-#' @export
-#'
-#' @examples
-write_worksheet.Pub_table <- function(
-  dat,
-  wb,
-  sheet = sanitize_excel_sheet_names(attr(dat, 'meta')$tableId)
-){
-  wb %assert_class% 'Workbook'
-
-  meta <- attr(dat, 'meta')
-  openxlsx::addWorksheet(wb, sheet)
-
-  openxlsx::writeData(
-    wb,
-    sheet = sheet,
-    sprintf('%s: %s', meta$tableId, meta$title)
-  )
-
-
-  if(meta$longtitle != meta$title){
-    openxlsx::writeData(
-      wb,
-      sheet = sheet,
-      startRow = 2,
-      meta$longtitle
-    )
-  }
-
-  openxlsx::writeData(
-    wb,
-    sheet = sheet,
-    startRow = 4,
-    dat
-  )
-
-  return(wb)
-}
 
 
 
