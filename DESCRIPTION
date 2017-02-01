@@ -1,0 +1,13 @@
+Package: tatool
+Type: Package
+Title: Provide tools for outputing formatted table in excel and latex
+Version: 0.1.0
+Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Description: More about what it does (maybe more than one line)
+License: MIT + file LICENSE
+LazyData: TRUE
+Depends: hammr
+Imports: assertthat, magrittr, data.table, openxlsx, foreach
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
