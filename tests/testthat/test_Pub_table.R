@@ -6,7 +6,8 @@ test_that("make_pub_table_print_title works as expected", {
     table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers',
-    subtitle = 'A table that contains numbers but maybe also letters'
+    subtitle = 'A table that contains numbers but maybe also letters',
+    footer = 'a footer'
   )
 
   tmeta2 <- pub_table_meta(
@@ -33,3 +34,32 @@ test_that("make_pub_table_print_title works as expected", {
     "t001: Table 1 - Table of Numbers"
   )
 })
+
+
+
+test_that("make_pub_table_print_title works as expected", {
+  tmeta <- pub_table_meta(
+    table_id = 't001',
+    title = 'Table 1',
+    longtitle = 'Table of Numbers',
+    subtitle = 'A table that contains numbers but maybe also letters',
+    footer = 'a footer'
+  )
+
+  tdat <- data.frame(
+    x = letters[1:5],
+    y = letters[10:14]
+  )
+
+  expect_silent(tres <- pub_table(tdat, tmeta))
+
+  ## manual tests
+
+  # tf <- file.path(tempdir(), 'pub.xlsx')
+  # save_xlsx(tres, tf, overwrite = TRUE)
+  # hammr::excel(tf)
+
+
+})
+
+

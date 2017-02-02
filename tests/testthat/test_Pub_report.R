@@ -28,9 +28,9 @@ test_that("Pub_report works as expected", {
   # cat(paste(readLines(tfile_txt), collapse = '\n'))
 
   tfile_xlsx <- file.path(td, 'pr.xlsx')
-  expect_silent(save_xlsx(
-    tdat, tfile_xlsx, overwrite = TRUE
-  ))
+  expect_silent(
+    save_xlsx(tdat, tfile_xlsx, overwrite = TRUE)
+  )
 })
 
 
