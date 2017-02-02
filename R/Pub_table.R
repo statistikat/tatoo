@@ -75,7 +75,7 @@ print.Pub_table <- function(dat, ...){
 #'
 #' Create a pub table metadata object
 #'
-#' @param tableId
+#' @param table_id
 #'
 #' @param title
 #' @param longtitle
@@ -83,13 +83,12 @@ print.Pub_table <- function(dat, ...){
 #'
 #' @export
 pub_table_meta <- function(
-  tableId,
+  table_id,
   title,
   longtitle = title,
-  subtitle = NULL,
-  ...
+  subtitle = NULL
 ){
-  tableId   %assert_class% 'character'
+  table_id   %assert_class% 'character'
   title     %assert_class% 'character'
   longtitle %assert_class% 'character'
   assert_that(
@@ -97,11 +96,10 @@ pub_table_meta <- function(
   )
 
   res <- list(
-    tableId   = tableId,
+    table_id   = table_id,
     title     = title,
     longtitle = longtitle,
-    subtitle  = subtitle,
-    ...
+    subtitle  = subtitle
   )
 
   class(res) <- c('Pub_table_meta', 'list')
@@ -111,11 +109,11 @@ pub_table_meta <- function(
 
 
 #' @export
-pub_tableMaker <- function(fun, idVars){
+pub_table_maker <- function(fun, idVars){
   fun %assert_class% 'function'
   assert_that(is.character(idVars))
 
-  class(fun) <- c('Pub_tableMaker', 'function')
+  class(fun) <- c('Pub_table_maker', 'function')
   data.table::setattr(fun, 'idVars', idVars)
   return(fun)
 }
@@ -127,10 +125,10 @@ make_pub_table_print_title <- function(meta, subtitle = TRUE){
   assert_that(is.flag(subtitle))
   meta %assert_class% 'Pub_table_meta'
 
-  title <- meta$tableId
+  title <- meta$table_id
 
-  if(!meta$tableId %identical% meta$title){
-    title <- sprintf('%s: %s', meta$tableId, meta$title)
+  if(!meta$table_id %identical% meta$title){
+    title <- sprintf('%s: %s', meta$table_id, meta$title)
   }
 
   if(!meta$longtitle %identical% meta$title){
