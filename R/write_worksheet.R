@@ -46,6 +46,18 @@ write_worksheet.Pub_table <- function(
     start_row = crow + 1
   )
 
+  if (!is.null(meta$footer)){
+    crow <- openxlsx::readWorkbook(
+      wb,
+      colNames = FALSE,
+      skipEmptyRows = FALSE
+    ) %>%
+      nrow() %>%
+      `+`(2)
+
+    openxlsx::writeData(wb, sheet = sheet, startRow = crow, meta$footer)
+  }
+
   return(wb)
 }
 

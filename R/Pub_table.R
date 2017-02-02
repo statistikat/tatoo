@@ -68,6 +68,12 @@ print.Pub_table <- function(dat, ...){
   }
 
   print(data.table::as.data.table(dd), ...)
+
+  if(!is.null(meta$footer)){
+    cat('\n', meta$footer, '\n')
+  }
+
+
 }
 
 
@@ -86,7 +92,8 @@ pub_table_meta <- function(
   table_id,
   title,
   longtitle = title,
-  subtitle = NULL
+  subtitle = NULL,
+  footer = NULL
 ){
   table_id   %assert_class% 'character'
   title     %assert_class% 'character'
@@ -99,7 +106,8 @@ pub_table_meta <- function(
     table_id   = table_id,
     title     = title,
     longtitle = longtitle,
-    subtitle  = subtitle
+    subtitle  = subtitle,
+    footer = footer
   )
 
   class(res) <- c('Pub_table_meta', 'list')
