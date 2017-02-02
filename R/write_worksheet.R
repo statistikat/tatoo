@@ -1,41 +1,3 @@
-#' Title
-#'
-#' @param dat
-#' @param wb
-#' @param sheet
-#' @param passed on to \code{openxlsx::writeData}
-#'
-#' @return
-#' @export
-#'
-#' @examples
-write_worksheet <- function(
-  dat,
-  wb,
-  sheet,
-  append = FALSE,
-  start_row = 1L,
-  ...
-){
-  assert_that(requireNamespace("openxlsx"))
-  UseMethod('write_worksheet')
-}
-
-
-
-write_worksheet.default <- function(
-  dat,
-  wb,
-  sheet,
-  append = FALSE,
-  start_row = 1L,
-  ...
-){
-  openxlsx::writeData(wb = wb, sheet = sheet, x = dat, ...)
-}
-
-
-
 #' Write worksheet
 #'
 #' @param dat
@@ -49,7 +11,7 @@ write_worksheet.default <- function(
 write_worksheet.Pub_table <- function(
   dat,
   wb,
-  sheet = sanitize_excel_sheet_names(attr(dat, 'meta')$tableId),
+  sheet = sanitize_excel_sheet_names(attr(dat, 'meta')$table_id),
   start_row = 1L
 ){
   wb %assert_class% 'Workbook'
@@ -59,7 +21,7 @@ write_worksheet.Pub_table <- function(
   # Construct header
   crow <- start_row
 
-  title    <- sprintf('%s: %s', meta$tableId, meta$title)
+  title    <- sprintf('%s: %s', meta$table_id, meta$title)
   openxlsx::writeData(wb, sheet = sheet, title)
   crow <- crow + 1
 
@@ -115,13 +77,12 @@ write_worksheet.Comp_table <- function(
     openxlsx::addWorksheet(wb, sheet)
   }
 
-  crow <- start_row
-
-  titles  <- attr(dat, 'titles')
+  crow   <- start_row
+  titles <- attr(dat, 'titles')
 
   assert_that(titles %identical% sort(titles))
 
-  title_row <- vector(mode = 'list', length = ncol(dat))
+  title_row     <- vector(mode = 'list', length = ncol(dat))
   title_counter <- 1
 
   for(i in seq_along(title_row)){
@@ -150,7 +111,7 @@ write_worksheet.Comp_table <- function(
     openxlsx::mergeCells(
       wb,
       cols = c(merge_start, merge_end),
-      rows = 1,
+      rows = start_row,
       sheet = sheet
     )
   }
@@ -169,10 +130,3 @@ write_worksheet.Comp_table <- function(
 
 
 
-
-
-sanitize_excel_sheet_names <- function(x){
-  invalid_chars_regex <- "\\[|\\]|\\*|\\?|:|\\/|\\\\"
-  res <- stringi::stri_replace_all_regex(x, invalid_chars_regex,'_')
-  stringi::stri_sub(res, 1, 31)
-}
