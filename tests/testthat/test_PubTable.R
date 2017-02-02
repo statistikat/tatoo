@@ -3,14 +3,14 @@ context("Pub_table")
 
 test_that("make_pub_table_print_title works as expected", {
   tmeta <- pub_table_meta(
-    tableId = 't001',
+    table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers',
     subtitle = 'A table that contains numbers but maybe also letters'
   )
 
   tmeta2 <- pub_table_meta(
-    tableId = 't001',
+    table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers'
   )
