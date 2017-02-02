@@ -1,25 +1,5 @@
 #' As Workbook
 #'
-#' @param ...
-#'
-#' @return
-#' @export
-#'
-#' @examples
-as_workbook <- function(...){
-  assert_that(requireNamespace("openxlsx"))
-  UseMethod('as_workbook')
-}
-
-
-as_workbook.default <- function(dat){
-  wb <- openxlsx::createWorkbook()
-  wb <- write_worksheet(dat, wb, sheet = 1)
-  return(wb)
-}
-
-#' As Workbook
-#'
 #' @param dat
 #' @param stack_method
 #' @param insert_blank_row
@@ -31,16 +11,19 @@ as_workbook.default <- function(dat){
 #' @export
 #'
 #' @examples
-as_workbook.Stack_table <- function(dat,
-                                    stack_method,
-                                    insert_blank_row,
-                                    sep_height = 20,
-                                    sheet_name = 'sheet1',
-                                    ...){
-
-  res <- as.data.table(dat,
-                       stack_method = stack_method,
-                       insert_blank_row = insert_blank_row)
+as_workbook.Stack_table <- function(
+  dat,
+  stack_method,
+  insert_blank_row,
+  sep_height = 20,
+  sheet_name = 'sheet1',
+  ...
+){
+  res <- as.data.table(
+    dat,
+    stack_method = stack_method,
+    insert_blank_row = insert_blank_row
+  )
 
   wb <- openxlsx::createWorkbook()
   openxlsx::addWorksheet(wb, '')
@@ -118,12 +101,10 @@ as_workbook.Pub_report <- function(dat){
   wb <- openxlsx::createWorkbook()
 
   for(i in seq_along(dat)){
-    ptable <- dat[[i]]
-
     if(is.null(names(dat))){
-      sheet_name = i
+      sheet_name <- i
     } else {
-      sheet_name = sanitize_excel_sheet_names(names(dat))[[i]]
+      sheet_name <- sanitize_excel_sheet_names(names(dat))[[i]]
     }
 
     wb <- write_worksheet(dat[[i]], wb, sheet = sheet_name)
@@ -131,6 +112,3 @@ as_workbook.Pub_report <- function(dat){
 
   return(wb)
 }
-
-
-
