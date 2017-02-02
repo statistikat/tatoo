@@ -3,14 +3,17 @@ context("Comp_table")
 
 
 test_that("Comp_table works as expected", {
-  tdat <- list()
-  for(i in seq_len(3)){
-    tdat[[i]] <- data.frame(
-      id = 1:6,
-      small = letters[i:(i+5)],
-      tall = LETTERS[i:(i+5)]
-    )
-  }
+  # Generate test data
+    tdat <- list()
+    for(i in seq_len(3)){
+      tdat[[i]] <- data.frame(
+        id = 1:6,
+        small = letters[i:(i+5)],
+        tall = LETTERS[i:(i+5)]
+      )
+    }
+
+
 
   # Ursula wants to combine several tables to a Comp_table (side-by-side tables)
 
@@ -35,43 +38,65 @@ test_that("Comp_table works as expected", {
   # Ursulas table have an ID column. She wants to merge them, instead of
   # cbinding them. This has the advantage of avoiding duplicate ID columns
   # and ensuring data integrity
-  expect_silent(tres <- comp_table(
-    tdat,
-    titles = c('tab1', 'tab2', 'tab3'),
-    by = 'id'
-  ))
+    expect_silent(tres <- comp_table(
+      tdat,
+      titles = c('tab1', 'tab2', 'tab3'),
+      by = 'id'
+    ))
 })
 
 
 
 test_that("xlsx output for comp_tables works", {
-  tdat <- list()
-  for(i in seq_len(3)){
-    tdat[[i]] <- data.frame(
-      id = 1:6,
-      small = letters[i:(i+5)],
-      tall = LETTERS[i:(i+5)]
-    )
-  }
+  # Generate test data
+    tdat <- list()
+    for(i in seq_len(3)){
+      tdat[[i]] <- data.frame(
+        id = 1:6,
+        small = letters[i:(i+5)],
+        tall = LETTERS[i:(i+5)]
+      )
+    }
 
-  pub_tres <- pub_table(
-    tres,
-    pub_table_meta(
-      't1',
-      'comp pub tab',
-      'a composite pub table',
-      'for a testing purpose'
-  ))
+    expect_silent(tres <- comp_table(
+      tdat,
+      titles = c('tab1', 'tab2', 'tab3')
+    ))
+
+    pub_tres <- pub_table(
+      tres,
+      pub_table_meta(
+        't1',
+        'comp pub tab',
+        'a composite pub table',
+        'for a testing purpose'
+      ))
+
+
 
   # Ursula wants to export her comp_table as .xlsx
   # (the xlsx files have to be checked manually)
-  td <- tempdir()
-  wb <- as_workbook(tres)
-  outfile <- file.path(td, 'comp_table.xlsx')
+    td <- tempdir()
+    wb <- as_workbook(tres)
+    outfile <- file.path(td, 'comp_table.xlsx')
 
-  expect_silent(openxlsx::saveWorkbook(wb, outfile, overwrite = TRUE))
-  pub_wb    <- as_workbook(pub_tres)
-  outfile <- file.path(td, 'pub_comp_table.xlsx')
-  expect_silent(openxlsx::saveWorkbook(pub_wb, outfile, overwrite = TRUE))
-  # hammr::excel(outfile)
+    expect_silent(openxlsx::saveWorkbook(wb, outfile, overwrite = TRUE))
+    pub_wb    <- as_workbook(pub_tres)
+    outfile <- file.path(td, 'pub_comp_table.xlsx')
+    expect_silent(openxlsx::saveWorkbook(pub_wb, outfile, overwrite = TRUE))
+    # hammr::excel(outfile)
+
+
+  # When exporting comp_tables created with "by", the super-headings should
+  # not cover the id_vars
+    expect_silent(tres <- comp_table(
+      tdat,
+      titles = c('tab1', 'tab2', 'tab3'),
+      by = 'id'
+    ))
+    wb <- as_workbook(tres)
+
+    outfile <- file.path(td, 'pub_comp_table_idvars.xlsx')
+    expect_silent(openxlsx::saveWorkbook(wb, outfile, overwrite = TRUE))
+    # hammr::excel(outfile)
 })

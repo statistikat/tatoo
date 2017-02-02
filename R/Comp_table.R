@@ -42,18 +42,26 @@ comp_table <- function(
   # if a "by" was specified, this has to be considered when creating the indices
     table_titles <- vector('integer', length(tables))
     for(i in seq_along(table_titles)){
-      if(i == 1){
-        table_titles[[i]] <- ncol(tables[[i]])
-      } else {
-        table_titles[[i]] <- ncol(tables[[i]]) - length(by)
-      }
+      table_titles[[i]] <- ncol(tables[[i]]) - length(by)
     }
+
+    if(length(by) > 0){
+      table_titles <- c(length(by), table_titles)
+      titles       <- c('', titles)
+    }
+
     table_titles <- cumsum(table_titles)
     names(table_titles) <- titles
 
   # post conditions
     assert_that(max(table_titles) %identical% ncol(res))
-    assert_that(min(table_titles) %identical% ncol(tables[[1]]))
+
+    if(length(by) %identical% 0L){
+      assert_that(min(table_titles) %identical% ncol(tables[[1]]))
+    } else {
+      assert_that(min(table_titles) %identical% length(by))
+    }
+
     assert_that(table_titles %identical% sort(table_titles))
 
 
