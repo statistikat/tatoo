@@ -1,7 +1,7 @@
 #' As Workbook
 #'
 #' @param dat
-#' @param stack_method
+#' @param mash_method
 #' @param insert_blank_row
 #' @param sep_height
 #' @param sheet_name
@@ -13,7 +13,7 @@
 #' @examples
 as_workbook.Mash_table <- function(
   dat,
-  stack_method,
+  mash_method,
   insert_blank_row,
   sep_height = 20,
   sheet_name = 'sheet1',
@@ -21,7 +21,7 @@ as_workbook.Mash_table <- function(
 ){
   res <- as.data.table(
     dat,
-    stack_method = stack_method,
+    mash_method = mash_method,
     insert_blank_row = insert_blank_row
   )
 
@@ -56,7 +56,7 @@ as_workbook.Mash_table <- function(
 #'
 #' @param dat
 #' @param outfile
-#' @param stack_method
+#' @param mash_method
 #' @param insert_blank_row
 #' @param sep_height
 #' @param sheet_name
@@ -69,7 +69,7 @@ as_workbook.Mash_table <- function(
 #' @examples
 save_xlsx.StackTable <- function(dat,
                                  outfile,
-                                 stack_method = 'row',
+                                 mash_method = 'row',
                                  insert_blank_row = FALSE,
                                  sep_height = 24,
                                  sheet_name = 'sheet1',
@@ -77,7 +77,7 @@ save_xlsx.StackTable <- function(dat,
                                  ...){
 
   wb <- as_workbook(dat,
-                    stack_method = stack_method,
+                    mash_method = mash_method,
                     insert_blank_row = insert_blank_row,
                     sep_height = sep_height,
                     sheet_name = sheet_name,

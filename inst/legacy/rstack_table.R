@@ -7,7 +7,7 @@
 #' @param as_character Shoudl table cells be coerced to character? (Necessary for insert_empty_line)
 #'
 #' @export
-rstack_table <- function(line1,
+rmash_table <- function(line1,
                          line2,
                          format = 'latex',
                          insert_empty_line = FALSE,
@@ -88,7 +88,7 @@ rstack_table <- function(line1,
       return(r)
     }
 
-    class(res) <- union(paste0('Rstack_table_', format), class(res))
+    class(res) <- union(paste0('Rmash_table_', format), class(res))
 
     return(res)
 }
