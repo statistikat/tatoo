@@ -9,7 +9,7 @@ pub_table(dat, meta = NULL)
 \arguments{
 \item{dat}{a \code{data.frame}}
 
-\item{meta}{a \code{\link{pub_tableMeta}} object}
+\item{meta}{a \code{\link{pub_table_meta}} object}
 }
 \value{
 An object of class 'Pub_table'
@@ -42,7 +42,7 @@ dat <- data.frame(
 
 dat <- pub_table(
   dat,
-  pub_tableMeta(
+  pub_table_meta(
     "tab1",
     "grades",
     "Grades of the final examination")
@@ -57,4 +57,3 @@ polish.Pub_tableTab1 <- function(dat){
 polish(dat)
 }
 }
-

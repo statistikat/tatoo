@@ -14,4 +14,3 @@ Converts a Pub_report to a an \code{openxlsx::Workbook} object. Sheet names
 will be taken from the element names of Pub_report
 (\code{names(yourPub_report)}).
 }
-

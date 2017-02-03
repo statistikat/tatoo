@@ -16,4 +16,3 @@ An object of class 'Pub_report'
 A Pub report is a list of Pub_tables. Right now this class is mostly a
 placeholder, but in the future it will support various export methods.
 }
-

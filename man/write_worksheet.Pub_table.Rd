@@ -5,7 +5,8 @@
 \title{Write worksheet}
 \usage{
 \method{write_worksheet}{Pub_table}(dat, wb,
-  sheet = sanitize_excel_sheet_names(attr(dat, "meta")$tableId))
+  sheet = sanitize_excel_sheet_names(attr(dat, "meta")$table_id),
+  start_row = 1L)
 }
 \arguments{
 \item{sheet}{}
@@ -13,4 +14,3 @@
 \description{
 Write worksheet
 }
-

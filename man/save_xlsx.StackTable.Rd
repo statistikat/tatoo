@@ -4,7 +4,7 @@
 \alias{save_xlsx.StackTable}
 \title{Title}
 \usage{
-\method{save_xlsx}{StackTable}(dat, outfile, stack_method = "row",
+\method{save_xlsx}{StackTable}(dat, outfile, mash_method = "row",
   insert_blank_row = FALSE, sep_height = 24, sheet_name = "sheet1",
   overwrite = FALSE, ...)
 }
@@ -14,4 +14,3 @@
 \description{
 Title
 }
-
