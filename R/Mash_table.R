@@ -1,4 +1,4 @@
-#' Stack Table
+#' Mash Table
 #'
 #' Stack tables are designed to make it easy to put together multidimensional
 #' tables from two data.frames. An example where this might be useful is
@@ -7,8 +7,8 @@
 #'
 #' Stack table provides a framework to stack those two data.frames together
 #' into one data.frame with alternating rows or columns. You can then output the
-#' stacked table as latex \code{\link{print_tex.Stack_table}}, as xlsx
-#' \code{\link{save_as.Stack_table}} or simply as data.table or data.frame
+#' stacked table as latex \code{\link{print_tex.Mash_table}}, as xlsx
+#' \code{\link{save_as.Mash_table}} or simply as data.table or data.frame
 #' via \code{as.data.table} or \code{as.data.frame}.
 #'
 #' If your goal is to present formated tables as latex or xlsx, you  should aslo
@@ -21,10 +21,10 @@
 #'
 #' @return
 #' @export
-#' @rdname stack_table
+#' @rdname mash_table
 #'
 #' @examples
-stack_table <- function(dat1, dat2, rem_ext = NULL){
+mash_table <- function(dat1, dat2, rem_ext = NULL){
   dat1 %assert_class% 'data.frame'
   dat2 %assert_class% 'data.frame'
   assert_that(nrow(dat1)  %identical% nrow(dat2))
@@ -43,28 +43,28 @@ stack_table <- function(dat1, dat2, rem_ext = NULL){
 
 
   res <- list(dat1, dat2)
-  class(res) <- c('Stack_table', 'list')
+  class(res) <- c('Mash_table', 'list')
   return(res)
 }
 
 
 #' @export
-#' @rdname stack_table
-rstack <- function(dat1, dat2, rem_ext = NULL, ...){
+#' @rdname mash_table
+rmash <- function(dat1, dat2, rem_ext = NULL, ...){
   as.data.table(
-    stack_table(dat1, dat2, rem_ext = rem_ext),
-    stack_method = 'row',
+    mash_table(dat1, dat2, rem_ext = rem_ext),
+    mash_method = 'row',
     ...
   )
 }
 
 
 #' @export
-#' @rdname stack_table
-cstack <- function(dat1, dat2, rem_ext = NULL, ...){
+#' @rdname mash_table
+cmash <- function(dat1, dat2, rem_ext = NULL, ...){
   as.data.table(
-    stack_table(dat1, dat2, rem_ext = rem_ext),
-    stack_method = 'col',
+    mash_table(dat1, dat2, rem_ext = rem_ext),
+    mash_method = 'col',
     ...
   )
 }
@@ -73,25 +73,25 @@ cstack <- function(dat1, dat2, rem_ext = NULL, ...){
 #' Title
 #'
 #' @param dat
-#' @param stack_method
+#' @param mash_method
 #' @param ... passed on to as.data.frame.data.table
 #'
 #' @return
 #' @export
 #'
 #' @examples
-as.data.table.Stack_table <- function(dat,
-                                      stack_method = 'row',
+as.data.table.Mash_table <- function(dat,
+                                      mash_method = 'row',
                                       ...){
 
-  stack_method  %assert_class% 'character'
+  mash_method  %assert_class% 'character'
   assert_that(is.scalar(stack))
-  if(stack_method %in% c('c', 'col', 'column', 'columns')){
-    res <- stack_cols(dat, ...)
-  } else if(stack_method %in% c('r', 'row', 'rows')) {
-    res <- stack_rows(dat, ...)
+  if(mash_method %in% c('c', 'col', 'column', 'columns')){
+    res <- mash_cols(dat, ...)
+  } else if(mash_method %in% c('r', 'row', 'rows')) {
+    res <- mash_rows(dat, ...)
   } else{
-    stop('stack_method must be either "row" or "col".')
+    stop('mash_method must be either "row" or "col".')
   }
 
   return(as.data.table(res))
@@ -103,20 +103,20 @@ as.data.table.Stack_table <- function(dat,
 #' Stacking uses \code{data.table}s internally,
 #'
 #' @param dat
-#' @param stack_method
+#' @param mash_method
 #' @param ... parameters passed on to \code{as.data.frame.data.table}
 #'
 #' @return
 #' @export
 #'
 #' @examples
-as.data.frame.Stack_table <- function(dat, stack_method = 'row', ...){
+as.data.frame.Mash_table <- function(dat, mash_method = 'row', ...){
   as.data.frame(as.data.table(dat, ...))
 }
 
 # Utility funs -----------------------------------------------------------------
-stack_rows <- function(dat, insert_blank_row = FALSE){
-  dat %assert_class% 'Stack_table'
+mash_rows <- function(dat, insert_blank_row = FALSE){
+  dat %assert_class% 'Mash_table'
 
   if(insert_blank_row){
     dat_blank <- rep('', nrow(dat[[1]]) * ncol(dat[[1]])) %>%
@@ -146,8 +146,8 @@ stack_rows <- function(dat, insert_blank_row = FALSE){
 }
 
 
-stack_rows_tex <- function(dat, insert_blank_row) {
-  dat %assert_class% 'Stack_table'
+mash_rows_tex <- function(dat, insert_blank_row) {
+  dat %assert_class% 'Mash_table'
 
   empty_row <- rep('', length(dat[[1]])) %>%
     t() %>%
@@ -170,8 +170,8 @@ stack_rows_tex <- function(dat, insert_blank_row) {
 }
 
 
-stack_cols <- function(dat, id_vars = NULL, suffixes = c('', '')){
-  dat %assert_class% 'Stack_table'
+mash_cols <- function(dat, id_vars = NULL, suffixes = c('', '')){
+  dat %assert_class% 'Mash_table'
   assert_that(length(suffixes) %identical% 2L)
 
   dd1 <- data.table::copy(dat[[1]])
@@ -202,7 +202,7 @@ stack_cols <- function(dat, id_vars = NULL, suffixes = c('', '')){
 }
 
 
-stack_cols_tex <- function(dat) {
+mash_cols_tex <- function(dat) {
   foreach(i = 1:nrow(dat[[1]]), .combine = rbind) %do% {
     r <- paste(dat[[1]][i, ], dat[[2]][i, ], sep = ' ') %>%
       t() %>%

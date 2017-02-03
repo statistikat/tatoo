@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-as_workbook.Stack_table <- function(
+as_workbook.Mash_table <- function(
   dat,
   stack_method,
   insert_blank_row,
