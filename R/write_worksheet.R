@@ -17,47 +17,57 @@ write_worksheet.Pub_table <- function(
   wb %assert_class% 'Workbook'
   meta <- attr(dat, 'meta')
   openxlsx::addWorksheet(wb, sheet)
+  crow   <- start_row
 
   # Construct header
-  crow <- start_row
+    header <- list()
 
-  title    <- sprintf('%s: %s', meta$table_id, meta$title)
-  openxlsx::writeData(wb, sheet = sheet, title)
-  crow <- crow + 1
+    header$title <- sprintf('%s: %s', meta$table_id, meta$title)
 
-  if(meta$longtitle != meta$title){
-    openxlsx::writeData(wb, sheet = sheet, startRow = crow, meta$longtitle)
-    crow <- crow + 1
-  }
+    if(meta$longtitle != meta$title){
+      header$longtitle <- meta$longtitle
+    }
 
-  if (!is.null(meta$subtitle)){
-    openxlsx::writeData(wb, sheet = sheet, startRow = crow, meta$subtitle)
-    crow <- crow + 1
-  }
+    if (!is.null(meta$subtitle)){
+      header$subtitle <- meta$subtitle
+    }
 
+    header <- t(as.data.frame(header))
 
-  # Write Data
-  NextMethod(
-    generic = write_worksheet,
-    object = dat,
-    wb = wb,
-    sheet = sheet,
-    append = TRUE,
-    start_row = crow + 1
-  )
-
-  if (!is.null(meta$footer)){
-    crow <- openxlsx::readWorkbook(
+    openxlsx::writeData(
       wb,
       sheet = sheet,
-      colNames = FALSE,
-      skipEmptyRows = FALSE
-    ) %>%
-      nrow()
+      header,
+      rowNames = FALSE,
+      colNames = FALSE
+    )
 
-    crow <- crow + 2
-    openxlsx::writeData(wb, sheet = sheet, startRow = crow, meta$footer)
-  }
+    crow <- crow + nrow(header) + 1
+
+  # Write Data
+    NextMethod(
+      generic = write_worksheet,
+      object = dat,
+      wb = wb,
+      sheet = sheet,
+      append = TRUE,
+      start_row = crow
+    )
+
+
+  # Write Footer
+    if (!is.null(meta$footer)){
+      crow <- openxlsx::readWorkbook(
+        wb,
+        sheet = sheet,
+        colNames = FALSE,
+        skipEmptyRows = FALSE
+      ) %>%
+        nrow()
+
+      crow <- crow + 3
+      openxlsx::writeData(wb, sheet = sheet, startRow = crow, meta$footer)
+    }
 
   return(wb)
 }
