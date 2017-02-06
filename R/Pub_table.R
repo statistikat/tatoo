@@ -93,7 +93,8 @@ pub_table_meta <- function(
   title,
   longtitle = title,
   subtitle = NULL,
-  footer = NULL
+  footer = NULL,
+  ...
 ){
   table_id   %assert_class% 'character'
   title     %assert_class% 'character'
@@ -107,7 +108,8 @@ pub_table_meta <- function(
     title     = title,
     longtitle = longtitle,
     subtitle  = subtitle,
-    footer = footer
+    footer = footer,
+    ...
   )
 
   class(res) <- c('Pub_table_meta', 'list')
