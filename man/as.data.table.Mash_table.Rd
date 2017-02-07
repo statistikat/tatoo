@@ -4,7 +4,8 @@
 \alias{as.data.table.Mash_table}
 \title{Title}
 \usage{
-\method{as.data.table}{Mash_table}(dat, mash_method = "row", ...)
+\method{as.data.table}{Mash_table}(dat, mash_method = "row",
+  insert_blank_row = (mash_method == "row"), ...)
 }
 \arguments{
 \item{...}{passed on to as.data.frame.data.table}

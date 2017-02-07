@@ -5,7 +5,7 @@
 \title{Pub Table Metadata}
 \usage{
 pub_table_meta(table_id, title, longtitle = title, subtitle = NULL,
-  footer = NULL)
+  footer = NULL, ...)
 }
 \arguments{
 \item{table_id}{}
