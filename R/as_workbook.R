@@ -1,52 +1,65 @@
 #' As Workbook
 #'
-#' @param dat
-#' @param mash_method
-#' @param insert_blank_row
-#' @param sep_height
-#' @param sheet_name
-#' @param ... parameters passed on to openxlsx::writeDate
+#' @param ...
 #'
 #' @return
 #' @export
 #'
 #' @examples
-as_workbook.Mash_table <- function(
+as_workbook <- function(
   dat,
-  mash_method,
-  insert_blank_row,
-  sep_height = 20,
-  sheet_name = 'sheet1',
+  sheet = 1L,
   ...
 ){
-  res <- as.data.table(
-    dat,
-    mash_method = mash_method,
-    insert_blank_row = insert_blank_row
-  )
+  assert_that(requireNamespace("openxlsx"))
+  UseMethod('as_workbook')
+}
 
+
+#' @export
+as_workbook.default <- function(
+  dat,
+  sheet = 1,
+  ...
+){
   wb <- openxlsx::createWorkbook()
-  openxlsx::addWorksheet(wb, '')
-  openxlsx::writeData(wb, 1, res, ...)
+  wb <- write_worksheet(dat, wb, sheet = sheet, ...)
+  return(wb)
+}
 
 
-  if(!is.null(sep_height)){
-    if('startRow' %in% names(list(...))){
-      row_off <- list(...)[['startRow']] - 1
-    } else if ('xy' %in% names(list(...))){
-      row_off <- list(...)[['xy']][[2]] - 1
-    } else {
-      row_off <- 0
-    }
 
-    if(insert_blank_row){
-      sel_rows <- seq(4 + row_off, nrow(res) + row_off, by = 3)
-    } else {
-      sel_rows <- seq(4 + row_off, nrow(res) + row_off, by = 2)
-    }
+#' @export
+as_workbook.Pub_table <- function(
+  dat,
+  sheet = attr(dat, 'meta')$table_id,
+  ...
+){
+  wb <- openxlsx::createWorkbook()
+  wb <- write_worksheet(dat, wb, sheet = sheet, ...)
+  return(wb)
+}
 
-    openxlsx::setRowHeights(wb, 1, sel_rows, sep_height)
-  }
+
+#' @export
+as_workbook.Mash_table <- function(
+  dat,
+  sheet = 1L,
+  mash_method = 'row',
+  insert_blank_row = TRUE,
+  sep_height = 20
+){
+  wb <- openxlsx::createWorkbook()
+  wb <- write_worksheet(
+    dat,
+    wb,
+    sheet = sheet,
+    append = FALSE,
+    start_row = 1L,
+    mash_method = mash_method,
+    insert_blank_row = insert_blank_row,
+    sep_height = sep_height
+  )
 
   return(wb)
 }
@@ -67,21 +80,24 @@ as_workbook.Mash_table <- function(
 #' @export
 #'
 #' @examples
-save_xlsx.StackTable <- function(dat,
-                                 outfile,
-                                 mash_method = 'row',
-                                 insert_blank_row = FALSE,
-                                 sep_height = 24,
-                                 sheet_name = 'sheet1',
-                                 overwrite = FALSE,
-                                 ...){
-
-  wb <- as_workbook(dat,
-                    mash_method = mash_method,
-                    insert_blank_row = insert_blank_row,
-                    sep_height = sep_height,
-                    sheet_name = sheet_name,
-                    ...)
+save_xlsx.Mash_table <- function(
+  dat,
+  outfile,
+  mash_method = 'row',
+  insert_blank_row = FALSE,
+  sep_height = 24,
+  overwrite = FALSE
+){
+  wb <- as_workbook(
+    dat,
+    wb,
+    sheet = 1L,
+    append = FALSE,
+    start_row = 1L,
+    mash_method = mash_method,
+    insert_blank_row = insert_blank_row,
+    sep_height = sep_height
+  )
 
   openxlsx::saveWorkbook(wb, outfile, overwrite = overwrite)
 }
@@ -107,8 +123,10 @@ as_workbook.Pub_report <- function(dat){
       sheet_name <- sanitize_excel_sheet_names(names(dat))[[i]]
     }
 
-    wb <- write_worksheet(dat[[i]], wb, sheet = sheet_name)
+    wb <- write_worksheet(dat = dat[[i]], wb = wb, sheet = sheet_name, append = FALSE, start_row = 1L)
+    wb %assert_class% 'Workbook'
   }
+
 
   return(wb)
 }
