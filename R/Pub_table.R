@@ -72,9 +72,9 @@ print.Pub_table <- function(dat, ...){
   if(!is.null(meta$footer)){
     cat('\n', meta$footer, '\n')
   }
-
-
 }
+
+
 
 
 #' Pub Table Metadata
@@ -113,7 +113,22 @@ pub_table_meta <- function(
   )
 
   class(res) <- c('Pub_table_meta', 'list')
+
+  assert_that(is_valid(res))
   return(res)
+}
+
+
+
+#' @export
+is_valid.Pub_table_meta <- function(dat){
+  res <- list()
+
+  res$elements_are_scalars <- all(unlist(
+    lapply(res, function(x) assertthat::is.scalar(x) || is.null(x))
+  ))
+
+  hammr::all_with_warning(res)
 }
 
 
@@ -139,15 +154,19 @@ make_pub_table_print_title <- function(meta, subtitle = TRUE){
 
   if(!meta$table_id %identical% meta$title){
     title <- sprintf('%s: %s', meta$table_id, meta$title)
+    assert_that(length(title) %identical% 1L)
   }
 
   if(!meta$longtitle %identical% meta$title){
     title <- sprintf('%s - %s', title, meta$longtitle)
+    assert_that(length(title) %identical% 1L)
   }
 
   if(subtitle && !is.null(meta$subtitle)){
     title <- paste0(
-      title, '\n', meta$subtitle )
+      title, '\n', meta$subtitle
+    )
+    assert_that(length(title) %identical% 1L)
   }
 
   return(title)
