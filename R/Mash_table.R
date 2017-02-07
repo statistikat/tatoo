@@ -48,6 +48,8 @@ mash_table <- function(dat1, dat2, rem_ext = NULL){
 }
 
 
+
+
 #' @export
 #' @rdname mash_table
 rmash <- function(dat1, dat2, rem_ext = NULL, ...){
@@ -59,15 +61,20 @@ rmash <- function(dat1, dat2, rem_ext = NULL, ...){
 }
 
 
+
+
 #' @export
 #' @rdname mash_table
-cmash <- function(dat1, dat2, rem_ext = NULL, ...){
+cmash <- function(dat1, dat2, rem_ext = NULL, by = NULL, suffixes = NULL){
   as.data.table(
     mash_table(dat1, dat2, rem_ext = rem_ext),
     mash_method = 'col',
-    ...
+    by = by,
+    suffixes = suffixes
   )
 }
+
+
 
 
 #' Title
@@ -80,22 +87,29 @@ cmash <- function(dat1, dat2, rem_ext = NULL, ...){
 #' @export
 #'
 #' @examples
-as.data.table.Mash_table <- function(dat,
-                                      mash_method = 'row',
-                                      ...){
+as.data.table.Mash_table <- function(
+  dat,
+  mash_method = 'row',
+  insert_blank_row = (mash_method == 'row'),
+  by = NULL,
+  suffixes = NULL
+){
+  assert_that(purrr::is_scalar_character(mash_method))
+  assert_that(is.flag(insert_blank_row))
 
-  mash_method  %assert_class% 'character'
   assert_that(is.scalar(stack))
   if(mash_method %in% c('c', 'col', 'column', 'columns')){
-    res <- mash_cols(dat, ...)
+    res <- mash_cols(dat, by = by, suffixes = suffixes)
   } else if(mash_method %in% c('r', 'row', 'rows')) {
-    res <- mash_rows(dat, ...)
+    res <- mash_rows(dat, insert_blank_row = insert_blank_row)
   } else{
     stop('mash_method must be either "row" or "col".')
   }
 
   return(as.data.table(res))
 }
+
+
 
 
 #' Title
@@ -113,6 +127,9 @@ as.data.table.Mash_table <- function(dat,
 as.data.frame.Mash_table <- function(dat, mash_method = 'row', ...){
   as.data.frame(as.data.table(dat, ...))
 }
+
+
+
 
 # Utility funs -----------------------------------------------------------------
 mash_rows <- function(dat, insert_blank_row = FALSE){
@@ -146,6 +163,8 @@ mash_rows <- function(dat, insert_blank_row = FALSE){
 }
 
 
+
+
 mash_rows_tex <- function(dat, insert_blank_row) {
   dat %assert_class% 'Mash_table'
 
@@ -170,21 +189,23 @@ mash_rows_tex <- function(dat, insert_blank_row) {
 }
 
 
-mash_cols <- function(dat, id_vars = NULL, suffixes = c('', '')){
+
+
+mash_cols <- function(dat, by = NULL, suffixes = c('', '')){
   dat %assert_class% 'Mash_table'
   assert_that(length(suffixes) %identical% 2L)
 
   dd1 <- data.table::copy(dat[[1]])
   dd2 <- data.table::copy(dat[[2]])
 
-  if (is.null(id_vars)){
+  if (is.null(by)){
     data.table::setnames(dd1, paste0(names(dd1), suffixes[[1]]))
     data.table::setnames(dd2, paste0(names(dd2), suffixes[[2]]))
     res <- cbind(dd1, dd2)
     start_order <- 1
   } else {
-    res <- merge(dat[[1]], dat[[2]], by = id_vars, suffixes = suffixes)
-    start_order <- length(id_vars) + 1
+    res <- merge(dat[[1]], dat[[2]], by = by, suffixes = suffixes)
+    start_order <- length(by) + 1
   }
 
   assert_that(start_order < ncol(dat[[1]]))
@@ -192,14 +213,17 @@ mash_cols <- function(dat, id_vars = NULL, suffixes = c('', '')){
   colorder <- foreach(i = start_order:ncol(dat[[1]]), .combine = c) %do% {
     c(i, i + ncol(dat[[1]]) - (start_order - 1L))
   }
-  colorder <- as.integer(c(seq_along(id_vars), colorder))
+  colorder <- as.integer(c(seq_along(by), colorder))
   assert_that(max(colorder) %identical% ncol(res))
 
 
   data.table::setcolorder(res, colorder)
+  data.table::setattr(res, 'by', by)
 
   return(res)
 }
+
+
 
 
 mash_cols_tex <- function(dat) {
