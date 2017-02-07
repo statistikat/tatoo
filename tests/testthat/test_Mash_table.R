@@ -105,15 +105,8 @@ test_that('mash_table: stacking tables by col works', {
       "factors.y", "ints.x", "ints.y", "id_1.x", "id_1.y", "id_2.x",
       "id_2.y")
   )
-
-
-
-
-
-
-
-
 })
+
 
 
 test_that('printing as latex works', {
@@ -136,7 +129,26 @@ test_that('printing as latex works', {
 
 test_that('exporting as xlsx works', {
   expect_silent(st1 <- mash_table(tdat1, tdat2, rem_ext = '_xt'))
-  # save_xlsx.StackTable(st1, '/home/hoelk/blah.xlsx', overwrite = TRUE)
+  of <- file.path(test_path(), 'test_out', 'mash_table.xlsx')
+  save_xlsx(st1, of, overwrite = TRUE)
+  #hammr::excel(of)
+
+
+  of2 <- file.path(test_path(), 'test_out', 'mash_table_meta.xlsx')
+  st1_meta <- pub_table(
+    st1,
+    pub_table_meta(
+      table_id = 'tid',
+      title = 'title',
+      longtitle = 'longitle',
+      subtitle = 'subtitle',
+      footer = ' ---------------- ')
+  )
+  save_xlsx(st1_meta, of2, overwrite = TRUE)
+  hammr::excel(of2)
+
+
+
   # save_xlsx.StackTable(st1, '/home/hoelk/blah.xlsx', overwrite = TRUE, startRow = 10)
   # save_xlsx.StackTable(st1, '/home/hoelk/blah.xlsx', overwrite = TRUE, xy = c(6, 10))
   # save_xlsx.StackTable(st1, '/home/hoelk/blah.xlsx', overwrite = TRUE, sep_height = 24, xy = c(6, 10))

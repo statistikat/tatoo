@@ -99,4 +99,10 @@ test_that("xlsx output for comp_tables works", {
     outfile <- file.path(td, 'pub_comp_table_idvars.xlsx')
     expect_silent(openxlsx::saveWorkbook(wb, outfile, overwrite = TRUE))
     # hammr::excel(outfile)
+
+
+    outfile <- file.path(td, 'pub_comp_table_meta.xlsx')
+    save_xlsx(pub_tres, outfile)
+    hammr::excel(outfile)
+
 })
