@@ -24,25 +24,51 @@
 #' @rdname mash_table
 #'
 #' @examples
-mash_table <- function(dat1, dat2, rem_ext = NULL){
-  dat1 %assert_class% 'data.frame'
-  dat2 %assert_class% 'data.frame'
-  assert_that(nrow(dat1)  %identical% nrow(dat2))
-  assert_that(ncol(dat1)  %identical% ncol(dat2))
+mash_table <- function(..., rem_ext = NULL){
+  dl <- list(...)
 
-  dat1 <- as.data.table(data.table::copy(dat1))
-  dat2 <- as.data.table(data.table::copy(dat2))
+  # Check Inputs
+    assert_that(length(dl) > 1)
+    assert_that(all(
+      unlist(lapply(dl, is.data.frame))
+    ))
 
-  if(!is.null(rem_ext)){
-    data.table::setnames(dat1, gsub(rem_ext, '', names(dat1)))
-    data.table::setnames(dat2, gsub(rem_ext, '', names(dat2)))
-  }
+    for (el in dl) {
+      assert_that(nrow(el) %identical% nrow(dl[[1]]))
+      assert_that(ncol(el) %identical% ncol(dl[[1]]))
+    }
 
-  assert_that(identical(sort(names(dat1)), sort(names(dat2))))
-  data.table::setcolorder(dat2, names(dat1))
+    assert_that(
+      is.null(rem_ext) ||
+      purrr::is_scalar_character(rem_ext)
+    )
 
 
-  res <- list(dat1, dat2)
+  # Process inputs
+    res <- lapply(dl, function(x) {
+      data.table::as.data.table(data.table::copy(x))
+    })
+
+    if(!is.null(rem_ext)){
+      res <- lapply(res, function(x) {
+        data.table::setnames(x, gsub(rem_ext, '', names(x)))
+      })
+    }
+
+    res <- lapply(res, function(x) {
+      data.table::setcolorder(x, names(res[[1]]))
+    })
+
+
+  # Post conditions
+    for (el in res) {
+      assert_that(names(el) %identical% names(dl[[1]]))
+      assert_that(data.table::is.data.table(el))
+      assert_that(nrow(el) %identical% nrow(dl[[1]]))
+      assert_that(ncol(el) %identical% ncol(dl[[1]]))
+    }
+
+
   class(res) <- c('Mash_table', 'list')
   return(res)
 }

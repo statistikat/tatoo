@@ -27,29 +27,53 @@ tdat3 <- data.frame(
 
 
 test_that('mash_table: stacking tables by row works', {
-  #* @testing mash_rows
-  #* @testing as.data.table.Mash_table
+  #* @testing mash_table
 
-  # Creating stack tables
+  # Creating mash tables works for two elements (legacy version of the function
+  # only accepted two arguments)
     expect_error(mash_table(tdat1, tdat2))
     expect_silent(st1 <- mash_table(tdat1, tdat2, rem_ext = '_xt'))
     expect_silent(st2 <- mash_table(tdat1, tdat3, rem_ext = '_xt'))
 
-  # Create row stacked data.table
+  # but also for an arbitrary number
+    expect_error(mash_table(tdat1, tdat2, tdat1, tdat2))
+    expect_silent(st3 <- mash_table(tdat1, tdat2, tdat1, tdat2, rem_ext = '_xt'))
+    expect_silent(st4 <- mash_table(tdat1, tdat3, tdat1, tdat2, rem_ext = '_xt'))
+
+
+  #* @testing mash_rows
+  #* @testing as.data.table.Mash_table
+
+  # Testing if row mashing works
+    ## Input must be a mash_table
     expect_error(mash_rows(tdat1))
+
+    ## for two data.frames
     expect_silent(res1 <- mash_rows(st1))
-    expect_silent(res2 <- mash_rows(st2))
+    expect_identical(nrow(res1), sum(unlist(lapply(st1, nrow))))
+
+    ## for an arbitrary number of data.frames
+    expect_silent(res3 <- mash_rows(st3))
+    expect_identical(nrow(res3), sum(unlist(lapply(st3, nrow))))
+
 
     expect_identical(lapply(res1, class), lapply(tdat1, class))
     expect_identical(as.character(lapply(res2, class)), as.character(lapply(tdat3, class)))
 
-  # Inserting blank rows works
-    expect_silent(res1 <- as.data.table(st1, insert_blank_row = TRUE))
-    expect_error(as.data.table(st1, mash_method = 'col', insert_blank_row = TRUE))
+    ## For better visual differentiation, blank rows can be inserted between
+    ## mashes (useful especially for latex or xlsx export)
+      expect_silent(res1 <- as.data.table(st1, insert_blank_row = TRUE))
+      expect_error(as.data.table(st1, mash_method = 'col', insert_blank_row = TRUE))
 
-    sel <- seq(3, nrow(res1), 3)
-    expect_true(all(rowSums(res1[sel] == '') == ncol(res1)))
-    expect_false(any(rowSums(res1[-sel] == '') == ncol(res1)))
+      sel <- seq(3, nrow(res1), 3)
+      expect_true(all(rowSums(res1[sel] == '') == ncol(res1)))
+      expect_false(any(rowSums(res1[-sel] == '') == ncol(res1)))
+
+
+
+
+
+
 
 })
 
