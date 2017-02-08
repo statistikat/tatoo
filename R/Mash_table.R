@@ -145,6 +145,7 @@ as.data.table.Mash_table <- function(
 
   assert_that(is.scalar(stack))
   if(mash_method %in% c('c', 'col', 'column', 'columns')){
+    assert_that(insert_blank_row %identical% FALSE)
     res <- mash_cols(dat, by = by, suffixes = suffixes)
   } else if(mash_method %in% c('r', 'row', 'rows')) {
     res <- mash_rows(dat, insert_blank_row = insert_blank_row)
@@ -263,7 +264,7 @@ mash_cols <- function(
       is.character(by)
     )
 
-    if (is.null(names(dat))) {
+    if (is.null(names(dat)) && is.null(suffixes)) {
       suffixes = rep('', length(dat))
     } else {
       assert_that(length(suffixes) %identical% length(dat))
@@ -278,8 +279,8 @@ mash_cols <- function(
     for(i in seq_along(dl)){
       new_names <- names(dl[[i]])
       new_names[!new_names %in% by] <- paste0(
-        new_names[!new_names %in% by],
-        suffixes[[i]]
+          new_names[!new_names %in% by],
+          suffixes[[i]]
       )
       data.table::setnames(dl[[i]], new_names)
     }

@@ -58,12 +58,11 @@ test_that('mash_table: stacking tables by row works', {
 
     ## Ensure classes were preserved
       expect_identical(lapply(res1, class), lapply(tdat1, class))
-      expect_identical(as.character(lapply(res2, class)), as.character(lapply(tdat3, class)))
 
     ## For better visual differentiation, blank rows can be inserted between
     ## mashes (useful especially for latex or xlsx export)
       expect_silent(res1 <- as.data.table(st1, insert_blank_row = TRUE))
-      expect_error(as.data.table(st1, mash_method = 'row', insert_blank_row = TRUE))
+      expect_error(as.data.table(st1, mash_method = 'col', insert_blank_row = TRUE))
 
       sel <- seq(3, nrow(res1), 3)
       expect_true(all(rowSums(res1[sel] == '') == ncol(res1)))
@@ -91,12 +90,19 @@ test_that('mash_table: stacking tables by col works', {
   st1[[1]]$id_2 <- letters[6:10]
   st1[[2]]$id_2 <- letters[6:10]
 
-  expect_silent(res1 <- mash_cols(st1, by = c('id_1', 'id_2')))
-  expect_silent(res2 <- mash_cols(st1, by = c('id_1', 'id_2'),
-                                   suffixes = c('foo', 'bar')))
+  expect_silent(res1 <- mash_cols(
+    st1, by = c('id_1', 'id_2')
+  ))
+  expect_silent(res2 <- mash_cols(
+    st1,
+    by = c('id_1', 'id_2'),
+    suffixes = c('foo', 'bar')
+  ))
   expect_silent(res3 <- mash_cols(st1))
-  expect_silent(res4 <- mash_cols(st1,
-                                   suffixes = c('.x', '.y')))
+  expect_silent(res4 <- mash_cols(
+    st1,
+    suffixes = c('.x', '.y')
+  ))
 
 
   expect_identical(unlist(
@@ -173,7 +179,7 @@ test_that('exporting as xlsx works', {
       footer = ' ---------------- ')
   )
   save_xlsx(st1_meta, of2, overwrite = TRUE)
-  hammr::excel(of2)
+  #hammr::excel(of2)
 
 
 
