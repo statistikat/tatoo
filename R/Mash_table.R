@@ -75,6 +75,26 @@ mash_table <- function(..., rem_ext = NULL){
 
 
 
+#' @export
+as_mash_table <- function(dat){
+  UseMethod('as_mash_table')
+}
+
+
+
+#' @export
+as_mash_table.list <- function(dat){
+  do.call(mash_table, dat)
+}
+
+
+
+#' @export
+as_mash_table.default <- function(dat){
+  stop('Only lists can be coerced to mash tables')
+}
+
+
 
 #' @export
 #' @rdname mash_table
@@ -231,35 +251,85 @@ mash_rows_tex <- function(dat, insert_blank_row) {
 
 
 
-mash_cols <- function(dat, by = NULL, suffixes = c('', '')){
-  dat %assert_class% 'Mash_table'
-  assert_that(length(suffixes) %identical% 2L)
+mash_cols <- function(
+  dat,
+  by = NULL,
+  suffixes = names(dat)
+){
+  # Preconditions
+    dat %assert_class% 'Mash_table'
+    assert_that(
+      is.null(by) ||
+      is.character(by)
+    )
 
-  dd1 <- data.table::copy(dat[[1]])
-  dd2 <- data.table::copy(dat[[2]])
-
-  if (is.null(by)){
-    data.table::setnames(dd1, paste0(names(dd1), suffixes[[1]]))
-    data.table::setnames(dd2, paste0(names(dd2), suffixes[[2]]))
-    res <- cbind(dd1, dd2)
-    start_order <- 1
-  } else {
-    res <- merge(dat[[1]], dat[[2]], by = by, suffixes = suffixes)
-    start_order <- length(by) + 1
-  }
-
-  assert_that(start_order < ncol(dat[[1]]))
-
-  colorder <- foreach(i = start_order:ncol(dat[[1]]), .combine = c) %do% {
-    c(i, i + ncol(dat[[1]]) - (start_order - 1L))
-  }
-  colorder <- as.integer(c(seq_along(by), colorder))
-  assert_that(max(colorder) %identical% ncol(res))
+    if (is.null(names(dat))) {
+      suffixes = rep('', length(dat))
+    } else {
+      assert_that(length(suffixes) %identical% length(dat))
+    }
 
 
+  # Prepare inputs
+    dl <- lapply(dat, function(x){
+      data.table::copy(x)
+    })
+
+    for(i in seq_along(dl)){
+      new_names <- names(dl[[i]])
+      new_names[!new_names %in% by] <- paste0(
+        new_names[!new_names %in% by],
+        suffixes[[i]]
+      )
+      data.table::setnames(dl[[i]], new_names)
+    }
+
+
+  # Flatten
+    if (is.null(by)){
+      res <- do.call(cbind, dl)
+    } else {
+      merger <- function(x, y)  {suppressWarnings(
+        data.table:::merge.data.table(
+          x,
+          y,
+          by = by,
+          all = TRUE,
+          sort = FALSE)
+      )}
+      res <- Reduce(merger, dl)
+    }
+
+
+  # Determine output row order
+    colorder <- seq_len(
+      length(dat) * (ncol(dat[[1]]) - length(by))
+    )
+
+    colorder <- matrix(
+      colorder,
+      nrow = (ncol(dat[[1]]) - length(by)),
+      ncol = length(dat)
+    )
+
+    colorder <- as.vector(t(colorder))
+
+    if(length(by) > 0){
+      i_by <- seq_along(by)
+      colorder <- colorder + max(i_by)
+      colorder <- c(i_by, colorder)
+    }
+
+
+    assert_that(identical(
+      max(colorder),
+      ncol(res)
+    ))
+
+
+  # Output
   data.table::setcolorder(res, colorder)
   data.table::setattr(res, 'by', by)
-
   return(res)
 }
 

@@ -91,8 +91,8 @@ test_that('mash_table: stacking tables by col works', {
   st1[[1]]$id_2 <- letters[6:10]
   st1[[2]]$id_2 <- letters[6:10]
 
-  expect_silent(res1 <- mash_cols(st1, id_vars = c('id_1', 'id_2')))
-  expect_silent(res2 <- mash_cols(st1, id_vars = c('id_1', 'id_2'),
+  expect_silent(res1 <- mash_cols(st1, by = c('id_1', 'id_2')))
+  expect_silent(res2 <- mash_cols(st1, by = c('id_1', 'id_2'),
                                    suffixes = c('foo', 'bar')))
   expect_silent(res3 <- mash_cols(st1))
   expect_silent(res4 <- mash_cols(st1,
@@ -123,6 +123,16 @@ test_that('mash_table: stacking tables by col works', {
       "factors.y", "ints.x", "ints.y", "id_1.x", "id_1.y", "id_2.x",
       "id_2.y")
   )
+
+  # test for an arbitrary number of columns
+  st3id <- lapply(st3, function(x) {
+    x$id  <- seq_len(nrow(x))
+    x$id2 <- LETTERS[x$id]
+    return(x)
+  }) %>% as_mash_table()
+
+  expect_silent(mash_cols(st3id))
+  expect_silent(mash_cols(st3id, by = c('id', 'id2')))
 })
 
 
