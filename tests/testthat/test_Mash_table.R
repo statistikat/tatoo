@@ -162,10 +162,13 @@ test_that('printing as latex works', {
 
 
 test_that('exporting as xlsx works', {
-  expect_silent(st1 <- mash_table(tdat1, tdat2, rem_ext = '_xt'))
+  expect_silent(st1 <- mash_table(tdat1, tdat1, tdat1, tdat1, rem_ext = '_xt'))
   of <- file.path(test_path(), 'test_out', 'mash_table.xlsx')
   save_xlsx(st1, of, overwrite = TRUE)
-  #hammr::excel(of)
+  # hammr::excel(of)
+
+  save_xlsx(st1, of, overwrite = TRUE, mash_method = 'col')
+  # hammr::excel(of)
 
 
   of2 <- file.path(test_path(), 'test_out', 'mash_table_meta.xlsx')
@@ -179,12 +182,5 @@ test_that('exporting as xlsx works', {
       footer = ' ---------------- ')
   )
   save_xlsx(st1_meta, of2, overwrite = TRUE)
-  #hammr::excel(of2)
-
-
-
-  # save_xlsx.StackTable(st1, '/home/hoelk/blah.xlsx', overwrite = TRUE, startRow = 10)
-  # save_xlsx.StackTable(st1, '/home/hoelk/blah.xlsx', overwrite = TRUE, xy = c(6, 10))
-  # save_xlsx.StackTable(st1, '/home/hoelk/blah.xlsx', overwrite = TRUE, sep_height = 24, xy = c(6, 10))
-  # save_xlsx.StackTable(st1, '/home/hoelk/blah.xlsx', overwrite = TRUE, sep_height = 24, xy = c(6, 10), insert_blank_row = TRUE)
+  # hammr::excel(of2)
 })

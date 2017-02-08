@@ -245,22 +245,30 @@ write_worksheet.Mash_table <- function(
     startRow = start_row
   )
 
-  row_off <- start_row - 1
+
+  row_off          <- start_row - 1
+  sep_height_start <- length(dat) + 2  # +2 accounts for header, and that excel cell indices start with 0
 
   # Modify row heights
   # '4' is the empty row before the table + table heading + first pair of rows
-    if(insert_blank_row){
-      sel_rows <- seq(4 + row_off, nrow(res) + row_off, by = 3)
-    } else {
-      sel_rows <- seq(4 + row_off, nrow(res) + row_off, by = 2)
-    }
+    if(mash_method %identical% 'row'){
+      if(insert_blank_row){
+        sel_rows <- seq(
+          sep_height_start + row_off, nrow(res) + row_off, by = (length(dat) + 1)
+        )
+      } else {
+        sel_rows <- seq(
+          sep_height_start + row_off, nrow(res) + row_off, by = length(dat)
+        )
+      }
 
-  openxlsx::setRowHeights(
-    wb,
-    sheet = sheet,
-    rows = sel_rows,
-    heights = rep(sep_height, length(sel_rows))
-  )
+      openxlsx::setRowHeights(
+        wb,
+        sheet = sheet,
+        rows = sel_rows,
+        heights = rep(sep_height, length(sel_rows))
+      )
+    }
 
   return(wb)
 }
