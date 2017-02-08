@@ -160,34 +160,48 @@ as.data.frame.Mash_table <- function(dat, mash_method = 'row', ...){
 # Utility funs -----------------------------------------------------------------
 mash_rows <- function(dat, insert_blank_row = FALSE){
   dat %assert_class% 'Mash_table'
+  assert_that(is.flag(insert_blank_row))
 
-  if(insert_blank_row){
-    dat_blank <- rep('', nrow(dat[[1]]) * ncol(dat[[1]])) %>%
-      `dim<-`(dim(dat[[1]])) %>%
-      as.data.table()
 
-    res <- data.table::rbindlist(list(dat[[1]], dat[[2]], dat_blank))
-    res <- res[1:(nrow(res) - 1)]
-  } else {
-    res <- rbind(dat[[1]], dat[[2]])
-  }
-
-  roworder <- foreach(i = seq_len(nrow(dat[[1]])), .combine = c) %do% {
+  # flatten
     if(insert_blank_row){
-      c(i, i + nrow(dat[[1]]), i + 2L * nrow(dat[[1]]))
+      blank_rowks <- rep('', nrow(dat[[1]]) * ncol(dat[[1]])) %>%
+        `dim<-`(dim(dat[[1]])) %>%
+        as.data.table()
+
+      dl <- c(dat, list(blank_rowks))
+
+      res <- data.table::rbindlist(dl)
     } else {
-      c(i, i + nrow(dat[[1]]))
+      res <- data.table::rbindlist(dat)
     }
-  }
 
-  if(insert_blank_row){
-    roworder <- roworder[-which(roworder == max(roworder))]
-  }
 
-  assert_that(max(roworder) %identical% nrow(res))
-  return(res[roworder])
+  # Determine output row order ("mash")
+    roworder <- seq_len((length(dat) + insert_blank_row) * nrow(dat[[1]]))
+    roworder <- matrix(
+      roworder,
+      nrow = nrow(dat[[1]]),
+      ncol = (length(dat) + insert_blank_row)
+    )
+    roworder <- as.vector(t(roworder))
+
+
+  # Post condtions
+    assert_that(identical(
+      max(roworder),
+      nrow(res)
+    ))
+
+
+  # Output
+    ## Remove trailing blank line
+    if(insert_blank_row){
+      res[-length(res)]
+    }
+
+    res[roworder]
 }
-
 
 
 
