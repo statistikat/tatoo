@@ -98,11 +98,10 @@ as_mash_table.default <- function(dat){
 
 #' @export
 #' @rdname mash_table
-rmash <- function(dat1, dat2, rem_ext = NULL, ...){
+rmash <- function(..., rem_ext = NULL, insert_blank_row = FALSE){
   as.data.table(
-    mash_table(dat1, dat2, rem_ext = rem_ext),
-    mash_method = 'row',
-    ...
+    mash_table(..., rem_ext = rem_ext),
+    mash_method = 'row'
   )
 }
 
@@ -111,9 +110,9 @@ rmash <- function(dat1, dat2, rem_ext = NULL, ...){
 
 #' @export
 #' @rdname mash_table
-cmash <- function(dat1, dat2, rem_ext = NULL, by = NULL, suffixes = NULL){
+cmash <- function(..., rem_ext = NULL, by = NULL, suffixes = NULL){
   as.data.table(
-    mash_table(dat1, dat2, rem_ext = rem_ext),
+    mash_table(..., rem_ext = rem_ext),
     mash_method = 'col',
     by = by,
     suffixes = suffixes
@@ -226,30 +225,6 @@ mash_rows <- function(dat, insert_blank_row = FALSE){
 
 
 
-mash_rows_tex <- function(dat, insert_blank_row) {
-  dat %assert_class% 'Mash_table'
-
-  empty_row <- rep('', length(dat[[1]])) %>%
-    t() %>%
-    as.data.frame(stringsAsFactors = FALSE) %>%
-    data.table::setnames(names(dat[[2]]))
-
-  res <- foreach(i = 1:nrow(dat[[1]]), .combine = rbind) %do% {
-    r <- paste(dat[[1]][i, ], dat[[2]][i, ], sep = ' \\newline ') %>%
-      t() %>%
-      as.data.frame()
-    names(r) <-  names(dat[[1]])
-
-
-    if (insert_blank_row && i != nrow(dat[[1]])) {
-      r <- rbind(r, empty_row)
-    }
-
-    return(r)
-  }
-}
-
-
 
 
 mash_cols <- function(
@@ -336,14 +311,40 @@ mash_cols <- function(
 
 
 
+#
+# mash_cols_tex <- function(dat) {
+#   foreach(i = 1:nrow(dat[[1]]), .combine = rbind) %do% {
+#     r <- paste(dat[[1]][i, ], dat[[2]][i, ], sep = ' ') %>%
+#       t() %>%
+#       as.data.frame()
+#     names(r) <-  names(dat[[1]])
+#
+#     return(r)
+#   }
+# }
+#
+#
+# mash_rows_tex <- function(dat, insert_blank_row) {
+#   dat %assert_class% 'Mash_table'
+#
+#   empty_row <- rep('', length(dat[[1]])) %>%
+#     t() %>%
+#     as.data.frame(stringsAsFactors = FALSE) %>%
+#     data.table::setnames(names(dat[[2]]))
+#
+#   res <- foreach(i = 1:nrow(dat[[1]]), .combine = rbind) %do% {
+#     r <- paste(dat[[1]][i, ], dat[[2]][i, ], sep = ' \\newline ') %>%
+#       t() %>%
+#       as.data.frame()
+#     names(r) <-  names(dat[[1]])
+#
+#
+#     if (insert_blank_row && i != nrow(dat[[1]])) {
+#       r <- rbind(r, empty_row)
+#     }
+#
+#     return(r)
+#   }
+# }
+#
 
-mash_cols_tex <- function(dat) {
-  foreach(i = 1:nrow(dat[[1]]), .combine = rbind) %do% {
-    r <- paste(dat[[1]][i, ], dat[[2]][i, ], sep = ' ') %>%
-      t() %>%
-      as.data.frame()
-    names(r) <-  names(dat[[1]])
-
-    return(r)
-  }
-}
