@@ -103,6 +103,6 @@ test_that("xlsx output for comp_tables works", {
 
     outfile <- file.path(td, 'pub_comp_table_meta.xlsx')
     save_xlsx(pub_tres, outfile)
-    hammr::excel(outfile)
+    #hammr::excel(outfile)
 
 })
