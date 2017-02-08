@@ -55,7 +55,6 @@ as_workbook.Mash_table <- function(
     wb,
     sheet = sheet,
     append = FALSE,
-    start_row = 1L,
     mash_method = mash_method,
     insert_blank_row = insert_blank_row,
     sep_height = sep_height
@@ -64,43 +63,6 @@ as_workbook.Mash_table <- function(
   return(wb)
 }
 
-
-#' Title
-#'
-#' @param dat
-#' @param outfile
-#' @param mash_method
-#' @param insert_blank_row
-#' @param sep_height
-#' @param sheet_name
-#' @param overwrite
-#' @param ... parameters passed on to
-#'
-#' @return
-#' @export
-#'
-#' @examples
-save_xlsx.Mash_table <- function(
-  dat,
-  outfile,
-  mash_method = 'row',
-  insert_blank_row = FALSE,
-  sep_height = 24,
-  overwrite = FALSE
-){
-  wb <- as_workbook(
-    dat,
-    wb,
-    sheet = 1L,
-    append = FALSE,
-    start_row = 1L,
-    mash_method = mash_method,
-    insert_blank_row = insert_blank_row,
-    sep_height = sep_height
-  )
-
-  openxlsx::saveWorkbook(wb, outfile, overwrite = overwrite)
-}
 
 
 
