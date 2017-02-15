@@ -151,8 +151,6 @@ write_worksheet.Comp_table <- function(
   start_row = 1L,
   ...
 ){
-  wb %assert_class% 'Workbook'
-
   if(!append){
     openxlsx::addWorksheet(wb, sheet)
   }
@@ -221,10 +219,7 @@ write_worksheet.Mash_table <- function(
   sep_height = 30,
   ...
 ){
-  wb %assert_class% 'Workbook'
-  assert_that(is.flag(append))
-  assert_that(is.number(start_row))
-  assert_that(purrr::is_scalar_character(mash_method))
+  assert_that(is.scalar(mash_method))
   assert_that(is.flag(insert_blank_row))
   assert_that(is.number(sep_height))
 
@@ -254,7 +249,8 @@ write_worksheet.Mash_table <- function(
     if(mash_method %identical% 'row'){
       if(insert_blank_row){
         sel_rows <- seq(
-          sep_height_start + row_off, nrow(res) + row_off, by = (length(dat) + 1)
+          sep_height_start + row_off, nrow(res) + row_off,
+          by = (length(dat) + 1)
         )
       } else {
         sel_rows <- seq(
@@ -287,7 +283,7 @@ write_worksheet.Mash_table <- function(
 #' @examples
 sanitize_excel_sheet_names <- function(x){
   invalid_chars_regex <- "\\[|\\]|\\*|\\?|:|\\/|\\\\"
-  res <- stringi::stri_replace_all_regex(x, invalid_chars_regex,'_')
+  res <- stringi::stri_replace_all_regex(x, invalid_chars_regex, '_')
   res <- stringi::stri_sub(res, 1, 31)
 
   for(el in unique(res)){
@@ -302,4 +298,3 @@ sanitize_excel_sheet_names <- function(x){
 
   return(res)
 }
-

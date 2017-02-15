@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 \method{as.data.table}{Mash_table}(dat, mash_method = "row",
-  insert_blank_row = (mash_method == "row"), ...)
+  insert_blank_row = (mash_method == "row"), by = NULL, suffixes = NULL)
 }
 \arguments{
 \item{...}{passed on to as.data.frame.data.table}

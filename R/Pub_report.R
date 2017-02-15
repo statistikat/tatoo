@@ -19,38 +19,10 @@ pub_report <- function(dat){
 #' @export
 is_valid.Pub_report <- function(dat){
   res <- list()
-  checkColClass <- function(x) 'Pub_table' %in% class(x)
+  check_col_class <- function(x) 'Pub_table' %in% class(x)
 
   res$class     <- 'list' %in% class(dat)
-  res$elclasses <- all(unlist(lapply(dat, checkColClass)))
+  res$elclasses <- all(unlist(lapply(dat, check_col_class)))
 
   all_with_warning(res)
 }
-
-
-
-#' @export
-save_txt.Pub_report <- function(
-  dat,
-  outfile,
-  polisher = identity
-){
-  # Prevent data tables from wrapping
-  ow <- getOption('width')
-  options(width = 10000)
-
-  # Write out
-  sink(outfile)
-  for(el in dat){
-    cat('\n\n')
-    print(polisher(el), nrows = 9999, topn = 999999)
-    cat('\n\n')
-  }
-
-  # Cleanup
-  options(width = ow)
-  sink()
-}
-
-
-
