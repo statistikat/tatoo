@@ -54,12 +54,8 @@ test_that("Stack_table works as expected", {
     tdat <- stack_table(tmeta, tmash, tcomp, meta = tt_meta(
       table_id = 'rp1',
       title = 'stack table 1',
-      longtitle = 'stack table 1 is a stack of tables',
+      longtitle = c('stack table 1 is a stack of tables', 'with a very long title', 'that spans several rows'),
       subtitle = 'with a subtitle',
-      footer = 'that has a footer also'
+      footer = c('that has a footer also', 'which goes over man lines')
     ))
-
-
-
-
 })

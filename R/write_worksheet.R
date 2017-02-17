@@ -81,7 +81,7 @@ write_worksheet.Meta_table <- function(
 
     header$title <- sprintf('%s: %s', meta$table_id, meta$title)
 
-    if(meta$longtitle != meta$title){
+    if(!identical(meta$longtitle, meta$title)){
       header$longtitle <- meta$longtitle
     }
 
@@ -89,7 +89,9 @@ write_worksheet.Meta_table <- function(
       header$subtitle <- meta$subtitle
     }
 
-    header <- t(as.data.frame(header))
+
+
+    header <- unlist(header)
 
     openxlsx::writeData(
       wb,
@@ -99,7 +101,7 @@ write_worksheet.Meta_table <- function(
       colNames = FALSE
     )
 
-    crow <- crow + nrow(header) + 1
+    crow <- crow + length(header) + 1
     class(dat) <- class(dat)[!class(dat) == 'Meta_table']
 
     wb <- write_worksheet(

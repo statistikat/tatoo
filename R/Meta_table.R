@@ -79,7 +79,8 @@ print.Meta_table <- function(dat, ...){
   NextMethod(print, dd, ...)
 
   if(!is.null(meta$footer)){
-    cat('\n', meta$footer, '\n')
+    footer <- paste(meta$footer, collapse = '\n')
+    cat('\n', footer, '\n')
   }
 }
 
@@ -90,11 +91,14 @@ print.Meta_table <- function(dat, ...){
 #'
 #' Create a pub table metadata object
 #'
-#' @param table_id
-#'
-#' @param title
-#' @param longtitle
-#' @param ...
+#' @param table_id A vector of length 1
+#' @param title A vector of length 1
+#' @param longtitle A vector. If length >1 the title will be displayed in several rows
+#' @param subtitle A vector
+#' @param footer A vector
+#' @param ... Additional arguments that will be contained in the final object.
+#'   they are passed on to list. This is only usefull if you develop a package
+#'   that wants to want to create subclasses of tt_meta.
 #'
 #' @export
 tt_meta <- function(
@@ -105,11 +109,16 @@ tt_meta <- function(
   footer = NULL,
   ...
 ){
-  table_id   %assert_class% 'character'
-  title     %assert_class% 'character'
-  longtitle %assert_class% 'character'
+  assert_that(purrr::is_scalar_atomic(table_id))
+  assert_that(purrr::is_scalar_atomic(title))
+  assert_that(purrr::is_atomic(longtitle))
+
   assert_that(
-    is.null(subtitle) | is.character(subtitle)
+    is.null(subtitle) | purrr::is_atomic(subtitle)
+  )
+
+  assert_that(
+    is.null(footer) | purrr::is_atomic(footer)
   )
 
   res <- list(
@@ -155,28 +164,38 @@ meta_table_maker <- function(fun, idVars){
 
 
 #' @export
-make_meta_table_print_title <- function(meta, subtitle = TRUE){
-  assert_that(is.flag(subtitle))
+make_meta_table_print_title <- function(meta, show_subtitle = TRUE){
+  assert_that(is.flag(show_subtitle))
   meta %assert_class% 'TT_meta'
 
-  title <- meta$table_id
+  table_id  <- meta$table_id
+  title     <- paste(meta$title, collapse = '\n')
+  longtitle <- paste(meta$longtitle, collapse = '\n')
 
-  if(!meta$table_id %identical% meta$title){
-    title <- sprintf('%s: %s', meta$table_id, meta$title)
-    assert_that(length(title) %identical% 1L)
+  if(is.null(meta$subtitle)){
+    subtitle <- NULL
+  } else {
+    subtitle  <- paste(meta$subtitle, collapse = '\n')
   }
 
-  if(!meta$longtitle %identical% meta$title){
-    title <- sprintf('%s - %s', title, meta$longtitle)
-    assert_that(length(title) %identical% 1L)
+  res <- table_id
+
+  if(!table_id %identical% title){
+    res <- sprintf('%s: %s', table_id, title)
+    assert_that(length(res) %identical% 1L)
   }
 
-  if(subtitle && !is.null(meta$subtitle)){
-    title <- paste0(
-      title, '\n', meta$subtitle
+  if(!longtitle %identical% title){
+    res <- sprintf('%s - %s', res, longtitle)
+    assert_that(length(res) %identical% 1L)
+  }
+
+  if(show_subtitle && !is.null(subtitle)){
+    res <- paste0(
+      res, '\n', subtitle
     )
-    assert_that(length(title) %identical% 1L)
+    assert_that(length(res) %identical% 1L)
   }
 
-  return(title)
+  return(res)
 }
