@@ -1,3 +1,5 @@
+#* @testfile test_save_xlsx
+
 #' Title
 #'
 #' @param dat
@@ -40,7 +42,13 @@ write_worksheet.default <- function(
   if(!append){
     openxlsx::addWorksheet(wb, sheet)
   }
-  openxlsx::writeData(wb = wb, sheet = sheet, x = dat, startRow = start_row)
+
+  openxlsx::writeData(
+    wb = wb,
+    sheet = sheet,
+    x = dat,
+    startRow = start_row)
+
   wb %assert_class% 'Workbook'
   return(wb)
 }
@@ -70,6 +78,8 @@ write_worksheet.Meta_table <- function(
   assert_that(is.number(start_row))
   meta <- attr(dat, 'meta')
 
+  wb <- wb$copy()
+
   if(!append){
     openxlsx::addWorksheet(wb, sheet)
   }
@@ -89,19 +99,23 @@ write_worksheet.Meta_table <- function(
       header$subtitle <- meta$subtitle
     }
 
-
-
     header <- unlist(header)
 
+  # write header
     openxlsx::writeData(
       wb,
       sheet = sheet,
       header,
       rowNames = FALSE,
-      colNames = FALSE
+      colNames = FALSE,
+      startRow = crow
     )
 
+
+  # write data
     crow <- crow + length(header) + 1
+    ## hacky, but NextMethod did not do what i wanted when ... were passed to
+    ## this function
     class(dat) <- class(dat)[!class(dat) == 'Meta_table']
 
     wb <- write_worksheet(
@@ -109,15 +123,15 @@ write_worksheet.Meta_table <- function(
       wb = wb,
       sheet = sheet,
       append = TRUE,
-      start_row = crow,
-      ...
+      start_row = crow
     )
 
 
   # Write Footer
     if (!is.null(meta$footer)){
+
       crow <- openxlsx::readWorkbook(
-        wb,
+        xlsxFile = wb,
         sheet = sheet,
         colNames = FALSE,
         skipEmptyRows = FALSE
@@ -125,8 +139,14 @@ write_worksheet.Meta_table <- function(
         nrow()
 
       crow <- crow + 3
-      openxlsx::writeData(wb, sheet = sheet, startRow = crow, meta$footer)
+      openxlsx::writeData(
+        wb,
+        sheet = sheet,
+        startRow = crow,
+        meta$footer
+      )
     }
+
 
   return(wb)
 }
@@ -153,56 +173,63 @@ write_worksheet.Comp_table <- function(
   start_row = 1L,
   ...
 ){
-  if(!append){
-    openxlsx::addWorksheet(wb, sheet)
-  }
+  # Pre-condtions
+    assert_that(has_attr(dat, 'titles'))
 
-  crow   <- start_row
-  titles <- attr(dat, 'titles')
+  # Process arguments
+    wb <- wb$copy()
 
-  assert_that(titles %identical% sort(titles))
-
-  title_row     <- vector(mode = 'list', length = ncol(dat))
-  title_counter <- 1
-
-  for(i in seq_along(title_row)){
-    title_row[[i]] <- names(titles)[[title_counter]]
-
-    if(i %in% titles){
-      title_counter <- title_counter + 1
+    if(!append){
+      openxlsx::addWorksheet(wb, sheet)
     }
-  }
+    crow   <- start_row
+    titles <- attr(dat, 'titles')
 
-  # Write super-headings
-  openxlsx::writeData(
-    wb,
-    sheet = sheet,
-    as.data.frame(title_row),
-    colNames = FALSE,
-    startRow = crow
-  )
+    assert_that(titles %identical% sort(titles))
 
-  crow <- crow + 1
+    title_row     <- vector(mode = 'list', length = ncol(dat))
+    title_counter <- 1
 
+    for(i in seq_along(title_row)){
+      title_row[[i]] <- names(titles)[[title_counter]]
 
-  for(i in seq_along(titles)){
-    merge_start <- ifelse(i == 1L, 1, titles[[i-1]] + 1)
-    merge_end   <- titles[[i]]
-    openxlsx::mergeCells(
+      if(i %in% titles){
+        title_counter <- title_counter + 1
+      }
+    }
+
+  # Write "subtable" headings
+    openxlsx::writeData(
       wb,
-      cols = c(merge_start, merge_end),
-      rows = start_row,
-      sheet = sheet
+      sheet = sheet,
+      as.data.frame(title_row),
+      colNames = FALSE,
+      startRow = crow
     )
-  }
 
-  openxlsx::writeData(
-    wb,
-    sheet = sheet,
-    startRow = crow,
-    dat,
-    colNames = TRUE
-  )
+    crow <- crow + 1
+
+    ## merge subtable heading cells
+    for(i in seq_along(titles)){
+      merge_start <- ifelse(i == 1L, 1, titles[[i-1]] + 1)
+      merge_end   <- titles[[i]]
+      openxlsx::mergeCells(
+        wb,
+        cols = c(merge_start, merge_end),
+        rows = start_row,
+        sheet = sheet
+      )
+    }
+
+
+  # Write data
+    openxlsx::writeData(
+      wb,
+      sheet = sheet,
+      startRow = crow,
+      dat,
+      colNames = TRUE
+    )
 
   return(wb)
 }
@@ -221,33 +248,38 @@ write_worksheet.Mash_table <- function(
   sep_height = 30,
   ...
 ){
-  assert_that(is.scalar(mash_method))
-  assert_that(is.flag(insert_blank_row))
-  assert_that(is.number(sep_height))
-
-  if(!append){
-    openxlsx::addWorksheet(wb, sheet)
-  }
-
-  res <- as.data.table(
-    dat,
-    mash_method = mash_method,
-    insert_blank_row = insert_blank_row
-  )
-
-  openxlsx::writeData(
-    wb,
-    sheet = sheet,
-    res,
-    startRow = start_row
-  )
+  # Preconditions
+    assert_that(is.scalar(mash_method))
+    assert_that(is.flag(insert_blank_row))
+    assert_that(is.number(sep_height))
 
 
-  row_off          <- start_row - 1
-  sep_height_start <- length(dat) + 2  # +2 accounts for header, and that excel cell indices start with 0
+  # Process arguments
+    wb <- wb$copy()
+
+    if(!append){
+      openxlsx::addWorksheet(wb, sheet)
+    }
+
+    res <- as.data.table(
+      dat,
+      mash_method = mash_method,
+      insert_blank_row = insert_blank_row
+    )
+
+  # Write data
+    openxlsx::writeData(
+      wb,
+      sheet = sheet,
+      res,
+      startRow = start_row
+    )
+
 
   # Modify row heights
-  # '4' is the empty row before the table + table heading + first pair of rows
+    row_off          <- start_row - 1
+    sep_height_start <- length(dat) + 2  # +2 because of header
+
     if(mash_method %identical% 'row'){
       if(insert_blank_row){
         sel_rows <- seq(
@@ -272,6 +304,34 @@ write_worksheet.Mash_table <- function(
 }
 
 
+
+write_worksheet.Stack_table <- function(
+  dat,
+  wb,
+  sheet,
+  append = FALSE,
+  start_row = 1L
+){
+  for(table in dat){
+    start_row <- nrow(openxlsx::readWorkbook(
+      wb,
+      sheet = sheet,
+      colNames = FALSE,
+      skipEmptyRows = FALSE)
+    )
+
+    start_row <- start_row + 5
+
+    wb <- write_worksheet(
+      table,
+      wb = wb,
+      sheet = sheet,
+      start_row = start_row,
+      append = TRUE)
+  }
+
+  return(wb)
+}
 
 # Utils -------------------------------------------------------------------
 
