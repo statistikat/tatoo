@@ -58,8 +58,8 @@ as_workbook.Mash_table <- function(
 
   wb <- openxlsx::createWorkbook()
   wb <- write_worksheet(
-    dat,
-    wb,
+    dat = dat,
+    wb = wb,
     sheet = sheet,
     append = FALSE,
     mash_method = mash_method,
