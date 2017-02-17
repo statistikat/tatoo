@@ -18,7 +18,7 @@
 #' @param dat A \code{Meta_table}, \code{Mash_table}, \code{\link{Stack_table}},
 #'   or anything that can be coerced to a \code{\link{data.table}} with
 #'   \code{as.data.table}
-#' @param meta a \code{\link{ttmeta}} object
+#' @param meta a \code{\link{tt_meta}} object
 #'
 #' @return An object of class 'Meta_table'
 #' @export
@@ -34,7 +34,7 @@
 #'
 #' dat <- meta_table(
 #'   dat,
-#'   ttmeta(
+#'   tt_meta(
 #'     "tab1",
 #'     "grades",
 #'     "Grades of the final examination")
@@ -49,7 +49,7 @@
 #' polish(dat)
 #' }
 meta_table <- function(dat, meta = NULL){
-  assert_that(is.null(meta) || is_class(meta, 'TTmeta'))
+  assert_that(is.null(meta) || is_class(meta, 'TT_meta'))
 
   if (is_any_class(dat, c('Meta_table', 'Stack_table', 'Comp_table'))){
     dd <- data.table::copy(dat)
@@ -97,7 +97,7 @@ print.Meta_table <- function(dat, ...){
 #' @param ...
 #'
 #' @export
-ttmeta <- function(
+tt_meta <- function(
   table_id,
   title,
   longtitle = title,
@@ -121,7 +121,7 @@ ttmeta <- function(
     ...
   )
 
-  class(res) <- c('TTmeta', 'list')
+  class(res) <- c('TT_meta', 'list')
 
   assert_that(is_valid(res))
   return(res)
@@ -130,7 +130,7 @@ ttmeta <- function(
 
 
 #' @export
-is_valid.TTmeta <- function(dat){
+is_valid.TT_meta <- function(dat){
   res <- list()
 
   res$elements_are_scalars <- all(unlist(
@@ -157,7 +157,7 @@ meta_table_maker <- function(fun, idVars){
 #' @export
 make_meta_table_print_title <- function(meta, subtitle = TRUE){
   assert_that(is.flag(subtitle))
-  meta %assert_class% 'TTmeta'
+  meta %assert_class% 'TT_meta'
 
   title <- meta$table_id
 

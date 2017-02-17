@@ -2,7 +2,7 @@ context("Meta_table")
 
 
 test_that("make_meta_table_print_title works as expected", {
-  tmeta <- ttmeta(
+  tmeta <- tt_meta(
     table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers',
@@ -10,7 +10,7 @@ test_that("make_meta_table_print_title works as expected", {
     footer = 'a footer'
   )
 
-  tmeta2 <- ttmeta(
+  tmeta2 <- tt_meta(
     table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers'
@@ -38,7 +38,7 @@ test_that("make_meta_table_print_title works as expected", {
 
 
 test_that("make_meta_table_print_title works as expected", {
-  tmeta <- ttmeta(
+  tmeta <- tt_meta(
     table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers',

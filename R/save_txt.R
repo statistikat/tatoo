@@ -4,7 +4,7 @@ save_txt <- function(dat, outfile, ...){
 
 
 #' @export
-save_txt.Pub_report <- function(
+save_txt.TT_report <- function(
   dat,
   outfile,
   polisher = identity

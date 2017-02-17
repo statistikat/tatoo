@@ -4,7 +4,7 @@ context("Stack_table")
 test_that("Stack_table works as expected", {
 
   # Generate test data
-  tmeta <- ttmeta(
+  tmeta <- tt_meta(
     table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers',

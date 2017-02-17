@@ -73,16 +73,16 @@ as_workbook.Mash_table <- function(
 
 
 
-#' Convert Pub_report to openxlsx Workbook
+#' Convert TT_report to openxlsx Workbook
 #'
-#' Converts a Pub_report to a an \code{openxlsx::Workbook} object. Sheet names
-#' will be taken from the element names of Pub_report
-#' (\code{names(yourPub_report)}).
+#' Converts a TT_report to a an \code{openxlsx::Workbook} object. Sheet names
+#' will be taken from the element names of TT_report
+#' (\code{names(yourTT_report)}).
 #'
 #' @param dat a pub report
 #'
 #' @export
-as_workbook.Pub_report <- function(dat){
+as_workbook.TT_report <- function(dat){
   wb <- openxlsx::createWorkbook()
 
   for(i in seq_along(dat)){

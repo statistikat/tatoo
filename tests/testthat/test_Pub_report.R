@@ -1,9 +1,9 @@
-context("Pub_report")
+context("TT_report")
 
 tdat <- list()
 
 for(i in seq_len(3)){
-  meta <- ttmeta(
+  meta <- tt_meta(
     paste0('T', i),
     'A table',
     'With a Long Title'
@@ -18,11 +18,11 @@ for(i in seq_len(3)){
   )
 }
 
-expect_silent(tdat <- pub_report(tdat))
+expect_silent(tdat <- tt_report(tdat))
 td <- tempdir()
 
 
-test_that("Pub_report works as expected", {
+test_that("TT_report works as expected", {
   tfile_txt <- file.path(td, 'pr.txt')
   expect_silent(save_txt(tdat, tfile_txt))
   # cat(paste(readLines(tfile_txt), collapse = '\n'))

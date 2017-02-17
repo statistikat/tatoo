@@ -9,7 +9,7 @@
 #'   or anything that can be coerced to a \code{data.frame} with
 #'   \code{as.data.frame}
 #'
-#' @param meta a \code{\link{ttmeta}} object (optional)
+#' @param meta a \code{\link{tt_meta}} object (optional)
 #'
 #' @return
 #' @export

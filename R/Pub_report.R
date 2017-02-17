@@ -5,11 +5,11 @@
 #'
 #' @param dat
 #'
-#' @return An object of class 'Pub_report'
+#' @return An object of class 'TT_report'
 #' @export
-pub_report <- function(dat){
+tt_report <- function(dat){
   res <- data.table::copy(dat)
-  class(res) <- union('Pub_report', class(res))
+  class(res) <- union('TT_report', class(res))
   hammr::assert_valid(res)
   return(res)
 }
@@ -17,7 +17,7 @@ pub_report <- function(dat){
 
 
 #' @export
-is_valid.Pub_report <- function(dat){
+is_valid.TT_report <- function(dat){
   res <- list()
   check_col_class <- function(x) 'Meta_table' %in% class(x)
 

@@ -66,7 +66,7 @@ test_that("xlsx output for comp_tables works", {
 
     pub_tres <- meta_table(
       tres,
-      ttmeta(
+      tt_meta(
         't1',
         'comp pub tab',
         'a composite pub table',
