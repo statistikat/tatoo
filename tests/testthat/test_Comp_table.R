@@ -3,6 +3,8 @@ context("Comp_table")
 
 
 test_that("Comp_table works as expected", {
+  #* @testing comp_table
+  #* @testing comp_table_list
   # Generate test data
     tdat <- list()
     for(i in seq_len(3)){
@@ -105,5 +107,4 @@ test_that("xlsx output for comp_tables works", {
     outfile <- file.path(td, 'pub_comp_table_meta.xlsx')
     save_xlsx(pub_tres, outfile)
     #hammr::excel(outfile)
-
 })
