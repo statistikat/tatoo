@@ -1,9 +1,9 @@
 #' Umbrella Class for Publication Tables
 #'
-#' The \code{meta_table} class does very little by itself except adding a metadata
-#' attributes to a \code{data.frame} and providing a structure for how you
-#' should procede when creating new reports for publication within the
-#' gv* family of packages.
+#' The \code{meta_table} class does very little by itself except adding a
+#' metadata attributes to a \code{data.frame} and providing a structure for how
+#' you should procede when creating new reports for publication within the gv*
+#' family of packages.
 #'
 #' A publication table should be a table that is nearly publication ready. It
 #' should contain (only) the data desired in the final publication document, but
@@ -93,7 +93,8 @@ print.Meta_table <- function(dat, ...){
 #'
 #' @param table_id A vector of length 1
 #' @param title A vector of length 1
-#' @param longtitle A vector. If length >1 the title will be displayed in several rows
+#' @param longtitle A vector. If length >1 the title will be displayed in
+#'   several rows
 #' @param subtitle A vector
 #' @param footer A vector
 #' @param ... Additional arguments that will be contained in the final object.
