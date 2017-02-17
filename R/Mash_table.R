@@ -182,7 +182,7 @@ as.data.table.Mash_table <- function(
 #'
 #' @examples
 as.data.frame.Mash_table <- function(dat, mash_method = 'row', ...){
-  as.data.frame(as.data.table(dat, ...))
+  as.data.frame(as.data.table(dat))
 }
 
 
