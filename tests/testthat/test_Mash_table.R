@@ -16,7 +16,6 @@ tdat2 <- data.frame(
   stringsAsFactors = FALSE
 )
 
-
 tdat3 <- data.frame(
   numbers_xt = factor(c(1, 290, 0.311, 0.210, 1000)),
   animals_xt = factor(c('god', 'tac', 'lemac', 'gip', 'esuom')),
@@ -135,7 +134,7 @@ test_that('mash_table: stacking tables by col works', {
     x$id  <- seq_len(nrow(x))
     x$id2 <- LETTERS[x$id]
     return(x)
-  }) %>% as_mash_table()
+  }) %>% mash_table_list()
 
   expect_silent(mash_cols(st3id))
   expect_silent(mash_cols(st3id, by = c('id', 'id2')))
