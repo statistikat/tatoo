@@ -1,5 +1,4 @@
-
-save_txt <- function(dat){
+save_txt <- function(dat, outfile, ...){
   UseMethod('save_txt')
 }
 
