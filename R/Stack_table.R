@@ -19,16 +19,43 @@ stack_table <- function(
   ...,
   meta = NULL
 ){
-  dl <- list(...)
+  stack_table_list(
+    list(...),
+    meta = meta
+  )
+}
 
 
-
-
-
-
-
-
-
+stack_table_list <- function(
+  tables,
+  meta = NULL
+){
+  res <- tables
   class(res) <- c('Stack_table', 'list')
+  if(!is.null(meta)){
+    res <- meta_table(res, meta = meta)
+  }
+
+  if(!is.null(meta)){
+    res <- meta_table(res, meta = meta)
+  }
+
   return(res)
+}
+
+
+print.Stack_table <- function(dat){
+  width <- getOption("width")-sqrt(getOption("width"))
+  sep   <- paste(rep('#', width), collapse = '')
+  sep2  <- paste(rep('_', width), collapse = '')
+
+  cat(sep, '\n')
+  for(i in seq_along(dat)){
+    print(dat[[i]])
+    if(i < length(dat)){
+      cat(sep2, '\n')
+    }
+  }
+
+  cat(sep)
 }

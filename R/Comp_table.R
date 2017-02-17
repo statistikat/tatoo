@@ -10,7 +10,8 @@
 comp_table <- function(
   ...,
   titles,
-  by = NULL
+  by = NULL,
+  meta = NULL
 ){
   force(titles)
 
@@ -18,7 +19,8 @@ comp_table <- function(
   comp_table_list(
     list(...),
     titles = titles,
-    by = by
+    by = by,
+    meta = meta
   )
 }
 
@@ -37,7 +39,8 @@ comp_table <- function(
 comp_table_list <- function(
   tables,
   titles = names(tables),
-  by = NULL
+  by = NULL,
+  meta = NULL
 ){
   # Pre-conditions
     assert_that(is.list(tables))
@@ -101,14 +104,23 @@ comp_table_list <- function(
   # Return
     class(res) <- union('Comp_table', class(res))
     attr(res, 'titles') <- table_titles
+
+    if(!is.null(meta)){
+      res <- meta_table(res, meta = meta)
+    }
+
     return(res)
 }
 
 
 
 
-print.Comp_table <- function(dat){
+print.Comp_table <- function(dat, row.names = FALSE, ...){
   print(attr(dat, 'titles'))
   cat('\n')
-  print.data.frame(dat)
+  print(
+    as.data.table(dat),
+    row.names = FALSE,
+    ...
+  )
 }

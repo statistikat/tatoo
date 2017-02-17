@@ -24,16 +24,26 @@
 #' @rdname mash_table
 #'
 #' @examples
-mash_table <- function(..., rem_ext = NULL){
+mash_table <- function(
+  ...,
+  rem_ext = NULL,
+  meta = NULL
+  ){
   mash_table_list(
     list(...),
-    rem_ext = rem_ext
+    rem_ext = rem_ext,
+    meta = meta
   )
 }
 
 
-mash_table_list <- function(tables, rem_ext = NULL){
+mash_table_list <- function(
+  tables,
+  rem_ext = NULL,
+  meta = NULL
+){
   assert_that(is.list(tables))
+  assert_that(is.null(meta) || is_class(meta, 'TT_meta'))
 
   # Check Inputs
   assert_that(length(tables) > 1)
@@ -78,6 +88,11 @@ mash_table_list <- function(tables, rem_ext = NULL){
 
 
   class(res) <- c('Mash_table', 'list')
+
+  if(!is.null(meta)){
+    res <- meta_table(res, meta = meta)
+  }
+
   return(res)
 }
 
@@ -85,7 +100,11 @@ mash_table_list <- function(tables, rem_ext = NULL){
 
 #' @export
 #' @rdname mash_table
-rmash <- function(..., rem_ext = NULL, insert_blank_row = FALSE){
+rmash <- function(
+  ...,
+  rem_ext = NULL,
+  insert_blank_row = FALSE
+){
   as.data.table(
     mash_table(..., rem_ext = rem_ext),
     mash_method = 'row'
@@ -97,7 +116,12 @@ rmash <- function(..., rem_ext = NULL, insert_blank_row = FALSE){
 
 #' @export
 #' @rdname mash_table
-cmash <- function(..., rem_ext = NULL, by = NULL, suffixes = NULL){
+cmash <- function(
+  ...,
+  rem_ext = NULL,
+  by = NULL,
+  suffixes = NULL
+){
   as.data.table(
     mash_table(..., rem_ext = rem_ext),
     mash_method = 'col',
@@ -301,7 +325,9 @@ mash_cols <- function(
 
 
 
-print.Mash_table <- function(dat){
-  print(as.data.table.Mash_table(dat))
-
+print.Mash_table <- function(dat, row.names = FALSE, ...){
+  print(as.data.table(dat),
+    row.names = row.names,
+    ...
+  )
 }

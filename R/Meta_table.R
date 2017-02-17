@@ -76,7 +76,7 @@ print.Meta_table <- function(dat, ...){
     cat(make_meta_table_print_title(meta), '\n\n')
   }
 
-  print(data.table::as.data.table(dd), ...)
+  NextMethod(print, dd, ...)
 
   if(!is.null(meta$footer)){
     cat('\n', meta$footer, '\n')
