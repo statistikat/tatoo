@@ -82,26 +82,6 @@ mash_table_list <- function(tables, rem_ext = NULL){
 }
 
 
-#' @export
-as_mash_table <- function(dat){
-  UseMethod('as_mash_table')
-}
-
-
-
-#' @export
-as_mash_table.list <- function(dat){
-  do.call(mash_table, dat)
-}
-
-
-
-#' @export
-as_mash_table.default <- function(dat){
-  stop('Only lists can be coerced to mash tables')
-}
-
-
 
 #' @export
 #' @rdname mash_table
@@ -222,14 +202,15 @@ mash_rows <- function(dat, insert_blank_row = FALSE){
 
 
   # Output
+    res <- res[roworder]
+
     ## Remove trailing blank line
     if(insert_blank_row){
-      res[-length(res)]
+      res <- res[-nrow(res)]
     }
 
-    res[roworder]
+    return(res)
 }
-
 
 
 
@@ -247,7 +228,7 @@ mash_cols <- function(
     )
 
     if (is.null(names(dat)) && is.null(suffixes)) {
-      suffixes = rep('', length(dat))
+      suffixes <- rep('', length(dat))
     } else {
       assert_that(length(suffixes) %identical% length(dat))
     }
@@ -272,14 +253,16 @@ mash_cols <- function(
     if (is.null(by)){
       res <- do.call(cbind, dl)
     } else {
-      merger <- function(x, y)  {suppressWarnings(
-        data.table:::merge.data.table(
-          x,
-          y,
-          by = by,
-          all = TRUE,
-          sort = FALSE)
-      )}
+      merger <- function(x, y)  {
+        suppressWarnings(
+          data.table:::merge.data.table(
+            x,
+            y,
+            by = by,
+            all = TRUE,
+            sort = FALSE)
+        )
+      }
       res <- Reduce(merger, dl)
     }
 
@@ -318,40 +301,7 @@ mash_cols <- function(
 
 
 
-#
-# mash_cols_tex <- function(dat) {
-#   foreach(i = 1:nrow(dat[[1]]), .combine = rbind) %do% {
-#     r <- paste(dat[[1]][i, ], dat[[2]][i, ], sep = ' ') %>%
-#       t() %>%
-#       as.data.frame()
-#     names(r) <-  names(dat[[1]])
-#
-#     return(r)
-#   }
-# }
-#
-#
-# mash_rows_tex <- function(dat, insert_blank_row) {
-#   dat %assert_class% 'Mash_table'
-#
-#   empty_row <- rep('', length(dat[[1]])) %>%
-#     t() %>%
-#     as.data.frame(stringsAsFactors = FALSE) %>%
-#     data.table::setnames(names(dat[[2]]))
-#
-#   res <- foreach(i = 1:nrow(dat[[1]]), .combine = rbind) %do% {
-#     r <- paste(dat[[1]][i, ], dat[[2]][i, ], sep = ' \\newline ') %>%
-#       t() %>%
-#       as.data.frame()
-#     names(r) <-  names(dat[[1]])
-#
-#
-#     if (insert_blank_row && i != nrow(dat[[1]])) {
-#       r <- rbind(r, empty_row)
-#     }
-#
-#     return(r)
-#   }
-# }
-#
+print.Mash_table <- function(dat){
+  print(as.data.table.Mash_table(dat))
 
+}
