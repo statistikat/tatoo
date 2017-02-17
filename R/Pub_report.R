@@ -1,6 +1,6 @@
-#' A list of Pub_tables
+#' A list of Meta_tables
 #'
-#' A Pub report is a list of Pub_tables. Right now this class is mostly a
+#' A Pub report is a list of Meta_tables. Right now this class is mostly a
 #' placeholder, but in the future it will support various export methods.
 #'
 #' @param dat
@@ -19,7 +19,7 @@ pub_report <- function(dat){
 #' @export
 is_valid.Pub_report <- function(dat){
   res <- list()
-  check_col_class <- function(x) 'Pub_table' %in% class(x)
+  check_col_class <- function(x) 'Meta_table' %in% class(x)
 
   res$class     <- 'list' %in% class(dat)
   res$elclasses <- all(unlist(lapply(dat, check_col_class)))

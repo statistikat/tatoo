@@ -3,13 +3,13 @@ context("Pub_report")
 tdat <- list()
 
 for(i in seq_len(3)){
-  meta <- pub_table_meta(
+  meta <- ttmeta(
     paste0('T', i),
     'A table',
     'With a Long Title'
   )
 
-  tdat[[i]] <- pub_table(
+  tdat[[i]] <- meta_table(
     data.frame(
       small = letters[i:(i+3)],
       big = LETTERS[i:(i+3)]

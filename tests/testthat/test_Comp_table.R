@@ -64,9 +64,9 @@ test_that("xlsx output for comp_tables works", {
       titles = c('tab1', 'tab2', 'tab3')
     ))
 
-    pub_tres <- pub_table(
+    pub_tres <- meta_table(
       tres,
-      pub_table_meta(
+      ttmeta(
         't1',
         'comp pub tab',
         'a composite pub table',

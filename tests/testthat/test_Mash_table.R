@@ -154,9 +154,9 @@ test_that('exporting as xlsx works', {
 
 
   of2 <- file.path(test_path(), 'test_out', 'mash_table_meta.xlsx')
-  st1_meta <- pub_table(
+  st1_meta <- meta_table(
     st1,
-    pub_table_meta(
+    ttmeta(
       table_id = 'tid',
       title = 'title',
       longtitle = 'longitle',

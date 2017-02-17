@@ -4,7 +4,7 @@ context("Stack_table")
 test_that("Stack_table works as expected", {
 
   # Generate test data
-  tmeta <- pub_table_meta(
+  tmeta <- ttmeta(
     table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers',
@@ -17,7 +17,7 @@ test_that("Stack_table works as expected", {
     y = letters[10:14]
   )
 
-  expect_silent(tpub <- pub_table(tdat, tmeta))
+  expect_silent(tpub <- meta_table(tdat, tmeta))
 
 
   tdat1 <- data.frame(

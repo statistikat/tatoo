@@ -57,7 +57,7 @@ write_worksheet.default <- function(
 #' @export
 #'
 #' @examples
-write_worksheet.Pub_table <- function(
+write_worksheet.Meta_table <- function(
   dat,
   wb,
   sheet = sanitize_excel_sheet_names(attr(dat, 'meta')$table_id),
@@ -100,7 +100,7 @@ write_worksheet.Pub_table <- function(
     )
 
     crow <- crow + nrow(header) + 1
-    class(dat) <- class(dat)[!class(dat) == 'Pub_table']
+    class(dat) <- class(dat)[!class(dat) == 'Meta_table']
 
     wb <- write_worksheet(
       dat,

@@ -1,8 +1,8 @@
-context("Pub_table")
+context("Meta_table")
 
 
-test_that("make_pub_table_print_title works as expected", {
-  tmeta <- pub_table_meta(
+test_that("make_meta_table_print_title works as expected", {
+  tmeta <- ttmeta(
     table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers',
@@ -10,15 +10,15 @@ test_that("make_pub_table_print_title works as expected", {
     footer = 'a footer'
   )
 
-  tmeta2 <- pub_table_meta(
+  tmeta2 <- ttmeta(
     table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers'
   )
 
-  tres1  <- make_pub_table_print_title(tmeta)
-  tres1b <- make_pub_table_print_title(tmeta, subtitle = FALSE)
-  tres2  <- make_pub_table_print_title(tmeta2)
+  tres1  <- make_meta_table_print_title(tmeta)
+  tres1b <- make_meta_table_print_title(tmeta, subtitle = FALSE)
+  tres2  <- make_meta_table_print_title(tmeta2)
 
   expect_identical(
     tres1,
@@ -37,8 +37,8 @@ test_that("make_pub_table_print_title works as expected", {
 
 
 
-test_that("make_pub_table_print_title works as expected", {
-  tmeta <- pub_table_meta(
+test_that("make_meta_table_print_title works as expected", {
+  tmeta <- ttmeta(
     table_id = 't001',
     title = 'Table 1',
     longtitle = 'Table of Numbers',
@@ -51,7 +51,7 @@ test_that("make_pub_table_print_title works as expected", {
     y = letters[10:14]
   )
 
-  expect_silent(tres <- pub_table(tdat, tmeta))
+  expect_silent(tres <- meta_table(tdat, tmeta))
 
   ## manual tests
 

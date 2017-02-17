@@ -32,7 +32,7 @@ as_workbook.default <- function(
 
 
 #' @export
-as_workbook.Pub_table <- function(
+as_workbook.Meta_table <- function(
   dat,
   sheet = attr(dat, 'meta')$table_id,
   ...
