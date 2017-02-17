@@ -1,4 +1,4 @@
-context('mash_table')
+context('Mash_table')
 
 tdat1 <- data.frame(
   numbers = c(1.434, 190.3, 228.311, 5.210, 4321543),
@@ -139,24 +139,6 @@ test_that('mash_table: stacking tables by col works', {
 
   expect_silent(mash_cols(st3id))
   expect_silent(mash_cols(st3id, by = c('id', 'id2')))
-})
-
-
-
-test_that('printing as latex works', {
-  #* @testing mash_rows_tex
-  #* @testing print_tex
-
-  expect_silent(st1 <- mash_table(tdat1, tdat2, rem_ext = '_xt'))
-  expect_silent(st2 <- mash_table(tdat1, tdat3, rem_ext = '_xt'))
-
-  res1 <- mash_rows(st1)
-  res2 <- mash_rows(st2)
-
-  expect_silent(mash_rows_tex(st1, insert_blank_row = TRUE))
-  expect_silent(mash_rows_tex(st1, insert_blank_row = FALSE))
-  expect_output(print_tex(st1, mash_method = 'row'))
-  expect_output(print_tex(st2))
 })
 
 

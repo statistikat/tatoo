@@ -25,54 +25,61 @@
 #'
 #' @examples
 mash_table <- function(..., rem_ext = NULL){
-  dl <- list(...)
+  mash_table_list(
+    list(...),
+    rem_ext = rem_ext
+  )
+}
+
+
+mash_table_list <- function(tables, rem_ext = NULL){
+  assert_that(is.list(tables))
 
   # Check Inputs
-    assert_that(length(dl) > 1)
-    assert_that(all(
-      unlist(lapply(dl, is.data.frame))
-    ))
+  assert_that(length(tables) > 1)
+  assert_that(all(
+    unlist(lapply(tables, is.data.frame))
+  ))
 
-    for (el in dl) {
-      assert_that(nrow(el) %identical% nrow(dl[[1]]))
-      assert_that(ncol(el) %identical% ncol(dl[[1]]))
-    }
+  for (table in tables) {
+    assert_that(nrow(table) %identical% nrow(tables[[1]]))
+    assert_that(ncol(table) %identical% ncol(tables[[1]]))
+  }
 
-    assert_that(
-      is.null(rem_ext) ||
+  assert_that(
+    is.null(rem_ext) ||
       purrr::is_scalar_character(rem_ext)
-    )
+  )
 
 
   # Process inputs
-    res <- lapply(dl, function(x) {
-      data.table::as.data.table(data.table::copy(x))
-    })
+  res <- lapply(tables, function(x) {
+    data.table::as.data.table(data.table::copy(x))
+  })
 
-    if(!is.null(rem_ext)){
-      res <- lapply(res, function(x) {
-        data.table::setnames(x, gsub(rem_ext, '', names(x)))
-      })
-    }
-
+  if(!is.null(rem_ext)){
     res <- lapply(res, function(x) {
-      data.table::setcolorder(x, names(res[[1]]))
+      data.table::setnames(x, gsub(rem_ext, '', names(x)))
     })
+  }
+
+  res <- lapply(res, function(x) {
+    data.table::setcolorder(x, names(res[[1]]))
+  })
 
 
   # Post conditions
-    for (el in res) {
-      assert_that(names(el) %identical% names(dl[[1]]))
-      assert_that(data.table::is.data.table(el))
-      assert_that(nrow(el) %identical% nrow(dl[[1]]))
-      assert_that(ncol(el) %identical% ncol(dl[[1]]))
-    }
+  for (el in res) {
+    assert_that(names(el) %identical% names(tables[[1]]))
+    assert_that(data.table::is.data.table(el))
+    assert_that(nrow(el) %identical% nrow(tables[[1]]))
+    assert_that(ncol(el) %identical% ncol(tables[[1]]))
+  }
 
 
   class(res) <- c('Mash_table', 'list')
   return(res)
 }
-
 
 
 #' @export

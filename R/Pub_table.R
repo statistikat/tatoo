@@ -15,7 +15,9 @@
 #' for each distinct table in your report and implement your own polish methods
 #' for them. Look at the source code of the \code{gvroad} package for examples.
 #'
-#' @param dat a \code{data.frame}
+#' @param dat A \code{Pub_table}, \code{Mash_table}, \code{\link{Stack_table}},
+#'   or anything that can be coerced to a \code{\link{data.table}} with
+#'   \code{as.data.table}
 #' @param meta a \code{\link{pub_table_meta}} object
 #'
 #' @return An object of class 'Pub_table'
@@ -47,7 +49,14 @@
 #' polish(dat)
 #' }
 pub_table <- function(dat, meta = NULL){
-  dat <- data.table::copy(dat)
+  assert_that(is.null(meta) || is_class(meta, 'Pub_table_meta'))
+
+  if (is_any_class(dat, c('Pub_table', 'Stack_table', 'Comp_table'))){
+    dd <- data.table::copy(dat)
+  } else {
+    dd <- data.table::copy(data.table::as.data.table(dat))
+  }
+
   if (!is.null(meta)){
     data.table::setattr(dat, 'meta', meta)
   }
