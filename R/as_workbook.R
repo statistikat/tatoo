@@ -25,7 +25,12 @@ as_workbook.default <- function(
   ...
 ){
   wb <- openxlsx::createWorkbook()
-  wb <- write_worksheet(dat, wb, sheet = sheet, ...)
+  wb <- write_worksheet(
+    dat = dat,
+    wb = wb,
+    sheet = sheet,
+    ...
+  )
   return(wb)
 }
 
