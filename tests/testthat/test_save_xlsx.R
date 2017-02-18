@@ -171,7 +171,7 @@ test_that("xlsx output for stack_tables works", {
     outfile,
     overwrite = TRUE
   ))
-  openxlsx::openXL(outfile)
+  # openxlsx::openXL(outfile)
 })
 
 
