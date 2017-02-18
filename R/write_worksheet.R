@@ -74,8 +74,7 @@ write_worksheet.Meta_table <- function(
   ...
 ){
   wb %assert_class% 'Workbook'
-  assert_that(is.flag(append))
-  assert_that(is.number(start_row))
+  assert_that(has_attr(dat, 'meta'))
   meta <- attr(dat, 'meta')
 
   wb <- wb$copy()
@@ -312,51 +311,32 @@ write_worksheet.Stack_table <- function(
   append = FALSE,
   start_row = 1L
 ){
-  for(table in dat){
-    start_row <- nrow(openxlsx::readWorkbook(
-      wb,
-      sheet = sheet,
-      colNames = FALSE,
-      skipEmptyRows = FALSE)
-    )
+  crow    <- start_row
+  spacing <- attr(dat, 'spacing')
 
-    start_row <- start_row + 5
+
+  wb <- write_worksheet(
+    dat[[1]],
+    wb = wb,
+    sheet = sheet,
+    start_row = crow,
+    append = append
+  )
+
+
+
+  for(i in seq_along(dat)[-1]){
+    crow <- get_final_wb_row(wb, sheet)
+
+    crow <- crow + spacing + 1
 
     wb <- write_worksheet(
-      table,
+      dat[[i]],
       wb = wb,
       sheet = sheet,
-      start_row = start_row,
+      start_row = crow,
       append = TRUE)
   }
 
   return(wb)
-}
-
-# Utils -------------------------------------------------------------------
-
-#' Sanitze excel sheet names
-#'
-#' @param x
-#'
-#' @return
-#' @export
-#'
-#' @examples
-sanitize_excel_sheet_names <- function(x){
-  invalid_chars_regex <- "\\[|\\]|\\*|\\?|:|\\/|\\\\"
-  res <- stringi::stri_replace_all_regex(x, invalid_chars_regex, '_')
-  res <- stringi::stri_sub(res, 1, 31)
-
-  for(el in unique(res)){
-    suffix <- cumsum(duplicated(res[res == el]))
-
-    if(length(res[res == el]) > 1L){
-      res[res == el] <- paste0(
-        strtrim(res[res == el], 31 - max(nchar(suffix))),
-        suffix)
-    }
-  }
-
-  return(res)
 }
