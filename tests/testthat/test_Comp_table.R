@@ -44,4 +44,11 @@ test_that("Comp_table works as expected", {
       titles = c('tab1', 'tab2', 'tab3'),
       by = 'id'
     ))
+
+  # display print (manual check)
+    names(attr(tres, 'titles'))[[3]] <- 'a very long title, very long'
+
+    print(tres)
+
+
 })

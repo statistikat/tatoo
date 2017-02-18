@@ -114,7 +114,7 @@ comp_table_list <- function(
 
 
 
-
+#' @export
 print.Comp_table <- function(dat, row.names = FALSE, ...){
   assert_that(has_attr(dat, 'titles'))
 
