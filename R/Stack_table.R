@@ -17,10 +17,12 @@
 #' @examples
 stack_table <- function(
   ...,
+  spacing = 2L,
   meta = NULL
 ){
   stack_table_list(
     list(...),
+    spacing = spacing,
     meta = meta
   )
 }
@@ -28,9 +30,11 @@ stack_table <- function(
 
 stack_table_list <- function(
   tables,
+  spacing = 2L,
   meta = NULL
 ){
   res <- tables
+  attr(res, 'spacing') <- spacing
   class(res) <- c('Stack_table', 'list')
   if(!is.null(meta)){
     res <- meta_table(res, meta = meta)
