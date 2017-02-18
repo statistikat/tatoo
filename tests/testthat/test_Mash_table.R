@@ -139,29 +139,3 @@ test_that('mash_table: stacking tables by col works', {
   expect_silent(mash_cols(st3id))
   expect_silent(mash_cols(st3id, by = c('id', 'id2')))
 })
-
-
-
-test_that('exporting as xlsx works', {
-  expect_silent(st1 <- mash_table(tdat1, tdat1, tdat1, tdat1, rem_ext = '_xt'))
-  of <- file.path(test_path(), 'test_out', 'mash_table.xlsx')
-  save_xlsx(st1, of, overwrite = TRUE)
-  # hammr::excel(of)
-
-  save_xlsx(st1, of, overwrite = TRUE, mash_method = 'col')
-  # hammr::excel(of)
-
-
-  of2 <- file.path(test_path(), 'test_out', 'mash_table_meta.xlsx')
-  st1_meta <- meta_table(
-    st1,
-    tt_meta(
-      table_id = 'tid',
-      title = 'title',
-      longtitle = 'longitle',
-      subtitle = 'subtitle',
-      footer = ' ---------------- ')
-  )
-  save_xlsx(st1_meta, of2, overwrite = TRUE)
-  # hammr::excel(of2)
-})
