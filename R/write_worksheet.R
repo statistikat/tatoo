@@ -1,11 +1,19 @@
 #* @testfile test_save_xlsx
 
-#' Title
+#' Write data to an openxlsx Worksheet
 #'
-#' @param dat
-#' @param wb
-#' @param sheet
-#' @param passed on to \code{openxlsx::writeData}
+#' This function is similar to \code{\link[openxlsx]{writeData}}, but
+#' rather than writing \code{data.frames}, \code{write_data} supports methods
+#' for the various \code{tatool} classes.
+#'
+#' @param dat A tatool table object, \code{Comp_table}, \code{Meta_table},
+#'   \code{Mash_table} or \code{Stack_table}.
+#' @param wb A \code{\link[openxlsx]{openxlsx}} Workbook object
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param append Logical. Whether or not to append to an exisiting worksheet or
+#'   create a new one
+#' @param start_row A scalar specifiying the starting row to write to.
+#' @param ... passed onto methods
 #'
 #' @return
 #' @export
@@ -55,16 +63,7 @@ write_worksheet.default <- function(
 
 
 
-#' Write worksheet
-#'
-#' @param dat
-#' @param wb
-#' @param sheet
-#'
-#' @return
 #' @export
-#'
-#' @examples
 write_worksheet.Meta_table <- function(
   dat,
   wb,
@@ -122,22 +121,16 @@ write_worksheet.Meta_table <- function(
       wb = wb,
       sheet = sheet,
       append = TRUE,
-      start_row = crow
+      start_row = crow,
+      ...
     )
 
 
   # Write Footer
     if (!is.null(meta$footer)){
+      crow <- get_final_wb_row(wb, sheet)
 
-      crow <- openxlsx::readWorkbook(
-        xlsxFile = wb,
-        sheet = sheet,
-        colNames = FALSE,
-        skipEmptyRows = FALSE
-      ) %>%
-        nrow()
-
-      crow <- crow + 3
+      crow <- crow + 2
       openxlsx::writeData(
         wb,
         sheet = sheet,
@@ -151,19 +144,7 @@ write_worksheet.Meta_table <- function(
 }
 
 
-#' Title
-#'
-#' @param dat
-#' @param wb
-#' @param sheet
-#' @param append
-#' @param start_row
-#' @param ...
-#'
-#' @return
 #' @export
-#'
-#' @examples
 write_worksheet.Comp_table <- function(
   dat,
   wb,
@@ -304,12 +285,14 @@ write_worksheet.Mash_table <- function(
 
 
 
+#' @export
 write_worksheet.Stack_table <- function(
   dat,
   wb,
   sheet,
   append = FALSE,
-  start_row = 1L
+  start_row = 1L,
+  ...
 ){
   crow    <- start_row
   spacing <- attr(dat, 'spacing')
@@ -320,22 +303,23 @@ write_worksheet.Stack_table <- function(
     wb = wb,
     sheet = sheet,
     start_row = crow,
-    append = append
+    append = append,
+    ...
   )
 
 
 
   for(i in seq_along(dat)[-1]){
     crow <- get_final_wb_row(wb, sheet)
-
-    crow <- crow + spacing + 1
+    crow <- crow + 1 + spacing
 
     wb <- write_worksheet(
       dat[[i]],
       wb = wb,
       sheet = sheet,
       start_row = crow,
-      append = TRUE)
+      append = TRUE,
+      ...)
   }
 
   return(wb)
