@@ -1,9 +1,19 @@
-#' Title
+#* @testfile test_save_xlsx
+
+#' Write data to an openxlsx Worksheet
 #'
-#' @param dat
-#' @param wb
-#' @param sheet
-#' @param passed on to \code{openxlsx::writeData}
+#' This function is similar to \code{\link[openxlsx]{writeData}}, but
+#' rather than writing \code{data.frames}, \code{write_data} supports methods
+#' for the various \code{tatool} classes.
+#'
+#' @param dat A tatool table object, \code{Comp_table}, \code{Meta_table},
+#'   \code{Mash_table} or \code{Stack_table}.
+#' @param wb A \code{\link[openxlsx]{openxlsx}} Workbook object
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param append Logical. Whether or not to append to an exisiting worksheet or
+#'   create a new one
+#' @param start_row A scalar specifiying the starting row to write to.
+#' @param ... passed onto methods
 #'
 #' @return
 #' @export
@@ -40,24 +50,21 @@ write_worksheet.default <- function(
   if(!append){
     openxlsx::addWorksheet(wb, sheet)
   }
-  openxlsx::writeData(wb = wb, sheet = sheet, x = dat, startRow = start_row)
+
+  openxlsx::writeData(
+    wb = wb,
+    sheet = sheet,
+    x = dat,
+    startRow = start_row)
+
   wb %assert_class% 'Workbook'
   return(wb)
 }
 
 
 
-#' Write worksheet
-#'
-#' @param dat
-#' @param wb
-#' @param sheet
-#'
-#' @return
 #' @export
-#'
-#' @examples
-write_worksheet.Pub_table <- function(
+write_worksheet.Meta_table <- function(
   dat,
   wb,
   sheet = sanitize_excel_sheet_names(attr(dat, 'meta')$table_id),
@@ -66,9 +73,10 @@ write_worksheet.Pub_table <- function(
   ...
 ){
   wb %assert_class% 'Workbook'
-  assert_that(is.flag(append))
-  assert_that(is.number(start_row))
+  assert_that(has_attr(dat, 'meta'))
   meta <- attr(dat, 'meta')
+
+  wb <- wb$copy()
 
   if(!append){
     openxlsx::addWorksheet(wb, sheet)
@@ -81,7 +89,7 @@ write_worksheet.Pub_table <- function(
 
     header$title <- sprintf('%s: %s', meta$table_id, meta$title)
 
-    if(meta$longtitle != meta$title){
+    if(!identical(meta$longtitle, meta$title)){
       header$longtitle <- meta$longtitle
     }
 
@@ -89,18 +97,24 @@ write_worksheet.Pub_table <- function(
       header$subtitle <- meta$subtitle
     }
 
-    header <- t(as.data.frame(header))
+    header <- unlist(header)
 
+  # write header
     openxlsx::writeData(
       wb,
       sheet = sheet,
       header,
       rowNames = FALSE,
-      colNames = FALSE
+      colNames = FALSE,
+      startRow = crow
     )
 
-    crow <- crow + nrow(header) + 1
-    class(dat) <- class(dat)[!class(dat) == 'Pub_table']
+
+  # write data
+    crow <- crow + length(header) + 1
+    ## hacky, but NextMethod did not do what i wanted when ... were passed to
+    ## this function
+    class(dat) <- class(dat)[!class(dat) == 'Meta_table']
 
     wb <- write_worksheet(
       dat,
@@ -114,35 +128,23 @@ write_worksheet.Pub_table <- function(
 
   # Write Footer
     if (!is.null(meta$footer)){
-      crow <- openxlsx::readWorkbook(
+      crow <- get_final_wb_row(wb, sheet)
+
+      crow <- crow + 2
+      openxlsx::writeData(
         wb,
         sheet = sheet,
-        colNames = FALSE,
-        skipEmptyRows = FALSE
-      ) %>%
-        nrow()
-
-      crow <- crow + 3
-      openxlsx::writeData(wb, sheet = sheet, startRow = crow, meta$footer)
+        startRow = crow,
+        meta$footer
+      )
     }
+
 
   return(wb)
 }
 
 
-#' Title
-#'
-#' @param dat
-#' @param wb
-#' @param sheet
-#' @param append
-#' @param start_row
-#' @param ...
-#'
-#' @return
 #' @export
-#'
-#' @examples
 write_worksheet.Comp_table <- function(
   dat,
   wb,
@@ -151,58 +153,63 @@ write_worksheet.Comp_table <- function(
   start_row = 1L,
   ...
 ){
-  wb %assert_class% 'Workbook'
+  # Pre-condtions
+    assert_that(has_attr(dat, 'titles'))
 
-  if(!append){
-    openxlsx::addWorksheet(wb, sheet)
-  }
+  # Process arguments
+    wb <- wb$copy()
 
-  crow   <- start_row
-  titles <- attr(dat, 'titles')
-
-  assert_that(titles %identical% sort(titles))
-
-  title_row     <- vector(mode = 'list', length = ncol(dat))
-  title_counter <- 1
-
-  for(i in seq_along(title_row)){
-    title_row[[i]] <- names(titles)[[title_counter]]
-
-    if(i %in% titles){
-      title_counter <- title_counter + 1
+    if(!append){
+      openxlsx::addWorksheet(wb, sheet)
     }
-  }
+    crow   <- start_row
+    titles <- attr(dat, 'titles')
 
-  # Write super-headings
-  openxlsx::writeData(
-    wb,
-    sheet = sheet,
-    as.data.frame(title_row),
-    colNames = FALSE,
-    startRow = crow
-  )
+    assert_that(titles %identical% sort(titles))
 
-  crow <- crow + 1
+    title_row     <- vector(mode = 'list', length = ncol(dat))
+    title_counter <- 1
 
+    for(i in seq_along(title_row)){
+      title_row[[i]] <- names(titles)[[title_counter]]
 
-  for(i in seq_along(titles)){
-    merge_start <- ifelse(i == 1L, 1, titles[[i-1]] + 1)
-    merge_end   <- titles[[i]]
-    openxlsx::mergeCells(
+      if(i %in% titles){
+        title_counter <- title_counter + 1
+      }
+    }
+
+  # Write "subtable" headings
+    openxlsx::writeData(
       wb,
-      cols = c(merge_start, merge_end),
-      rows = start_row,
-      sheet = sheet
+      sheet = sheet,
+      as.data.frame(title_row),
+      colNames = FALSE,
+      startRow = crow
     )
-  }
 
-  openxlsx::writeData(
-    wb,
-    sheet = sheet,
-    startRow = crow,
-    dat,
-    colNames = TRUE
-  )
+    crow <- crow + 1
+
+    ## merge subtable heading cells
+    for(i in seq_along(titles)){
+      merge_start <- ifelse(i == 1L, 1, titles[[i-1]] + 1)
+      merge_end   <- titles[[i]]
+      openxlsx::mergeCells(
+        wb,
+        cols = c(merge_start, merge_end),
+        rows = start_row,
+        sheet = sheet
+      )
+    }
+
+
+  # Write data
+    openxlsx::writeData(
+      wb,
+      sheet = sheet,
+      startRow = crow,
+      dat,
+      colNames = TRUE
+    )
 
   return(wb)
 }
@@ -221,40 +228,43 @@ write_worksheet.Mash_table <- function(
   sep_height = 30,
   ...
 ){
-  wb %assert_class% 'Workbook'
-  assert_that(is.flag(append))
-  assert_that(is.number(start_row))
-  assert_that(purrr::is_scalar_character(mash_method))
-  assert_that(is.flag(insert_blank_row))
-  assert_that(is.number(sep_height))
-
-  if(!append){
-    openxlsx::addWorksheet(wb, sheet)
-  }
-
-  res <- as.data.table(
-    dat,
-    mash_method = mash_method,
-    insert_blank_row = insert_blank_row
-  )
-
-  openxlsx::writeData(
-    wb,
-    sheet = sheet,
-    res,
-    startRow = start_row
-  )
+  # Preconditions
+    assert_that(is.scalar(mash_method))
+    assert_that(is.flag(insert_blank_row))
+    assert_that(is.number(sep_height))
 
 
-  row_off          <- start_row - 1
-  sep_height_start <- length(dat) + 2  # +2 accounts for header, and that excel cell indices start with 0
+  # Process arguments
+    wb <- wb$copy()
+
+    if(!append){
+      openxlsx::addWorksheet(wb, sheet)
+    }
+
+    res <- as.data.table(
+      dat,
+      mash_method = mash_method,
+      insert_blank_row = insert_blank_row
+    )
+
+  # Write data
+    openxlsx::writeData(
+      wb,
+      sheet = sheet,
+      res,
+      startRow = start_row
+    )
+
 
   # Modify row heights
-  # '4' is the empty row before the table + table heading + first pair of rows
+    row_off          <- start_row - 1
+    sep_height_start <- length(dat) + 2  # +2 because of header
+
     if(mash_method %identical% 'row'){
       if(insert_blank_row){
         sel_rows <- seq(
-          sep_height_start + row_off, nrow(res) + row_off, by = (length(dat) + 1)
+          sep_height_start + row_off, nrow(res) + row_off,
+          by = (length(dat) + 1)
         )
       } else {
         sel_rows <- seq(
@@ -275,31 +285,42 @@ write_worksheet.Mash_table <- function(
 
 
 
-# Utils -------------------------------------------------------------------
-
-#' Sanitze excel sheet names
-#'
-#' @param x
-#'
-#' @return
 #' @export
-#'
-#' @examples
-sanitize_excel_sheet_names <- function(x){
-  invalid_chars_regex <- "\\[|\\]|\\*|\\?|:|\\/|\\\\"
-  res <- stringi::stri_replace_all_regex(x, invalid_chars_regex,'_')
-  res <- stringi::stri_sub(res, 1, 31)
+write_worksheet.Stack_table <- function(
+  dat,
+  wb,
+  sheet,
+  append = FALSE,
+  start_row = 1L,
+  ...
+){
+  crow    <- start_row
+  spacing <- attr(dat, 'spacing')
 
-  for(el in unique(res)){
-    suffix <- cumsum(duplicated(res[res == el]))
 
-    if(length(res[res == el]) > 1L){
-      res[res == el] <- paste0(
-        strtrim(res[res == el], 31 - max(nchar(suffix))),
-        suffix)
-    }
+  wb <- write_worksheet(
+    dat[[1]],
+    wb = wb,
+    sheet = sheet,
+    start_row = crow,
+    append = append,
+    ...
+  )
+
+
+
+  for(i in seq_along(dat)[-1]){
+    crow <- get_final_wb_row(wb, sheet)
+    crow <- crow + 1 + spacing
+
+    wb <- write_worksheet(
+      dat[[i]],
+      wb = wb,
+      sheet = sheet,
+      start_row = crow,
+      append = TRUE,
+      ...)
   }
 
-  return(res)
+  return(wb)
 }
-

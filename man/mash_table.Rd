@@ -6,7 +6,7 @@
 \alias{cmash}
 \title{Mash Table}
 \usage{
-mash_table(..., rem_ext = NULL)
+mash_table(..., rem_ext = NULL, meta = NULL)
 
 rmash(..., rem_ext = NULL, insert_blank_row = FALSE)
 
