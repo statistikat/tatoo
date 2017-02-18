@@ -116,11 +116,60 @@ comp_table_list <- function(
 
 
 print.Comp_table <- function(dat, row.names = FALSE, ...){
-  print(attr(dat, 'titles'))
-  cat('\n')
-  print(
-    as.data.table(dat),
-    row.names = FALSE,
-    ...
-  )
+  assert_that(has_attr(dat, 'titles'))
+
+  # Pad columns
+    prep_col <- function(x, colname){
+      i_nan <- is.nan(x)
+      i_na  <- is.na(x)
+      x <- as.character(x)
+      x[i_nan] <- 'NAN'
+      x[i_na]  <- 'NA'
+      x <- c(colname, x)
+
+      pad_width <- max(nchar(x))
+      stringi::stri_pad_left(as.character(x), pad_width)
+    }
+
+    dd <- vector('list', ncol(dat))
+
+    for(i in seq_along(dd)){
+      dd[[i]] <- prep_col(dat[[i]], names(dat)[[i]])
+    }
+
+
+  # Merge columns that belong to the same title
+    titles <- attr(dat, 'titles')
+    res <- vector('list', length(titles))
+    names(res) <- names(titles)
+
+    for(i in seq_along(titles)){
+      res[[i]] <- titles[(i-1):i]
+
+      if(!identical(i, 1L)){
+        sel_cols <- titles[i-1]:titles[i]
+      } else {
+        sel_cols <- 1:titles[[i]]
+      }
+
+      res[[i]] <- do.call(paste, c(dd[sel_cols], sep="   "))
+    }
+
+    tmp <- list()
+
+    for(i in seq_along(res)){
+      title  <- stringi::stri_pad_both(names(titles)[[i]], max(nchar(res[[i]])), '.')
+      column <- stringi::stri_pad_both(res[[i]], nchar(title))
+      sep    <- rep('  ', length(res[[i]]))
+
+      tmp[[i]] <- list(column, sep)
+      names(tmp[[i]]) <- c(title, '   ')
+    }
+
+    res2 <- unlist(tmp, recursive = FALSE)
+    res2 <- as.data.frame(res2, fix.empty.names = FALSE, optional = TRUE)
+
+    print(res2, row.names = FALSE, right = FALSE)
+
+    invisible(dat)
 }
