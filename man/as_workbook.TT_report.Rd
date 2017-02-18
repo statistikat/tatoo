@@ -14,4 +14,3 @@ Converts a TT_report to a an \code{openxlsx::Workbook} object. Sheet names
 will be taken from the element names of TT_report
 (\code{names(yourTT_report)}).
 }
-

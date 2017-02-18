@@ -4,7 +4,7 @@
 \alias{comp_table}
 \title{Composite Table}
 \usage{
-comp_table(..., titles, by = NULL)
+comp_table(..., titles, by = NULL, meta = NULL)
 }
 \arguments{
 \item{titles}{}
@@ -12,4 +12,3 @@ comp_table(..., titles, by = NULL)
 \description{
 Composite Table
 }
-

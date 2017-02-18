@@ -4,7 +4,7 @@
 \alias{stack_table}
 \title{Stack tables}
 \usage{
-stack_table(..., meta = NULL)
+stack_table(..., spacing = 2L, meta = NULL)
 }
 \arguments{
 \item{...}{A list whos elements can of class
@@ -19,4 +19,3 @@ or anything that can be coerced to a \code{data.frame} with
 \description{
 side by side or on top of each others
 }
-

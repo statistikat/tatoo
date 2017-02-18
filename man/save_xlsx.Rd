@@ -12,4 +12,3 @@ save_xlsx(dat, outfile, overwrite, ...)
 \description{
 As workbook
 }
-

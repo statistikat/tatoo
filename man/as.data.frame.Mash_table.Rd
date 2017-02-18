@@ -12,4 +12,3 @@
 \description{
 Stacking uses \code{data.table}s internally,
 }
-

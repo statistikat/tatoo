@@ -17,10 +17,10 @@ or anything that can be coerced to a \code{\link{data.table}} with
 An object of class 'Meta_table'
 }
 \description{
-The \code{meta_table} class does very little by itself except adding a metadata
-attributes to a \code{data.frame} and providing a structure for how you
-should procede when creating new reports for publication within the
-gv* family of packages.
+The \code{meta_table} class does very little by itself except adding a
+metadata attributes to a \code{data.frame} and providing a structure for how
+you should procede when creating new reports for publication within the gv*
+family of packages.
 }
 \details{
 A publication table should be a table that is nearly publication ready. It
@@ -59,4 +59,3 @@ polish.Meta_tableTab1 <- function(dat){
 polish(dat)
 }
 }
-

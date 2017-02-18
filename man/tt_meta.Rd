@@ -8,11 +8,21 @@ tt_meta(table_id, title, longtitle = title, subtitle = NULL,
   footer = NULL, ...)
 }
 \arguments{
-\item{table_id}{}
+\item{table_id}{A vector of length 1}
 
-\item{...}{}
+\item{title}{A vector of length 1}
+
+\item{longtitle}{A vector. If length >1 the title will be displayed in
+several rows}
+
+\item{subtitle}{A vector}
+
+\item{footer}{A vector}
+
+\item{...}{Additional arguments that will be contained in the final object.
+they are passed on to list. This is only usefull if you develop a package
+that wants to want to create subclasses of tt_meta.}
 }
 \description{
 Create a pub table metadata object
 }
-

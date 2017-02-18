@@ -16,4 +16,3 @@ An object of class 'TT_report'
 A Pub report is a list of Meta_tables. Right now this class is mostly a
 placeholder, but in the future it will support various export methods.
 }
-
