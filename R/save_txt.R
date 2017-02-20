@@ -1,3 +1,4 @@
+#' @export
 save_txt <- function(dat, outfile, ...){
   UseMethod('save_txt')
 }
