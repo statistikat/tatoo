@@ -146,10 +146,10 @@ print.Comp_table <- function(dat, row.names = FALSE, ...){
     for(i in seq_along(titles)){
       res[[i]] <- titles[(i-1):i]
 
-      if(!identical(i, 1L)){
-        sel_cols <- titles[i-1]:titles[i]
-      } else {
+      if(identical(i, 1L)){
         sel_cols <- 1:titles[[i]]
+      } else {
+        sel_cols <- (titles[i-1]+1):titles[i]
       }
 
       res[[i]] <- do.call(paste, c(dd[sel_cols], sep="   "))

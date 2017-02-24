@@ -153,18 +153,6 @@ is_valid.TT_meta <- function(dat){
 
 
 #' @export
-meta_table_maker <- function(fun, idVars){
-  fun %assert_class% 'function'
-  assert_that(is.character(idVars))
-
-  class(fun) <- c('Meta_table_maker', 'function')
-  data.table::setattr(fun, 'idVars', idVars)
-  return(fun)
-}
-
-
-
-#' @export
 make_meta_table_print_title <- function(meta, show_subtitle = TRUE){
   assert_that(is.flag(show_subtitle))
   meta %assert_class% 'TT_meta'
