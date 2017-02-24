@@ -49,5 +49,4 @@ test_that("Comp_table works as expected", {
     # names(attr(tres, 'titles'))[[3]] <- 'a very long title, very long'
     # print(tres)
 
-
 })
