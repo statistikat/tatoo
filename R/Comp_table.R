@@ -1,7 +1,13 @@
 #' Composite Table
 #'
-#' @param ...
-#' @param titles
+#' @param ... \code{comp_table} only:
+#' @param titles Titles of subtables (one for each element of
+#'   \code{...} / \code{tables})
+#' @param by If \code{by} is specified, the tables will be combined using
+#'   \code{\link{merge}} on the columns specified in by, otherwise the tables
+#'   will be combined with \code{\link{cbind}}.
+#' @param meta a \code{\link{TT_meta}} object. If speciefied, the resulting
+#'   \code{comp_table} will be wrapped in a \code{\link{meta_table}}.
 #'
 #' @return
 #' @export
@@ -15,9 +21,8 @@ comp_table <- function(
 ){
   force(titles)
 
-  tables <- list(...)
   comp_table_list(
-    list(...),
+    tables = list(...),
     titles = titles,
     by = by,
     meta = meta
@@ -29,10 +34,10 @@ comp_table <- function(
 
 #' Composite Table
 #'
-#' @param tables
-#' @param titles
+#' @param tables \code{comp_table_list} only: A list of data.frames with the same number of rows
 #'
 #' @return
+#' @rdname comp_table
 #' @export
 #'
 #' @examples
