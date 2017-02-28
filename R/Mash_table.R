@@ -194,26 +194,33 @@ mash_rows <- function(dat, insert_blank_row = FALSE){
   assert_that(is.flag(insert_blank_row))
 
 
+  dd <- lapply(dat, hammr::df_typecast_all, from = 'factor', to = 'character')
+
   # flatten
     if(insert_blank_row){
-      blank_rowks <- rep('', nrow(dat[[1]]) * ncol(dat[[1]])) %>%
-        `dim<-`(dim(dat[[1]])) %>%
+      blank_rowks <- rep('', nrow(dd[[1]]) * ncol(dd[[1]])) %>%
+        `dim<-`(dim(dd[[1]])) %>%
         as.data.table()
 
-      dl <- c(dat, list(blank_rowks))
+      dl <- c(dd, list(blank_rowks))
 
       res <- data.table::rbindlist(dl)
     } else {
-      res <- data.table::rbindlist(dat)
+      res <- data.table::rbindlist(dd)
     }
 
 
+  for(i in which(unlist(lapply(dat[[1]], is.factor)))){
+    res[[i]] <- as.factor(res[[i]])
+  }
+
+
   # Determine output row order ("mash")
-    roworder <- seq_len((length(dat) + insert_blank_row) * nrow(dat[[1]]))
+    roworder <- seq_len((length(dat) + insert_blank_row) * nrow(dd[[1]]))
     roworder <- matrix(
       roworder,
-      nrow = nrow(dat[[1]]),
-      ncol = (length(dat) + insert_blank_row)
+      nrow = nrow(dd[[1]]),
+      ncol = (length(dd) + insert_blank_row)
     )
     roworder <- as.vector(t(roworder))
 
