@@ -16,6 +16,7 @@ tt_report <- function(dat){
 
 
 
+
 #' @export
 is_valid.TT_report <- function(dat){
   res <- list()
@@ -25,4 +26,17 @@ is_valid.TT_report <- function(dat){
   res$elclasses <- all(unlist(lapply(dat, check_col_class)))
 
   all_with_warning(res)
+}
+
+
+
+
+#' @export
+print.TT_report <- function(
+  dat,
+  ...){
+
+  for(el in dat){
+    print(el, ...)
+  }
 }
