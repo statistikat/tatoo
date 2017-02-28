@@ -55,7 +55,8 @@ as_workbook.Mash_table <- function(
   sheet = 1L,
   mash_method = 'row',
   insert_blank_row = TRUE,
-  sep_height = 20
+  sep_height = 20,
+  ...
 ){
   assert_that(is.scalar(mash_method))
   assert_that(is.flag(insert_blank_row))
@@ -87,7 +88,7 @@ as_workbook.Mash_table <- function(
 #' @param dat a pub report
 #'
 #' @export
-as_workbook.TT_report <- function(dat){
+as_workbook.TT_report <- function(dat, ...){
   wb <- openxlsx::createWorkbook()
 
   for(i in seq_along(dat)){
@@ -102,7 +103,8 @@ as_workbook.TT_report <- function(dat){
       wb = wb,
       sheet = sheet_name,
       append = FALSE,
-      start_row = 1L
+      start_row = 1L,
+      ...
     )
 
     wb %assert_class% 'Workbook'
