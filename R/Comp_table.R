@@ -107,6 +107,7 @@ comp_table_list <- function(
 
 
   # Return
+    res <- as.data.table(res)
     class(res) <- union('Comp_table', class(res))
     attr(res, 'titles') <- table_titles
 
