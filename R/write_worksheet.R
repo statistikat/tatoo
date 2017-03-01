@@ -63,6 +63,7 @@ write_worksheet.default <- function(
 
 
 
+
 #' @export
 write_worksheet.Meta_table <- function(
   dat,
@@ -144,6 +145,8 @@ write_worksheet.Meta_table <- function(
 }
 
 
+
+
 #' @export
 write_worksheet.Comp_table <- function(
   dat,
@@ -216,6 +219,7 @@ write_worksheet.Comp_table <- function(
 
 
 
+
 #' @export
 write_worksheet.Mash_table <- function(
   dat,
@@ -260,7 +264,8 @@ write_worksheet.Mash_table <- function(
     row_off          <- start_row - 1
     sep_height_start <- length(dat) + 2  # +2 because of header
 
-    if(mash_method %identical% 'row'){
+
+    if(mash_method %identical% 'row' && nrow(res) > length(dat)){
       if(insert_blank_row){
         sel_rows <- seq(
           sep_height_start + row_off, nrow(res) + row_off,
@@ -268,7 +273,8 @@ write_worksheet.Mash_table <- function(
         )
       } else {
         sel_rows <- seq(
-          sep_height_start + row_off, nrow(res) + row_off, by = length(dat)
+          sep_height_start + row_off, nrow(res) + row_off,
+          by = length(dat)
         )
       }
 
@@ -282,6 +288,7 @@ write_worksheet.Mash_table <- function(
 
   return(wb)
 }
+
 
 
 
