@@ -37,6 +37,10 @@ mash_table <- function(
 }
 
 
+
+
+#' @export
+#' @rdname mash_table
 mash_table_list <- function(
   tables,
   rem_ext = NULL,
@@ -95,6 +99,7 @@ mash_table_list <- function(
 
   return(res)
 }
+
 
 
 
@@ -332,6 +337,8 @@ mash_cols <- function(
 
 
 
+
+#' @export
 print.Mash_table <- function(dat, row.names = FALSE, ...){
   print(as.data.table(dat),
     row.names = row.names,
