@@ -104,6 +104,14 @@ mash_table_list <- function(
 
 
 #' @export
+as_mash_table <- function(dat, ...){
+  UseMethod('as_mash_table')
+}
+
+
+
+
+#' @export
 #' @rdname mash_table
 rmash <- function(
   ...,
