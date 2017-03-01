@@ -67,6 +67,7 @@ meta_table <- function(dat, meta = NULL){
 
 
 
+
 #' @export
 print.Meta_table <- function(dat, ...){
   dd    <- data.table::copy(dat)
@@ -83,6 +84,7 @@ print.Meta_table <- function(dat, ...){
     cat('\n', footer, '\n')
   }
 }
+
 
 
 
@@ -139,6 +141,7 @@ tt_meta <- function(
 
 
 
+
 #' @export
 is_valid.TT_meta <- function(dat){
   res <- list()
@@ -149,6 +152,7 @@ is_valid.TT_meta <- function(dat){
 
   hammr::all_with_warning(res)
 }
+
 
 
 
