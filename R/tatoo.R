@@ -10,6 +10,6 @@
 #' @importFrom data.table data.table as.data.table
 #'
 #' @docType package
-#' @name tatool
+#' @name tatoo
 NULL
 

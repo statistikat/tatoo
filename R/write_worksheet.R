@@ -4,9 +4,9 @@
 #'
 #' This function is similar to \code{\link[openxlsx]{writeData}}, but
 #' rather than writing \code{data.frames}, \code{write_data} supports methods
-#' for the various \code{tatool} classes.
+#' for the various \code{tatoo} classes.
 #'
-#' @param dat A tatool table object, \code{Comp_table}, \code{Meta_table},
+#' @param dat A tatoo table object, \code{Comp_table}, \code{Meta_table},
 #'   \code{Mash_table} or \code{Stack_table}.
 #' @param wb A \code{\link[openxlsx]{openxlsx}} Workbook object
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.

@@ -1,4 +1,4 @@
 library(testthat)
-library(tatool)
+library(tatoo)
 
-test_check("tatool")
+test_check("tatoo")
