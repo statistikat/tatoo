@@ -1,10 +1,11 @@
 Package: tatoo
 Type: Package
-Title: Provide tools for outputing formatted table in excel (and in the future latex)
+Title: Provide tools for outputing formatted table in excel (and in the future
+    latex)
 Version: 0.0.4
 Authors@R: person("Stefan", "Fleck", email = "stefan.fleck@statistik.gv.at", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.fleck@statistik.gv.at>
-Description:
+Description: 
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
@@ -18,6 +19,7 @@ Imports:
     purrr,
     stringi
 Suggests:
-    testthat, taboo
+    testthat,
+    taboo
 RoxygenNote: 6.0.1
 Encoding: UTF-8
