@@ -53,70 +53,29 @@ In the future, latex and html export is also planned, but there is no roadmap
 for that yet. Since this is an open source project, any help is highly 
 appreciated.
 
-# Meta table - Add table metadata
-
-```{r}
-# Create metadata object
-ex_meta <- tt_meta(
-  table_id  = 'T01',  # Required
-  title     = 'Example Table', # Required
-  longtitle = 'This is an example for tables created with the tatool package', # optional
-  subtitle  = 'enough titles alread', # optional
-  footer    = 'This table was created from the iris dataset' # optional
-)
-
-# Create metadata object
-meta_table(
-  df1,
-  meta = ex_meta
-)
-```
-
-
 # Mash tables
 ```{r}
-x <- tatoo::mash_table(
-  df1, 
-  df2,
-  meta = ex_meta
-)
+mt <- tatoo::mash_table(df1, df2)
+
+res <- tatoo::rmash(x)
+tatoo::cmash(x)
+
+tatoo::rmash(df1, df2)
+tatoo::cmash(df1, df2, suffixes = c('_mean', '_sd'))
+tatoo::cmash(df1, df2, by = 'Species')
 
 
-tatoo::rmash(
-  df1, 
-  df2
-)
 
-tatoo::cmash(
-  df1, 
-  df2
-)
 
-tatoo::cmash(
-  df1, 
-  df2,
-  by = 'Species',
-  meta = ex_meta
-)
 ```
 
 # Comp tables
 ```{r}
-
 tatoo::comp_table(
   df1, 
   df2,
   titles = c('mean', 'sd')
 )
-
-tatoo::comp_table(
-  df1, 
-  df2,
-  titles = c('mean', 'sd'),
-  by = 'Species',
-  meta = ex_meta
-)
-
 ```
 
 
@@ -132,12 +91,51 @@ tatoo::stack_table(
 
 # Meta table
 ```{r}
-tatoo::stack_table(
+dat <- tatoo::stack_table(
   df1, 
   df2,
   titles = c('mean', 'sd')
 )
 ```
+
+
+# Meta table - Add metadata to a table
+
+```{r}
+# Create metadata object
+ex_meta <- tt_meta(
+  table_id  = 'T01',  # Required
+  title     = 'Example Table', # Required
+  longtitle = 'This is an example for tables created with the tatool package', # optional
+  subtitle  = 'enough titles alread', # optional
+  footer    = 'This table was created from the iris dataset' # optional
+)
+
+# Create metadata object
+res <- meta_table(
+  df1,
+  meta = ex_meta
+)
+
+
+tatoo::cmash(
+  df1, 
+  df2,
+  by = 'Species',
+  meta = ex_meta
+)
+
+
+tatoo::comp_table(
+  df1, 
+  df2,
+  titles = c('mean', 'sd'),
+  by = 'Species',
+  meta = ex_meta
+)
+
+```
+
 
 # Technical details
 
