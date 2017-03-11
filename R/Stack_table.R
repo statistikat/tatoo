@@ -27,15 +27,28 @@ stack_table <- function(
   )
 }
 
-
+#' @export
 stack_table_list <- function(
   tables,
   spacing = 2L,
   meta = NULL
 ){
-  res <- tables
+  ensure_data_table <- function(x){
+    if(is_any_class(
+      x,
+      c('Meta_table', 'Comp_table', 'Mash_table', 'data.table'))
+    ){
+      return(x)
+    } else {
+      return(data.table::as.data.table(x))
+    }
+  }
+
+  res <- lapply(tables, ensure_data_table)
+
   attr(res, 'spacing') <- spacing
   class(res) <- c('Stack_table', 'list')
+
   if(!is.null(meta)){
     res <- meta_table(res, meta = meta)
   }
@@ -47,7 +60,7 @@ stack_table_list <- function(
   return(res)
 }
 
-
+#' @export
 print.Stack_table <- function(dat){
   width <- getOption("width")-sqrt(getOption("width"))
   sep   <- paste(rep('#', width), collapse = '')
