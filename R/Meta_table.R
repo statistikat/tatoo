@@ -51,7 +51,11 @@
 meta_table <- function(dat, meta = NULL){
   assert_that(is.null(meta) || is_class(meta, 'TT_meta'))
 
-  if (is_any_class(dat, c('Meta_table', 'Stack_table', 'Comp_table'))){
+  if (inherits(dat, 'Meta_table')){
+    res <- data.table::copy(dat)
+    data.table::setattr(res, 'meta', NULL)
+  }
+  if (is_any_class(dat, c('Stack_table', 'Mash_table', 'Comp_table'))){
     res <- data.table::copy(dat)
   } else {
     res <- data.table::copy(data.table::as.data.table(dat))
@@ -105,23 +109,36 @@ print.Meta_table <- function(dat, ...){
 #'
 #' @export
 tt_meta <- function(
-  table_id,
-  title,
+  table_id = NULL,
+  title = NULL,
   longtitle = title,
   subtitle = NULL,
   footer = NULL,
   ...
 ){
-  assert_that(purrr::is_scalar_atomic(table_id))
-  assert_that(purrr::is_scalar_atomic(title))
-  assert_that(purrr::is_atomic(longtitle))
+  assert_that(purrr::is_scalar_atomic(table_id) || is.null(table_id))
+  assert_that(purrr::is_scalar_atomic(title) || is.null(title))
+  assert_that(purrr::is_atomic(longtitle) || is.null(longtitle))
+
+  if(all(
+      is.null(table_id),
+      is.null(title),
+      is.null(longtitle),
+      is.null(subtitle),
+      is.null(footer))
+  ){
+    stop(
+      'Meta_tables must at least contain one of the following:
+      table_id, title, longtitle, subtitle or footer'
+    )
+  }
 
   assert_that(
-    is.null(subtitle) | purrr::is_atomic(subtitle)
+    is.null(subtitle) || purrr::is_atomic(subtitle)
   )
 
   assert_that(
-    is.null(footer) | purrr::is_atomic(footer)
+    is.null(footer) || purrr::is_atomic(footer)
   )
 
   res <- list(
@@ -138,7 +155,6 @@ tt_meta <- function(
   assert_that(is_valid(res))
   return(res)
 }
-
 
 
 
@@ -162,25 +178,35 @@ make_meta_table_print_title <- function(meta, show_subtitle = TRUE){
   meta %assert_class% 'TT_meta'
 
   table_id  <- meta$table_id
-  title     <- paste(meta$title, collapse = '\n')
+  title     <- meta$title %||% ''
   longtitle <- paste(meta$longtitle, collapse = '\n')
 
-  if(is.null(meta$subtitle)){
-    subtitle <- NULL
+  if(!is.null(meta$subtitle)){
+    subtitle <- paste(meta$subtitle, collapse = '\n')
   } else {
-    subtitle  <- paste(meta$subtitle, collapse = '\n')
+    subtitle <- NULL
   }
 
-  res <- table_id
+  res <- ''
 
-  if(!table_id %identical% title){
-    res <- sprintf('%s: %s', table_id, title)
-    assert_that(length(res) %identical% 1L)
+  if(!is.null(table_id)){
+    res <- table_id
   }
 
-  if(!longtitle %identical% title){
-    res <- sprintf('%s - %s', res, longtitle)
-    assert_that(length(res) %identical% 1L)
+  if(!is.null(title)){
+    if(nchar(res) > 0){
+      res <- sprintf('%s: %s', table_id, title)
+    } else {
+      res <- title
+    }
+  }
+
+  if(nchar(longtitle) > 0 && !identical(longtitle, title)){
+    if(nchar(res) > 0){
+      res <- sprintf('%s - %s', res, longtitle)
+    } else {
+      res <- longtitle
+    }
   }
 
   if(show_subtitle && !is.null(subtitle)){
@@ -191,4 +217,56 @@ make_meta_table_print_title <- function(meta, show_subtitle = TRUE){
   }
 
   return(res)
+}
+
+
+
+
+# Meta assignment functions -----------------------------------------------
+assign_tt_meta <- function(dat, assignment){
+  assert_that(purrr::is_scalar_list(assignment))
+  assert_that(identical(
+    length(names(assignment)), 1L
+  ))
+
+  if(inherits(dat, 'Meta_table')){
+    res <- data.table::copy(dat)
+    attr(res, 'meta')[[names(assignment)]] <- assignment[[1]]
+  } else{
+    res <- meta_table(
+      dat,
+      meta = do.call(tt_meta, assignment)
+    )
+  }
+
+  return(res)
+}
+
+`meta<-` <- function(dat, value){
+  meta_table(dat, value)
+}
+
+`table_id<-` <- function(dat, value){
+  ass <- list(table_id = value)
+  assign_tt_meta(dat, ass)
+}
+
+`title<-` <- function(dat, value){
+  ass <- list(title = value)
+  assign_tt_meta(dat, ass)
+}
+
+`longtitle<-` <- function(dat, value){
+  ass <- list(longtitle = value)
+  assign_tt_meta(dat, ass)
+}
+
+`subtitle<-` <- function(dat, value){
+  ass <- list(subtitle = value)
+  assign_tt_meta(dat, ass)
+}
+
+`footer<-` <- function(dat, value){
+  ass <- list(footer = value)
+  assign_tt_meta(dat, ass)
 }
