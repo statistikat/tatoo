@@ -231,7 +231,14 @@ assign_tt_meta <- function(dat, assignment){
 
   if(inherits(dat, 'Meta_table')){
     res <- data.table::copy(dat)
-    attr(res, 'meta')[[names(assignment)]] <- assignment[[1]]
+    ass <- assignment[[1]]
+
+    if(is.null(ass)){
+      attr(res, 'meta')[names(assignment)] <- list(NULL)
+    } else {
+      attr(res, 'meta')[[names(assignment)]] <- ass
+    }
+
   } else{
     res <- meta_table(
       dat,
@@ -243,8 +250,20 @@ assign_tt_meta <- function(dat, assignment){
 }
 
 `meta<-` <- function(dat, value){
-  meta_table(dat, value)
+  if(is.null(value)){
+    res <- data.table::copy(dat)
+    class(res) <- class(res)[class(res) != 'Meta_table']
+    attr(res, 'meta', NULL)
+
+  } else{
+    res <- meta_table(dat, value)
+  }
+
+  return(res)
 }
+
+
+
 
 `table_id<-` <- function(dat, value){
   ass <- list(table_id = value)

@@ -132,9 +132,9 @@ test_that("metadata replacement functions work", {
     c("Meta_table", "data.table", "data.frame")
   )
 
-  assert_that(identical(
+  expect_identical(
     attr(tres, 'meta')$longtitle, 'blubb'
-  ))
+  )
 
   table_id(tres) <- 'T01'
   title(tres) <- 'Table 01'
@@ -169,4 +169,18 @@ test_that("metadata replacement functions work", {
     attr(tres, 'meta'),
     expected_meta
   )
+
+  title(tres) <- NULL
+
+  meta(tres) <- NULL
+
+
+  expect_identical(
+    class(tres),
+    c('data.table', 'data.frame')
+  )
+
+
+
+
 })
