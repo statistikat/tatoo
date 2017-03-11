@@ -110,18 +110,39 @@ as_mash_table <- function(dat, ...){
 
 
 
-
+#' @param ... either several \code{data.frames} or a single \code{Mash_table}.
+#' @param rem_ext
+#' @param insert_blank_row whether or not to insert a blank row between mash paris
+#'
 #' @export
 #' @rdname mash_table
 rmash <- function(
   ...,
   rem_ext = NULL,
-  insert_blank_row = FALSE
+  insert_blank_row = TRUE
 ){
-  as.data.table(
-    mash_table(..., rem_ext = rem_ext),
-    mash_method = 'row'
-  )
+  dots <- list(...)
+
+  if(length(dots) %identical% 1L && is_class(dots[[1]], 'Mash_table')){
+    res <- dots[[1]] %>%
+      as.data.table(
+        mash_method = 'row',
+        insert_blank_row = insert_blank_row
+      )
+  } else {
+    res <- mash_table_list(dots, rem_ext = rem_ext) %>%
+      as.data.table(
+        mash_method = 'row',
+        insert_blank_row = insert_blank_row
+    )
+  }
+
+  assert_that(identical(
+    class(res),
+    c('data.table', 'data.frame')
+  ))
+
+  return(res)
 }
 
 
@@ -133,14 +154,28 @@ cmash <- function(
   ...,
   rem_ext = NULL,
   by = NULL,
-  suffixes = NULL
+  suffixes = NULL,
+  meta = NULL
 ){
-  as.data.table(
-    mash_table(..., rem_ext = rem_ext),
-    mash_method = 'col',
-    by = by,
-    suffixes = suffixes
-  )
+  dots <- list(...)
+
+  if(length(dots) %identical% 1L && is_class(dots[[1]], 'Mash_table')){
+    res <- dots[[1]] %>%
+      as.data.table(
+        mash_method = 'col',
+        suffixes = suffixes
+      )
+    meta(res) <- attr(dots[[1]], 'meta')
+  } else {
+    res <-  mash_table_list(dots, rem_ext = rem_ext) %>%
+      as.data.table(
+        mash_method = 'col',
+        by = by,
+        suffixes = suffixes
+    )
+  }
+
+  return(res)
 }
 
 
@@ -299,19 +334,20 @@ mash_cols <- function(
     } else {
       merger <- function(x, y)  {
         suppressWarnings(
-          data.table:::merge.data.table(
+          merge.data.frame(
             x,
             y,
             by = by,
             all = TRUE,
-            sort = FALSE)
+            sort = FALSE,
+            suffixes = c('', ''))
         )
       }
-      res <- Reduce(merger, dl)
+      res <- Reduce(merger, dl) %>%
+        as.data.table()
     }
 
-
-  # Determine output row order
+  # Determine output col order
     colorder <- seq_len(
       length(dat) * (ncol(dat[[1]]) - length(by))
     )
