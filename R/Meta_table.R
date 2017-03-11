@@ -48,22 +48,22 @@
 #'
 #' polish(dat)
 #' }
-meta_table <- function(dat, meta = NULL){
-  assert_that(is.null(meta) || is_class(meta, 'TT_meta'))
+meta_table <- function(
+  dat,
+  meta
+){
+  assert_that(is_class(meta, 'TT_meta'))
 
-  if (inherits(dat, 'Meta_table')){
-    res <- data.table::copy(dat)
-    data.table::setattr(res, 'meta', NULL)
-  }
-  if (is_any_class(dat, c('Stack_table', 'Mash_table', 'Comp_table'))){
+  if (is_any_class(
+    dat,
+    c('Meta_table', 'Stack_table', 'Mash_table', 'Comp_table'))
+  ){
     res <- data.table::copy(dat)
   } else {
     res <- data.table::copy(data.table::as.data.table(dat))
   }
 
-  if (!is.null(meta)){
-    data.table::setattr(res, 'meta', meta)
-  }
+  data.table::setattr(res, 'meta', meta)
 
   class(res) <- union('Meta_table', class(res))
   return(res)
