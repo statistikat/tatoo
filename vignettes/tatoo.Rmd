@@ -1,0 +1,144 @@
+---
+title: "Tatoo package vignette"
+author: "Stefan Fleck"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tatoo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+library(dplyr)
+library(tatoo)
+
+df1 <- data.frame(
+  animals = c('cat', 'dog', 'cow', 'lizzard', 'bird'),
+  legs    = c(4, 4, 4, 4, 2),
+  milkable = c(TRUE, TRUE, TRUE, FALSE, FALSE)
+)
+
+
+df1 <- iris %>% 
+  dplyr::group_by(Species) %>% 
+  dplyr::summarise(
+    length = mean(Sepal.Length),
+    width  = mean(Sepal.Width)) %>% 
+   hammr::df_round(2)
+
+df2 <- iris %>% 
+  dplyr::group_by(Species) %>% 
+  dplyr::summarise(
+    length = sd(Sepal.Length),
+    width  = sd(Sepal.Width)) %>% 
+  hammr::df_round(2)
+
+```
+
+# Introduction
+
+Tatoo ("Table Tools") provides three straight-forward helper functions to 
+construct tables that are otherwise awkward to create in base-r, and a
+way to add metadata (id, title, ...) to a table. Those are the
+kinds of tables that you, as a data scientist, likely do not want to create
+in the first place, but that your boss likes a lot. 
+
+Tatoo tables can directly be saved to `.xlsx` files, or convert to `Workbook` 
+objects with `as_workbook` so that you can process them further using the 
+awesome `openxlsx` package. Tatoo also convenient print methods so that you
+can preview the tables you created in the console.
+
+In the future, latex and html export is also planned, but there is no roadmap
+for that yet. Since this is an open source project, any help is highly 
+appreciated.
+
+# Meta table - Add table metadata
+
+```{r}
+# Create metadata object
+ex_meta <- tt_meta(
+  table_id  = 'T01',  # Required
+  title     = 'Example Table', # Required
+  longtitle = 'This is an example for tables created with the tatool package', # optional
+  subtitle  = 'enough titles alread', # optional
+  footer    = 'This table was created from the iris dataset' # optional
+)
+
+# Create metadata object
+meta_table(
+  df1,
+  meta = ex_meta
+)
+```
+
+
+# Mash tables
+```{r}
+x <- tatoo::mash_table(
+  df1, 
+  df2,
+  meta = ex_meta
+)
+
+
+tatoo::rmash(
+  df1, 
+  df2
+)
+
+tatoo::cmash(
+  df1, 
+  df2
+)
+
+tatoo::cmash(
+  df1, 
+  df2,
+  by = 'Species',
+  meta = ex_meta
+)
+```
+
+# Comp tables
+```{r}
+
+tatoo::comp_table(
+  df1, 
+  df2,
+  titles = c('mean', 'sd')
+)
+
+tatoo::comp_table(
+  df1, 
+  df2,
+  titles = c('mean', 'sd'),
+  by = 'Species',
+  meta = ex_meta
+)
+
+```
+
+
+# Stack table
+```{r}
+tatoo::stack_table(
+  df1, 
+  df2,
+  titles = c('mean', 'sd')
+)
+```
+
+
+# Meta table
+```{r}
+tatoo::stack_table(
+  df1, 
+  df2,
+  titles = c('mean', 'sd')
+)
+```
+
+# Technical details
+
+* Internally tatoo makes heavy use of the `data.table` package

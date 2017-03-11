@@ -4,3 +4,5 @@
 .Ruserdata
 man
 .Rd
+inst/doc
+.directory
