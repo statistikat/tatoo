@@ -52,17 +52,17 @@ meta_table <- function(dat, meta = NULL){
   assert_that(is.null(meta) || is_class(meta, 'TT_meta'))
 
   if (is_any_class(dat, c('Meta_table', 'Stack_table', 'Comp_table'))){
-    dd <- data.table::copy(dat)
+    res <- data.table::copy(dat)
   } else {
-    dd <- data.table::copy(data.table::as.data.table(dat))
+    res <- data.table::copy(data.table::as.data.table(dat))
   }
 
   if (!is.null(meta)){
-    data.table::setattr(dat, 'meta', meta)
+    data.table::setattr(res, 'meta', meta)
   }
 
-  class(dat) <- union('Meta_table', class(dat))
-  return(dat)
+  class(res) <- union('Meta_table', class(res))
+  return(res)
 }
 
 
