@@ -9,31 +9,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r}
+```{r include = FALSE}
 library(dplyr)
 library(tatoo)
-
-df1 <- data.frame(
-  animals = c('cat', 'dog', 'cow', 'lizzard', 'bird'),
-  legs    = c(4, 4, 4, 4, 2),
-  milkable = c(TRUE, TRUE, TRUE, FALSE, FALSE)
-)
-
-
-df1 <- iris %>% 
-  dplyr::group_by(Species) %>% 
-  dplyr::summarise(
-    length = mean(Sepal.Length),
-    width  = mean(Sepal.Width)) %>% 
-   hammr::df_round(2)
-
-df2 <- iris %>% 
-  dplyr::group_by(Species) %>% 
-  dplyr::summarise(
-    length = sd(Sepal.Length),
-    width  = sd(Sepal.Width)) %>% 
-  hammr::df_round(2)
-
 ```
 
 # Introduction
@@ -53,29 +31,64 @@ In the future, latex and html export is also planned, but there is no roadmap
 for that yet. Since this is an open source project, any help is highly 
 appreciated.
 
-# Mash tables
+# Setup example data
 ```{r}
-mt <- tatoo::mash_table(df1, df2)
+df1 <- iris %>% 
+  dplyr::group_by(Species) %>% 
+  dplyr::summarise(
+    length = mean(Sepal.Length),
+    width  = mean(Sepal.Width)) %>% 
+   hammr::df_round(2)
 
-res <- tatoo::rmash(x)
-tatoo::cmash(x)
-
-tatoo::rmash(df1, df2)
-tatoo::cmash(df1, df2, suffixes = c('_mean', '_sd'))
-tatoo::cmash(df1, df2, by = 'Species')
-
-
-
-
+df2 <- iris %>% 
+  dplyr::group_by(Species) %>% 
+  dplyr::summarise(
+    length = sd(Sepal.Length),
+    width  = sd(Sepal.Width)) %>% 
+  hammr::df_round(2)
 ```
+
+
+# Mash tables
+
+## Mash by row
+```{r}
+mt <- mash_table(df1, df2)
+rmash(mt)
+rmash(df1, df2)
+rmash(df1, df2, insert_blank_row = FALSE)
+```
+
+## Mash by collumn
+```{r}
+cmash(mt)
+cmash(df1, df2, suffixes = c('_mean', '_sd'))
+cmash(df1, df2, by = 'Species')
+```
+
 
 # Comp tables
 ```{r}
-tatoo::comp_table(
+comp_table(
   df1, 
   df2,
   titles = c('mean', 'sd')
 )
+
+comp_table(
+  df1, 
+  df2,
+  titles = c('mean', 'sd'),
+  by = 'Species'
+)
+
+comp_table_list(
+  list(
+    mean = df1,
+    sd = df2),
+  by = 'Species'
+)
+
 ```
 
 
@@ -83,21 +96,9 @@ tatoo::comp_table(
 ```{r}
 tatoo::stack_table(
   df1, 
-  df2,
-  titles = c('mean', 'sd')
+  df2
 )
 ```
-
-
-# Meta table
-```{r}
-dat <- tatoo::stack_table(
-  df1, 
-  df2,
-  titles = c('mean', 'sd')
-)
-```
-
 
 # Meta table - Add metadata to a table
 
@@ -118,15 +119,14 @@ res <- meta_table(
 )
 
 
-tatoo::cmash(
+cmash(
   df1, 
   df2,
   by = 'Species',
   meta = ex_meta
 )
 
-
-tatoo::comp_table(
+comp_table(
   df1, 
   df2,
   titles = c('mean', 'sd'),
