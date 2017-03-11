@@ -119,7 +119,7 @@ as_mash_table <- function(dat, ...){
 rmash <- function(
   ...,
   rem_ext = NULL,
-  insert_blank_row = TRUE
+  insert_blank_row = FALSE
 ){
   dots <- list(...)
 
