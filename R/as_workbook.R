@@ -54,8 +54,6 @@ as_workbook.Meta_table <- function(
   sheet = attr(dat, 'meta')$table_id %||% 1L,
   ...
 ){
-  print(sheet)
-
   wb <- openxlsx::createWorkbook()
   wb <- write_worksheet(dat, wb, sheet = sheet, ...)
   return(wb)
