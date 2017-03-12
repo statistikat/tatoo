@@ -2,10 +2,15 @@ Tagged_table <- function(
   dat,
   meta
 ){
-  res <- data.table::copy(dat) %>%
-    data.table::setattr('class', union('Tagged_table', class(dat))) %>%
-    data.table::setattr('meta', meta)
+  assert_that(hammr::is_any_class(
+    dat,
+    c('Stacked_table', 'Mashed_table', 'Tagged_table', 'Composite_table', 'data.table')
+  ))
+  assert_that(is.list(meta))
 
+  res <- data.table::copy(dat)
+  data.table::setattr(res, 'class', union('Tagged_table', class(dat)))
+  data.table::setattr(res, 'meta', meta)
   return(res)
 }
 

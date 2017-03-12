@@ -2,12 +2,21 @@ Composite_table <- function(
   dat,
   multinames
 ){
-  res <- data.table::copy(dat) %>%
-    data.table::as.data.table() %>%
-    data.table::setattr(
-      'class', c('Composite_table', 'data.table', 'data.frame')) %>%
-    data.table::setattr('multinames', multinames)
+  assert_that(is.data.frame(dat))
+  assert_that(is.numeric(multinames))
+  assert_that(all(hammr::looks_like_integer(multinames)))
 
+  multinames <- structure(
+    as.integer(multinames),
+    names = names(multinames)
+  )
+
+  classes <- c('Composite_table', 'data.table', 'data.frame')
+
+  res <- data.table::copy(dat) %>%
+    data.table::as.data.table()
+  data.table::setattr(res, 'class', classes)
+  data.table::setattr(res, 'multinames', multinames)
   return(res)
 }
 
@@ -245,22 +254,14 @@ composite_name <- function(x, y, sep){
 #' @export
 `multinames<-` <- function(dat, value){
   assert_that(is.data.frame(dat))
-  assert_that(identical(
-    max(value),
-    ncol(dat)
-  ))
+  assert_that(max(value) == ncol(dat))
 
-  dd <- data.table::copy(dat)
-  setattr(dd, 'multinames', value)
-
-  if(!is_class(dd, 'Composite_table')){
-    dd <- data.table:::as.data.table.data.frame(dd)
-    data.table::setattr(dd, 'class', union('Composite_table', class(dd)))
+  if(is_class(dat, 'Composite_table')){
+    dd  <- data.table::copy(dat)
+    res <- data.table::setattr(dd, 'multinames', value)
+  } else {
+    res <- Composite_table(dat, multinames = value)
   }
 
-  return(Composite_table)
-
-
-
-
+  return(res)
 }

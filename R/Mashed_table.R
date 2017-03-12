@@ -2,12 +2,20 @@ Mashed_table <- function(
   dat,
   mash_method
 ){
-  res <- data.table::copy(dat) %>%
-    data.table::setattr('class', c('Mashed_table', 'list')) %>%
-    data.table::setattr('mash_method', mash_method)
+  assert_that(is.list(dat))
+  assert_that(
+    identical(mash_method, 'row') ||
+    identical(mash_method, 'col')
+  )
 
+  res <- data.table::copy(dat)
+  data.table::setattr(res, 'class', c('Mashed_table', 'list'))
+  data.table::setattr(res, 'mash_method', mash_method)
   return(res)
 }
+
+
+
 
 #' Mash Table
 #'
@@ -44,6 +52,7 @@ mash_table <- function(
   mash_table_list(
     list(...),
     rem_ext = rem_ext,
+    mash_method = mash_method,
     meta = meta
   )
 }
@@ -404,4 +413,21 @@ print.Mashed_table <- function(dat, row.names = FALSE, ...){
     row.names = row.names,
     ...
   )
+}
+
+
+
+#' Set the multinames attribute of a Composite_table
+#'
+#' @param dat a Composite_table or data.frame
+#' @param value a named character vector (see example)
+#'
+#' @export
+`mash_method<-` <- function(dat, value){
+  dat %assert_class% 'Mashed_table'
+
+  res <- data.table::copy(dat)
+  data.table::setattr(res, 'mash_method', value)
+
+  return(res)
 }

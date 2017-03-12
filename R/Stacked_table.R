@@ -2,12 +2,22 @@ Stacked_table <- function(
   dat,
   spacing
 ){
-  res <- data.table::copy(dat) %>%
-    data.table::setattr('class', c('Stacked_table', 'list')) %>%
-    data.table::setattr('spacing', spacing)
+  assert_that(is.list(dat))
+  valid_classes <- c('Mashed_table', 'Tagged_table', 'Composite_table', 'data.table')
+  assert_that(all(unlist(lapply(dat, hammr::is_any_class, valid_classes))))
 
+  assert_that(purrr::is_scalar_numeric(spacing))
+  assert_that(hammr::looks_like_integer(spacing))
+
+  res <- data.table::copy(dat)
+  data.table::setattr(res, 'class', c('Stacked_table', 'list'))
+  data.table::setattr(res, 'spacing', as.integer(spacing))
   return(res)
 }
+
+
+
+
 #' Stack tables
 #'
 #' side by side or on top of each others
@@ -43,18 +53,7 @@ stack_table_list <- function(
   spacing = 2L,
   meta = NULL
 ){
-  ensure_data_table <- function(x){
-    if(is_any_class(
-      x,
-      c('Tagged_table', 'Composite_table', 'Mashed_table', 'data.table'))
-    ){
-      return(x)
-    } else {
-      return(data.table::as.data.table(x))
-    }
-  }
-
-  res <- lapply(tables, ensure_data_table)
+  res <- lapply(tables, ensure_valid_stack_table_classes)
 
   res <- Stacked_table(
     dat = res,
@@ -86,4 +85,18 @@ print.Stacked_table <- function(dat){
   }
 
   cat(sep)
+}
+
+
+
+# Utils -------------------------------------------------------------------
+ensure_valid_stack_table_classes <- function(x){
+  if(hammr::is_any_class(
+    x,
+    c('Tagged_table', 'Composite_table', 'Mashed_table', 'data.table'))
+  ){
+    return(x)
+  } else {
+    return(data.table::as.data.table(x))
+  }
 }
