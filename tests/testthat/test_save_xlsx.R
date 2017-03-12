@@ -57,7 +57,7 @@ test_that("xlsx output for comp_tables works", {
 
   expect_silent(tres <- comp_table_list(
     tdat,
-    titles = c('tab1', 'tab2', 'tab3')
+    multinames = c('tab1', 'tab2', 'tab3')
   ))
 
   pub_tres <- meta_table(
@@ -86,7 +86,7 @@ test_that("xlsx output for comp_tables works", {
   # not cover the id_vars
   expect_silent(tres <- comp_table_list(
     tdat,
-    titles = c('tab1', 'tab2', 'tab3'),
+    multinames = c('tab1', 'tab2', 'tab3'),
     by = 'id'
   ))
   wb <- as_workbook(tres)
@@ -149,7 +149,7 @@ test_that("xlsx output for stack_tables works", {
   }
   tcomp <- comp_table_list(
     tdat,
-    titles = c('tab1', 'tab2', 'tab3'),
+    multinames = c('tab1', 'tab2', 'tab3'),
     meta = tt_meta('t03', 'a comp table')
   )
 

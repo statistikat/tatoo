@@ -1,7 +1,7 @@
 #' Composite Table
 #'
 #' @param ... \code{comp_table} only:
-#' @param titles Titles of subtables (one for each element of
+#' @param multinames Titles of subtables (one for each element of
 #'   \code{...} / \code{tables})
 #' @param by If \code{by} is specified, the tables will be combined using
 #'   \code{\link{merge}} on the columns specified in by, otherwise the tables
@@ -15,15 +15,15 @@
 #' @examples
 comp_table <- function(
   ...,
-  titles,
+  multinames,
   by = NULL,
   meta = NULL
 ){
-  force(titles)
+  force(multinames) # fail early if argument was not provided
 
   comp_table_list(
     tables = list(...),
-    titles = titles,
+    multinames = multinames,
     by = by,
     meta = meta
   )
@@ -43,7 +43,7 @@ comp_table <- function(
 #' @examples
 comp_table_list <- function(
   tables,
-  titles = names(tables),
+  multinames = names(tables),
   by = NULL,
   meta = NULL
 ){
@@ -54,9 +54,9 @@ comp_table_list <- function(
       assert_that(nrow(table)  %identical% nrow(tables[[1]]))
     }
 
-    if(!length(titles) %identical% length(tables)){
+    if(!length(multinames) %identical% length(tables)){
       stop(strwrap(
-          'Titles must be specified, otherwise comp_table
+          'multinames must be specified, otherwise comp_table
            would just be a wrapper for cbind.'))
     }
 
@@ -80,36 +80,36 @@ comp_table_list <- function(
 
   # Generate table-title cell positions (for xlsx / latex export).
   # if a "by" was specified, this has to be considered when creating the indices
-    table_titles <- vector('integer', length(tables))
-    for(i in seq_along(table_titles)){
-      table_titles[[i]] <- ncol(tables[[i]]) - length(by)
+    table_multinames <- vector('integer', length(tables))
+    for(i in seq_along(table_multinames)){
+      table_multinames[[i]] <- ncol(tables[[i]]) - length(by)
     }
 
     if(length(by) > 0){
-      table_titles <- c(length(by), table_titles)
-      titles       <- c('', titles)
+      table_multinames <- c(length(by), table_multinames)
+      multinames       <- c('', multinames)
     }
 
-    table_titles <- cumsum(table_titles)
-    names(table_titles) <- titles
+    table_multinames <- cumsum(table_multinames)
+    names(table_multinames) <- multinames
 
 
   # post conditions
-    assert_that(max(table_titles) %identical% ncol(res))
+    assert_that(max(table_multinames) %identical% ncol(res))
 
     if(length(by) %identical% 0L){
-      assert_that(min(table_titles) %identical% ncol(tables[[1]]))
+      assert_that(min(table_multinames) %identical% ncol(tables[[1]]))
     } else {
-      assert_that(min(table_titles) %identical% length(by))
+      assert_that(min(table_multinames) %identical% length(by))
     }
 
-    assert_that(table_titles %identical% sort(table_titles))
+    assert_that(table_multinames %identical% sort(table_multinames))
 
 
   # Return
     res <- as.data.table(res)
     class(res) <- union('Comp_table', class(res))
-    attr(res, 'titles') <- table_titles
+    attr(res, 'multinames') <- table_multinames
 
     if(!is.null(meta)){
       res <- meta_table(res, meta = meta)
@@ -122,7 +122,7 @@ comp_table_list <- function(
 
 #' @export
 print.Comp_table <- function(dat, row.names = FALSE, ...){
-  assert_that(has_attr(dat, 'titles'))
+  assert_that(has_attr(dat, 'multinames'))
 
   # Pad columns
     prep_col <- function(x, colname){
@@ -145,17 +145,17 @@ print.Comp_table <- function(dat, row.names = FALSE, ...){
 
 
   # Merge columns that belong to the same title
-    titles <- attr(dat, 'titles')
-    res <- vector('list', length(titles))
-    names(res) <- names(titles)
+    multinames <- attr(dat, 'multinames')
+    res <- vector('list', length(multinames))
+    names(res) <- names(multinames)
 
-    for(i in seq_along(titles)){
-      res[[i]] <- titles[(i-1):i]
+    for(i in seq_along(multinames)){
+      res[[i]] <- multinames[(i-1):i]
 
       if(identical(i, 1L)){
-        sel_cols <- 1:titles[[i]]
+        sel_cols <- 1:multinames[[i]]
       } else {
-        sel_cols <- (titles[i-1]+1):titles[i]
+        sel_cols <- (multinames[i-1]+1):multinames[i]
       }
 
       res[[i]] <- do.call(paste, c(dd[sel_cols], sep="   "))
@@ -164,7 +164,7 @@ print.Comp_table <- function(dat, row.names = FALSE, ...){
     tmp <- list()
 
     for(i in seq_along(res)){
-      title  <- stringi::stri_pad_both(names(titles)[[i]], max(nchar(res[[i]])), '.')
+      title  <- stringi::stri_pad_both(names(multinames)[[i]], max(nchar(res[[i]])), '.')
       column <- stringi::stri_pad_both(res[[i]], nchar(title))
       sep    <- rep('  ', length(res[[i]]))
 
@@ -178,4 +178,44 @@ print.Comp_table <- function(dat, row.names = FALSE, ...){
     print(res2, row.names = FALSE, right = FALSE)
 
     invisible(dat)
+}
+
+
+
+#' @export
+as.data.table.Comp_table <- function(
+  dat,
+  multinames = TRUE,
+  sep = '.'
+){
+  if(!multinames){
+    return(data.table:::as.data.table.data.table(dat))
+  } else {
+    res <- data.table::copy(dat)
+    multinames <- attr(res, 'multinames')
+    name_idx <- 1
+
+    for(i in seq_along(res)){
+      names(res)[[i]] <- composite_name(
+        names(multinames[name_idx]),
+        names(res)[[i]],
+        sep = sep
+      )
+
+      if(i == multinames[name_idx]){
+        name_idx <- name_idx + 1
+      }
+    }
+
+    return(data.table:::as.data.table.data.table(res))
+  }
+}
+
+
+composite_name <- function(x, y, sep){
+  if(x == ''){
+    return(y)
+  } else {
+    paste(x, y, sep = sep)
+  }
 }

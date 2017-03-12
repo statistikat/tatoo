@@ -45,7 +45,7 @@ test_that("Stack_table works as expected", {
     }
     tcomp <- comp_table_list(
       tdat,
-      titles = c('tab1', 'tab2', 'tab3'),
+      multinames = c('tab1', 'tab2', 'tab3'),
       meta = tt_meta('t03', 'a comp table')
     )
 

@@ -157,7 +157,7 @@ write_worksheet.Comp_table <- function(
   ...
 ){
   # Pre-condtions
-    assert_that(has_attr(dat, 'titles'))
+    assert_that(has_attr(dat, 'multinames'))
 
   # Process arguments
     wb <- wb$copy()
@@ -166,17 +166,17 @@ write_worksheet.Comp_table <- function(
       openxlsx::addWorksheet(wb, sheet)
     }
     crow   <- start_row
-    titles <- attr(dat, 'titles')
+    multinames <- attr(dat, 'multinames')
 
-    assert_that(titles %identical% sort(titles))
+    assert_that(multinames %identical% sort(multinames))
 
     title_row     <- vector(mode = 'list', length = ncol(dat))
     title_counter <- 1
 
     for(i in seq_along(title_row)){
-      title_row[[i]] <- names(titles)[[title_counter]]
+      title_row[[i]] <- names(multinames)[[title_counter]]
 
-      if(i %in% titles){
+      if(i %in% multinames){
         title_counter <- title_counter + 1
       }
     }
@@ -193,9 +193,9 @@ write_worksheet.Comp_table <- function(
     crow <- crow + 1
 
     ## merge subtable heading cells
-    for(i in seq_along(titles)){
-      merge_start <- ifelse(i == 1L, 1, titles[[i-1]] + 1)
-      merge_end   <- titles[[i]]
+    for(i in seq_along(multinames)){
+      merge_start <- ifelse(i == 1L, 1, multinames[[i-1]] + 1)
+      merge_end   <- multinames[[i]]
       openxlsx::mergeCells(
         wb,
         cols = c(merge_start, merge_end),
