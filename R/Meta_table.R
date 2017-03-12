@@ -249,6 +249,7 @@ assign_tt_meta <- function(dat, assignment){
   return(res)
 }
 
+#' @export
 `meta<-` <- function(dat, value){
   if(is.null(value)){
     res <- data.table::copy(dat)
@@ -262,29 +263,31 @@ assign_tt_meta <- function(dat, assignment){
   return(res)
 }
 
-
-
-
+#' @export
 `table_id<-` <- function(dat, value){
   ass <- list(table_id = value)
   assign_tt_meta(dat, ass)
 }
 
+#' @export
 `title<-` <- function(dat, value){
   ass <- list(title = value)
   assign_tt_meta(dat, ass)
 }
 
+#' @export
 `longtitle<-` <- function(dat, value){
   ass <- list(longtitle = value)
   assign_tt_meta(dat, ass)
 }
 
+#' @export
 `subtitle<-` <- function(dat, value){
   ass <- list(subtitle = value)
   assign_tt_meta(dat, ass)
 }
 
+#' @export
 `footer<-` <- function(dat, value){
   ass <- list(footer = value)
   assign_tt_meta(dat, ass)
