@@ -1,3 +1,14 @@
+Mashed_table <- function(
+  dat,
+  mash_method
+){
+  res <- data.table::copy(dat) %>%
+    data.table::setattr('class', c('Mashed_table', 'list')) %>%
+    data.table::setattr('mash_method', mash_method)
+
+  return(res)
+}
+
 #' Mash Table
 #'
 #' Stack tables are designed to make it easy to put together multidimensional
@@ -7,8 +18,8 @@
 #'
 #' Stack table provides a framework to stack those two data.frames together
 #' into one data.frame with alternating rows or columns. You can then output the
-#' stacked table as latex \code{\link{print_tex.Mash_table}}, as xlsx
-#' \code{\link{save_as.Mash_table}} or simply as data.table or data.frame
+#' stacked table as latex \code{\link{print_tex.Mashed_table}}, as xlsx
+#' \code{\link{save_as.Mashed_table}} or simply as data.table or data.frame
 #' via \code{as.data.table} or \code{as.data.frame}.
 #'
 #' If your goal is to present formated tables as latex or xlsx, you  should aslo
@@ -27,6 +38,7 @@
 mash_table <- function(
   ...,
   rem_ext = NULL,
+  mash_method = 'row',
   meta = NULL
   ){
   mash_table_list(
@@ -43,6 +55,7 @@ mash_table <- function(
 #' @rdname mash_table
 mash_table_list <- function(
   tables,
+  mash_method = 'row',
   rem_ext = NULL,
   meta = NULL
 ){
@@ -91,10 +104,13 @@ mash_table_list <- function(
   }
 
 
-  class(res) <- c('Mash_table', 'list')
+  res <- Mashed_table(
+    res,
+    mash_method = mash_method
+  )
 
   if(!is.null(meta)){
-    res <- meta_table(res, meta = meta)
+    res <- tag_table(res, meta = meta)
   }
 
   return(res)
@@ -110,7 +126,7 @@ as_mash_table <- function(dat, ...){
 
 
 
-#' @param ... either several \code{data.frames} or a single \code{Mash_table}.
+#' @param ... either several \code{data.frames} or a single \code{Mashed_table}.
 #' @param rem_ext
 #' @param insert_blank_row whether or not to insert a blank row between mash paris
 #'
@@ -123,7 +139,7 @@ rmash <- function(
 ){
   dots <- list(...)
 
-  if(length(dots) %identical% 1L && is_class(dots[[1]], 'Mash_table')){
+  if(length(dots) %identical% 1L && is_class(dots[[1]], 'Mashed_table')){
     res <- dots[[1]] %>%
       as.data.table(
         mash_method = 'row',
@@ -159,7 +175,7 @@ cmash <- function(
 ){
   dots <- list(...)
 
-  if(length(dots) %identical% 1L && is_class(dots[[1]], 'Mash_table')){
+  if(length(dots) %identical% 1L && is_class(dots[[1]], 'Mashed_table')){
     res <- dots[[1]] %>%
       as.data.table(
         mash_method = 'col',
@@ -191,7 +207,7 @@ cmash <- function(
 #' @export
 #'
 #' @examples
-as.data.table.Mash_table <- function(
+as.data.table.Mashed_table <- function(
   dat,
   mash_method = 'row',
   insert_blank_row = (mash_method == 'row'),
@@ -229,7 +245,7 @@ as.data.table.Mash_table <- function(
 #' @export
 #'
 #' @examples
-as.data.frame.Mash_table <- function(dat, mash_method = 'row', ...){
+as.data.frame.Mashed_table <- function(dat, mash_method = 'row', ...){
   as.data.frame(as.data.table(dat))
 }
 
@@ -238,7 +254,7 @@ as.data.frame.Mash_table <- function(dat, mash_method = 'row', ...){
 
 # Utility funs -----------------------------------------------------------------
 mash_rows <- function(dat, insert_blank_row = FALSE){
-  dat %assert_class% 'Mash_table'
+  dat %assert_class% 'Mashed_table'
   assert_that(is.flag(insert_blank_row))
 
 
@@ -300,7 +316,7 @@ mash_cols <- function(
   suffixes = names(dat)
 ){
   # Preconditions
-    dat %assert_class% 'Mash_table'
+    dat %assert_class% 'Mashed_table'
     assert_that(
       is.null(by) ||
       is.character(by)
@@ -383,7 +399,7 @@ mash_cols <- function(
 
 
 #' @export
-print.Mash_table <- function(dat, row.names = FALSE, ...){
+print.Mashed_table <- function(dat, row.names = FALSE, ...){
   print(as.data.table(dat),
     row.names = row.names,
     ...

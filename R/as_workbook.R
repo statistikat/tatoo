@@ -45,11 +45,11 @@ as_workbook.default <- function(
 
 
 
-#' Convert a Meta_table to an openxlsx Workbook
+#' Convert a Tagged_table to an openxlsx Workbook
 #'
 #' @export
 #' @rdname as_workbook
-as_workbook.Meta_table <- function(
+as_workbook.Tagged_table <- function(
   dat,
   sheet = attr(dat, 'meta')$table_id %||% 1L,
   ...
@@ -62,16 +62,16 @@ as_workbook.Meta_table <- function(
 
 
 #' @param mash_method either \code{row] or \code{col}
-#' @param insert_blank_row Only for \code{\link{Mash_table}} and only when
+#' @param insert_blank_row Only for \code{\link{Mashed_table}} and only when
 #'   mash_method is 'row': logical. Insert a blank row between row-pairs
-#' @param sep_height Only for \code{\link{Mash_table}}: if
+#' @param sep_height Only for \code{\link{Mashed_table}}: if
 #'   \code{insert_blank_row} is \code{FALSE}, the row height of the first row of
 #'   each row-pair, if \code{insert_blank_row} is \code{TRUE} the row height of
 #'   the blank row.
 #'
 #' @rdname as_workbook
 #' @export
-as_workbook.Mash_table <- function(
+as_workbook.Mashed_table <- function(
   dat,
   sheet = 1L,
   mash_method = 'row',

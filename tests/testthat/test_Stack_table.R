@@ -1,7 +1,7 @@
-context("Stack_table")
+context("Stacked_table")
 
 
-test_that("Stack_table works as expected", {
+test_that("Stacked_table works as expected", {
   #* @testing stack_table
 
 
@@ -17,7 +17,7 @@ test_that("Stack_table works as expected", {
       x = letters[1:5],
       y = letters[10:14]
     )
-    expect_silent(tmeta <- meta_table(tdat, meta = tm))
+    expect_silent(tmeta <- tag_table(tdat, meta = tm))
 
 
     tdat1 <- data.frame(

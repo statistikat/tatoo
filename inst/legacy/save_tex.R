@@ -12,7 +12,7 @@ mash_cols_tex <- function(dat) {
 
 
 mash_rows_tex <- function(dat, insert_blank_row) {
-  dat %assert_class% 'Mash_table'
+  dat %assert_class% 'Mashed_table'
 
   empty_row <- rep('', length(dat[[1]])) %>%
     t() %>%
@@ -50,7 +50,7 @@ print_tex <- function(dat, ...){
 }
 
 
-#' print a Mash_table as latex
+#' print a Mashed_table as latex
 #'
 #' Stacked rows are sepparated by \code{\\newline}, therefor this only works
 #' correctly for columns that have an 'X' column type (see documentation of
@@ -81,7 +81,7 @@ print_tex <- function(dat, ...){
 #' @export
 #'
 #' @examples
-print_tex.Mash_table <- function(dat,
+print_tex.Mashed_table <- function(dat,
                                  mash_method = 'row',
                                  insert_blank_row = (mash_method == 'row'),
                                  .align = paste0('lX',

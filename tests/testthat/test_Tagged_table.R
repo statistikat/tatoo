@@ -1,7 +1,7 @@
-context("Meta_table")
+context("Tagged_table")
 
 
-test_that("make_meta_table_print_title works as expected", {
+test_that("make_tag_table_print_title works as expected", {
   tmeta <- tt_meta(
     table_id = 't001',
     title = 'Table 1',
@@ -16,9 +16,9 @@ test_that("make_meta_table_print_title works as expected", {
     longtitle = 'Table of Numbers'
   )
 
-  tres1  <- make_meta_table_print_title(tmeta)
-  tres1b <- make_meta_table_print_title(tmeta, show_subtitle = FALSE)
-  tres2  <- make_meta_table_print_title(tmeta2)
+  tres1  <- make_tag_table_print_title(tmeta)
+  tres1b <- make_tag_table_print_title(tmeta, show_subtitle = FALSE)
+  tres2  <- make_tag_table_print_title(tmeta2)
 
   expect_identical(
     tres1,
@@ -35,7 +35,7 @@ test_that("make_meta_table_print_title works as expected", {
   )
 })
 
-test_that("make_meta_table_print_title works as expected", {
+test_that("make_tag_table_print_title works as expected", {
   tmeta <- tt_meta(
     table_id = 't001',
     title = 'Table 1',
@@ -49,7 +49,7 @@ test_that("make_meta_table_print_title works as expected", {
     y = letters[10:14]
   )
 
-  expect_silent(tres <- meta_table(tdat, tmeta))
+  expect_silent(tres <- tag_table(tdat, tmeta))
 
   ## manual tests
   # tf <- file.path(tempdir(), 'pub.xlsx')
@@ -58,7 +58,7 @@ test_that("make_meta_table_print_title works as expected", {
 })
 
 
-test_that("Creating meta_table works as expected", {
+test_that("Creating tag_table works as expected", {
 df1 <- iris %>%
   dplyr::group_by(Species) %>%
   dplyr::summarise(
@@ -81,22 +81,22 @@ tmeta <- tt_meta(
   footer = c('a footer', 'with many rows', '(c) someone')
 )
 
-tres1 <- meta_table(df1, tmeta)
+tres1 <- tag_table(df1, tmeta)
 
 # A meta table should be a data.table
   expect_identical(
     class(tres1),
-    c("Meta_table", "data.table", "data.frame")
+    c("Tagged_table", "data.table", "data.frame")
   )
 
 # Creating a meta-table from a meta table should replace the meta-attribute
 # without awkward stuff happening like a duplicate class attribute or such
   newmeta <- tt_meta('t1', 'a table')
 
-  tres2 <- meta_table(tres1, meta = newmeta)
+  tres2 <- tag_table(tres1, meta = newmeta)
   expect_identical(
     class(tres2),
-    c("Meta_table", "data.table", "data.frame")
+    c("Tagged_table", "data.table", "data.frame")
   )
 
   expect_identical(
@@ -129,7 +129,7 @@ test_that("metadata replacement functions work", {
 
   expect_identical(
     class(tres),
-    c("Meta_table", "data.table", "data.frame")
+    c("Tagged_table", "data.table", "data.frame")
   )
 
   expect_identical(
@@ -150,7 +150,7 @@ test_that("metadata replacement functions work", {
 
   expect_identical(
     class(tres),
-    c("Meta_table", "data.table", "data.frame")
+    c("Tagged_table", "data.table", "data.frame")
   )
 
   expected_meta <- tt_meta(

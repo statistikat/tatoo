@@ -43,7 +43,7 @@ save_xlsx.default <- function(
 #' @export
 #'
 #' @examples
-save_xlsx.Mash_table <- function(
+save_xlsx.Mashed_table <- function(
   dat,
   outfile,
   mash_method = 'row',

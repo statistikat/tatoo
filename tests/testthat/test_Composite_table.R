@@ -1,8 +1,8 @@
-context("Comp_table")
+context("Composite_table")
 
 
 
-test_that("Comp_table works as expected", {
+test_that("Composite_table works as expected", {
   #* @testing comp_table
   #* @testing comp_table_list
   # Generate test data
@@ -15,7 +15,7 @@ test_that("Comp_table works as expected", {
       )
     }
 
-  # Ursula wants to combine several tables to a Comp_table (side-by-side tables)
+  # Ursula wants to combine several tables to a Composite_table (side-by-side tables)
 
   ## multinames must be specified (otherwise comp_table would just be a wrapper for
   ## cbind)
@@ -25,7 +25,7 @@ test_that("Comp_table works as expected", {
   ## If "tables" is a named list, multinames are automatically set to element names
     names(tdat) <- c('a', 'b', 'c')
     expect_silent(tres <- comp_table_list(tdat))
-    expect_s3_class(tres, 'Comp_table')
+    expect_s3_class(tres, 'Composite_table')
 
   ## Alternatively, table names can be specified manually
     names(tdat) <- NULL
@@ -33,7 +33,7 @@ test_that("Comp_table works as expected", {
       tdat,
       multinames = c('tab1', 'tab2', 'tab3')
     ))
-    expect_s3_class(tres, 'Comp_table')
+    expect_s3_class(tres, 'Composite_table')
 
 
   # Ursulas table have an ID column. She wants to merge them, instead of
@@ -52,7 +52,7 @@ test_that("Comp_table works as expected", {
 })
 
 
-test_that("as.data.table.Comp_table works as expected", {
+test_that("as.data.table.Composite_table works as expected", {
   tl <- list()
   for(i in seq_len(3)){
     tl[[i]] <- data.frame(

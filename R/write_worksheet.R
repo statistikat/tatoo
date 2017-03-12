@@ -6,8 +6,8 @@
 #' rather than writing \code{data.frames}, \code{write_data} supports methods
 #' for the various \code{tatoo} classes.
 #'
-#' @param dat A tatoo table object, \code{Comp_table}, \code{Meta_table},
-#'   \code{Mash_table} or \code{Stack_table}.
+#' @param dat A tatoo table object, \code{Composite_table}, \code{Tagged_table},
+#'   \code{Mashed_table} or \code{Stacked_table}.
 #' @param wb A \code{\link[openxlsx]{openxlsx}} Workbook object
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param append Logical. Whether or not to append to an exisiting worksheet or
@@ -65,7 +65,7 @@ write_worksheet.default <- function(
 
 
 #' @export
-write_worksheet.Meta_table <- function(
+write_worksheet.Tagged_table <- function(
   dat,
   wb,
   sheet = sanitize_excel_sheet_names(attr(dat, 'meta')$table_id),
@@ -115,7 +115,7 @@ write_worksheet.Meta_table <- function(
     crow <- crow + length(header) + 1
     ## hacky, but NextMethod did not do what i wanted when ... were passed to
     ## this function
-    class(dat) <- class(dat)[!class(dat) == 'Meta_table']
+    class(dat) <- class(dat)[!class(dat) == 'Tagged_table']
 
     wb <- write_worksheet(
       dat,
@@ -148,7 +148,7 @@ write_worksheet.Meta_table <- function(
 
 
 #' @export
-write_worksheet.Comp_table <- function(
+write_worksheet.Composite_table <- function(
   dat,
   wb,
   sheet,
@@ -221,7 +221,7 @@ write_worksheet.Comp_table <- function(
 
 
 #' @export
-write_worksheet.Mash_table <- function(
+write_worksheet.Mashed_table <- function(
   dat,
   wb,
   sheet,
@@ -293,7 +293,7 @@ write_worksheet.Mash_table <- function(
 
 
 #' @export
-write_worksheet.Stack_table <- function(
+write_worksheet.Stacked_table <- function(
   dat,
   wb,
   sheet,

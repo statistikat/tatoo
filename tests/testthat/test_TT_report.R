@@ -9,7 +9,7 @@ for(i in seq_len(3)){
     'With a Long Title'
   )
 
-  tdat[[i]] <- meta_table(
+  tdat[[i]] <- tag_table(
     data.frame(
       small = letters[i:(i+3)],
       big = LETTERS[i:(i+3)]

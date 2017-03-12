@@ -1,6 +1,17 @@
+Tagged_table <- function(
+  dat,
+  meta
+){
+  res <- data.table::copy(dat) %>%
+    data.table::setattr('class', union('Tagged_table', class(dat))) %>%
+    data.table::setattr('meta', meta)
+
+  return(res)
+}
+
 #' Umbrella Class for Publication Tables
 #'
-#' The \code{meta_table} class does very little by itself except adding a
+#' The \code{tag_table} class does very little by itself except adding a
 #' metadata attributes to a \code{data.frame} and providing a structure for how
 #' you should procede when creating new reports for publication within the gv*
 #' family of packages.
@@ -11,20 +22,20 @@
 #' as in the analysis step. To achive the final publication ready table the
 #' function \code{\link{polish}} should be used.
 #'
-#' In practice you will want to create a subclasses of \link{meta_table} for
+#' In practice you will want to create a subclasses of \link{tag_table} for
 #' for each distinct table in your report and implement your own polish methods
 #' for them. Look at the source code of the \code{gvroad} package for examples.
 #'
-#' @param dat A \code{Meta_table}, \code{Mash_table}, \code{\link{Stack_table}},
+#' @param dat A \code{Tagged_table}, \code{Mashed_table}, \code{\link{Stacked_table}},
 #'   or anything that can be coerced to a \code{\link{data.table}} with
 #'   \code{as.data.table}
 #' @param meta a \code{\link{tt_meta}} object
 #'
-#' @return An object of class 'Meta_table'
+#' @return An object of class 'Tagged_table'
 #' @export
 #'
 #' @examples
-#' # Simplified version of how creating and polishing a meta_table could look
+#' # Simplified version of how creating and polishing a tag_table could look
 #'
 #' \dontrun{
 #' dat <- data.frame(
@@ -32,7 +43,7 @@
 #'   grade = c(1, 3, 2)
 #' )
 #'
-#' dat <- meta_table(
+#' dat <- tag_table(
 #'   dat,
 #'   tt_meta(
 #'     "tab1",
@@ -40,15 +51,15 @@
 #'     "Grades of the final examination")
 #' )
 #'
-#' class(dat) <- c("Meta_tableTab1", class(dat))
+#' class(dat) <- c("Tagged_tableTab1", class(dat))
 #'
-#' polish.Meta_tableTab1 <- function(dat){
+#' polish.Tagged_tableTab1 <- function(dat){
 #'  #...
 #' }
 #'
 #' polish(dat)
 #' }
-meta_table <- function(
+tag_table <- function(
   dat,
   meta
 ){
@@ -56,16 +67,14 @@ meta_table <- function(
 
   if (is_any_class(
     dat,
-    c('Meta_table', 'Stack_table', 'Mash_table', 'Comp_table'))
+    c('Tagged_table', 'Stacked_table', 'Mashed_table', 'Composite_table'))
   ){
     res <- data.table::copy(dat)
   } else {
     res <- data.table::copy(data.table::as.data.table(dat))
   }
 
-  data.table::setattr(res, 'meta', meta)
-
-  class(res) <- union('Meta_table', class(res))
+  res <- Tagged_table(res, meta)
   return(res)
 }
 
@@ -73,12 +82,12 @@ meta_table <- function(
 
 
 #' @export
-print.Meta_table <- function(dat, ...){
+print.Tagged_table <- function(dat, ...){
   dd    <- data.table::copy(dat)
   meta  <- attr(dd, 'meta')
 
   if(!is.null(meta)){
-    cat(make_meta_table_print_title(meta), '\n\n')
+    cat(make_tag_table_print_title(meta), '\n\n')
   }
 
   NextMethod(print, dd, ...)
@@ -128,7 +137,7 @@ tt_meta <- function(
       is.null(footer))
   ){
     stop(
-      'Meta_tables must at least contain one of the following:
+      'Tagged_tables must at least contain one of the following:
       table_id, title, longtitle, subtitle or footer'
     )
   }
@@ -173,7 +182,7 @@ is_valid.TT_meta <- function(dat){
 
 
 #' @export
-make_meta_table_print_title <- function(meta, show_subtitle = TRUE){
+make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
   assert_that(is.flag(show_subtitle))
   meta %assert_class% 'TT_meta'
 
@@ -229,7 +238,7 @@ assign_tt_meta <- function(dat, assignment){
     length(names(assignment)), 1L
   ))
 
-  if(inherits(dat, 'Meta_table')){
+  if(inherits(dat, 'Tagged_table')){
     res <- data.table::copy(dat)
     ass <- assignment[[1]]
 
@@ -240,7 +249,7 @@ assign_tt_meta <- function(dat, assignment){
     }
 
   } else{
-    res <- meta_table(
+    res <- tag_table(
       dat,
       meta = do.call(tt_meta, assignment)
     )
@@ -253,11 +262,11 @@ assign_tt_meta <- function(dat, assignment){
 `meta<-` <- function(dat, value){
   if(is.null(value)){
     res <- data.table::copy(dat)
-    class(res) <- class(res)[class(res) != 'Meta_table']
+    class(res) <- class(res)[class(res) != 'Tagged_table']
     attr(res, 'meta', NULL)
 
   } else{
-    res <- meta_table(dat, value)
+    res <- tag_table(dat, value)
   }
 
   return(res)

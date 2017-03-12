@@ -1,11 +1,21 @@
+Stacked_table <- function(
+  dat,
+  spacing
+){
+  res <- data.table::copy(dat) %>%
+    data.table::setattr('class', c('Stacked_table', 'list')) %>%
+    data.table::setattr('spacing', spacing)
+
+  return(res)
+}
 #' Stack tables
 #'
 #' side by side or on top of each others
 #'
 #' @param ... A list whos elements can of class
-#'   \code{\link{Meta_table}},
-#'   \code{\link{Mash_table}},
-#'   \code{\link{Comp_table}},
+#'   \code{\link{Tagged_table}},
+#'   \code{\link{Mashed_table}},
+#'   \code{\link{Composite_table}},
 #'   or anything that can be coerced to a \code{data.frame} with
 #'   \code{as.data.frame}
 #'
@@ -36,7 +46,7 @@ stack_table_list <- function(
   ensure_data_table <- function(x){
     if(is_any_class(
       x,
-      c('Meta_table', 'Comp_table', 'Mash_table', 'data.table'))
+      c('Tagged_table', 'Composite_table', 'Mashed_table', 'data.table'))
     ){
       return(x)
     } else {
@@ -46,22 +56,23 @@ stack_table_list <- function(
 
   res <- lapply(tables, ensure_data_table)
 
-  attr(res, 'spacing') <- spacing
-  class(res) <- c('Stack_table', 'list')
+  res <- Stacked_table(
+    dat = res,
+    spacing = spacing
+  )
 
   if(!is.null(meta)){
-    res <- meta_table(res, meta = meta)
-  }
-
-  if(!is.null(meta)){
-    res <- meta_table(res, meta = meta)
+    res <- tag_table(res, meta = meta)
   }
 
   return(res)
 }
 
+
+
+
 #' @export
-print.Stack_table <- function(dat){
+print.Stacked_table <- function(dat){
   width <- getOption("width")-sqrt(getOption("width"))
   sep   <- paste(rep('#', width), collapse = '')
   sep2  <- paste(rep('_', width), collapse = '')

@@ -4,9 +4,9 @@ outdir <- file.path(test_path(), 'test_out')
 
 
 test_that('save_xlsx mash_table', {
-  #* @testing save_xlsx.Mash_table
-  #* @testing write_worksheet.Mash_table
-  #* @testing as_workbook.Mash_table
+  #* @testing save_xlsx.Mashed_table
+  #* @testing write_worksheet.Mashed_table
+  #* @testing as_workbook.Mashed_table
 
   tdat1 <- data.frame(
     numbers = c(1.434, 190.3, 228.311, 5.210, 4321543),
@@ -26,7 +26,7 @@ test_that('save_xlsx mash_table', {
 
 
   of2 <- file.path(test_path(), 'test_out', 'mash_table_meta.xlsx')
-  st1_meta <- meta_table(
+  st1_meta <- tag_table(
     st1,
     tt_meta(
       table_id = 'tid',
@@ -41,9 +41,9 @@ test_that('save_xlsx mash_table', {
 
 
 test_that("xlsx output for comp_tables works", {
-  #* @testing save_xlsx.Comp_table
-  #* @testing write_worksheet.Comp_table
-  #* @testing as_workbook.Comp_table
+  #* @testing save_xlsx.Composite_table
+  #* @testing write_worksheet.Composite_table
+  #* @testing as_workbook.Composite_table
 
   # Generate test data
   tdat <- list()
@@ -60,7 +60,7 @@ test_that("xlsx output for comp_tables works", {
     multinames = c('tab1', 'tab2', 'tab3')
   ))
 
-  pub_tres <- meta_table(
+  pub_tres <- tag_table(
     tres,
     tt_meta(
       't1',
@@ -104,10 +104,10 @@ test_that("xlsx output for comp_tables works", {
 
 
 test_that("xlsx output for stack_tables works", {
-  #* @testing save_xlsx.Stack_table
-  #* @testing write_worksheet.Stack_table
-  #* @testing as_workbook.Stack_table
-  #* @testing write_worksheet.Meta_table
+  #* @testing save_xlsx.Stacked_table
+  #* @testing write_worksheet.Stacked_table
+  #* @testing as_workbook.Stacked_table
+  #* @testing write_worksheet.Tagged_table
 
   # Generate test data
   tm <- tt_meta(
@@ -121,7 +121,7 @@ test_that("xlsx output for stack_tables works", {
     x = letters[1:5],
     y = letters[10:14]
   )
-  expect_silent(tmeta <- meta_table(tdat, meta = tm))
+  expect_silent(tmeta <- tag_table(tdat, meta = tm))
 
 
   tdat1 <- data.frame(

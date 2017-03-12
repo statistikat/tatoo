@@ -1,3 +1,16 @@
+Composite_table <- function(
+  dat,
+  multinames
+){
+  res <- data.table::copy(dat) %>%
+    data.table::as.data.table() %>%
+    data.table::setattr(
+      'class', c('Composite_table', 'data.table', 'data.frame')) %>%
+    data.table::setattr('multinames', multinames)
+
+  return(res)
+}
+
 #' Composite Table
 #'
 #' @param ... \code{comp_table} only:
@@ -7,7 +20,7 @@
 #'   \code{\link{merge}} on the columns specified in by, otherwise the tables
 #'   will be combined with \code{\link{cbind}}.
 #' @param meta a \code{\link{TT_meta}} object. If speciefied, the resulting
-#'   \code{comp_table} will be wrapped in a \code{\link{meta_table}}.
+#'   \code{comp_table} will be wrapped in a \code{\link{tag_table}}.
 #'
 #' @return
 #' @export
@@ -107,21 +120,23 @@ comp_table_list <- function(
 
 
   # Return
-    res <- as.data.table(res)
-    class(res) <- union('Comp_table', class(res))
-    attr(res, 'multinames') <- table_multinames
+    res <- Composite_table(
+      res,
+      multinames = table_multinames
+    )
+
 
     if(!is.null(meta)){
-      res <- meta_table(res, meta = meta)
+      res <- tag_table(res, meta = meta)
     }
 
-    return(res)
+  return(res)
 }
 
 
 
 #' @export
-print.Comp_table <- function(dat, row.names = FALSE, ...){
+print.Composite_table <- function(dat, row.names = FALSE, ...){
   assert_that(has_attr(dat, 'multinames'))
 
   # Pad columns
@@ -183,7 +198,7 @@ print.Comp_table <- function(dat, row.names = FALSE, ...){
 
 
 #' @export
-as.data.table.Comp_table <- function(
+as.data.table.Composite_table <- function(
   dat,
   multinames = TRUE,
   sep = '.'
@@ -218,4 +233,34 @@ composite_name <- function(x, y, sep){
   } else {
     paste(x, y, sep = sep)
   }
+}
+
+
+
+#' Set the multinames attribute of a Composite_table
+#'
+#' @param dat a Composite_table or data.frame
+#' @param value a named character vector (see example)
+#'
+#' @export
+`multinames<-` <- function(dat, value){
+  assert_that(is.data.frame(dat))
+  assert_that(identical(
+    max(value),
+    ncol(dat)
+  ))
+
+  dd <- data.table::copy(dat)
+  setattr(dd, 'multinames', value)
+
+  if(!is_class(dd, 'Composite_table')){
+    dd <- data.table:::as.data.table.data.frame(dd)
+    data.table::setattr(dd, 'class', union('Composite_table', class(dd)))
+  }
+
+  return(Composite_table)
+
+
+
+
 }

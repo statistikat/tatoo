@@ -56,7 +56,8 @@ df2 <- iris %>%
 mt <- mash_table(df1, df2)
 rmash(mt)
 rmash(df1, df2)
-rmash(df1, df2, insert_blank_row = FALSE)
+rmash(df1, df2, insert_blank_row = TRUE)
+as_workbook(mt, se)
 ```
 
 ## Mash by collumn
@@ -113,7 +114,7 @@ ex_meta <- tt_meta(
 )
 
 # Create metadata object
-res <- meta_table(
+res <- tag_table(
   df1,
   meta = ex_meta
 )

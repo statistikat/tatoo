@@ -1,4 +1,4 @@
-context('Mash_table')
+context('Mashed_table')
 
 tdat1 <- data.frame(
   numbers = c(1.434, 190.3, 228.311, 5.210, 4321543),
@@ -41,7 +41,7 @@ test_that('mash_table: stacking tables by row works', {
 
 
   #* @testing mash_rows
-  #* @testing as.data.table.Mash_table
+  #* @testing as.data.table.Mashed_table
 
   # Testing if row mashing works
     ## Input must be a mash_table
@@ -71,7 +71,7 @@ test_that('mash_table: stacking tables by row works', {
 
 test_that('mash_table: stacking tables by col works', {
   #* @testing mash_cols
-  #* @testing as.data.table.Mash_table
+  #* @testing as.data.table.Mashed_table
 
   # Creating stack tables
   expect_silent(st1 <- mash_table(tdat1, tdat2, rem_ext = '_xt'))
