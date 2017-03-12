@@ -1,8 +1,14 @@
-#' As Workbook
+#' Convert an object to a workbook
 #'
-#' @param ...
+#' see \code{methods(as_workbook)} and the closely related
+#' \code{methods(write_worksheet)}
 #'
-#' @return
+#' @param dat see \code{methods(as_workbook)} and the related
+#'   \code{methods(write_worksheet)}
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param ... passed on to \code{write_worksheet}
+#'
+#' @return an openxlsx \code{\link[openxlsx]{Workbook}} object
 #' @export
 #'
 #' @examples
@@ -18,6 +24,9 @@ as_workbook <- function(
 }
 
 
+
+
+#' @rdname as_workbook
 #' @export
 as_workbook.default <- function(
   dat,
@@ -36,12 +45,17 @@ as_workbook.default <- function(
 
 
 
+#' Convert a Meta_table to an openxlsx Workbook
+#'
 #' @export
+#' @rdname as_workbook
 as_workbook.Meta_table <- function(
   dat,
-  sheet = attr(dat, 'meta')$table_id,
+  sheet = attr(dat, 'meta')$table_id %||% 1L,
   ...
 ){
+  print(sheet)
+
   wb <- openxlsx::createWorkbook()
   wb <- write_worksheet(dat, wb, sheet = sheet, ...)
   return(wb)
@@ -49,6 +63,15 @@ as_workbook.Meta_table <- function(
 
 
 
+#' @param mash_method either \code{row] or \code{col}
+#' @param insert_blank_row Only for \code{\link{Mash_table}} and only when
+#'   mash_method is 'row': logical. Insert a blank row between row-pairs
+#' @param sep_height Only for \code{\link{Mash_table}}: if
+#'   \code{insert_blank_row} is \code{FALSE}, the row height of the first row of
+#'   each row-pair, if \code{insert_blank_row} is \code{TRUE} the row height of
+#'   the blank row.
+#'
+#' @rdname as_workbook
 #' @export
 as_workbook.Mash_table <- function(
   dat,
@@ -79,14 +102,12 @@ as_workbook.Mash_table <- function(
 
 
 
-#' Convert TT_report to openxlsx Workbook
+
+#' When converting a TT_report, which is a named \code{list} with an additional
+#' class attribute, sheet names of the resulting \code{Workbook} will be taken
+#' from the element names of TT_report.
 #'
-#' Converts a TT_report to a an \code{openxlsx::Workbook} object. Sheet names
-#' will be taken from the element names of TT_report
-#' (\code{names(yourTT_report)}).
-#'
-#' @param dat a pub report
-#'
+#' @rdname as_workbook
 #' @export
 as_workbook.TT_report <- function(dat, ...){
   wb <- openxlsx::createWorkbook()
