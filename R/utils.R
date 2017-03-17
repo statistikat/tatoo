@@ -2,15 +2,34 @@
 
 #' Sanitze excel sheet names
 #'
-#' @param x
+#' Convert a vactor to valid excel sheet names by:
+#' * trimming names down to 31 characters,
+#' * ensuring each element of the vector is unique,
+#' * and removing the illegal characters \code{ \ / * [ ] : ?}.
 #'
-#' @return
+#' @param x a vector (or anything that can be coerced to one via
+#'   \code{as.character()}).
+#' @param replace a scalar character to replace illegal characters with
+#'
+#' @return a character vector of valid excel sheet names
 #' @export
+#' @md
 #'
 #' @examples
-sanitize_excel_sheet_names <- function(x){
+#'
+#' sanitize_excel_sheet_names(
+#'   c("a very: long : vector? containing some illegal characters",
+#'     "a very: long : vector? containing some illegal characters")
+#' )
+#'
+#'   # [1] "a very_ long  vector_ containi0" "a very_ long  vector_ containi1"
+sanitize_excel_sheet_names <- function(x, replace = '_'){
+  assert_that(purrr::is_vector(x))
+  assert_that(purrr::is_scalar_character(replace))
+
+  x <- as.character(x)
   invalid_chars_regex <- "\\[|\\]|\\*|\\?|:|\\/|\\\\"
-  res <- stringi::stri_replace_all_regex(x, invalid_chars_regex, '_')
+  res <- stringi::stri_replace_all_regex(x, invalid_chars_regex, replace)
   res <- stringi::stri_sub(res, 1, 31)
 
   for(el in unique(res)){
@@ -23,8 +42,12 @@ sanitize_excel_sheet_names <- function(x){
     }
   }
 
+  assert_that(is.character(res))
+  assert_that(hammr::all_unique(res))
   return(res)
 }
+
+
 
 
 get_final_wb_row <- function(wb, sheet){
