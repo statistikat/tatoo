@@ -73,32 +73,8 @@ stack_table_list <- function(
 
 
 #' @export
-print.Stacked_table <- function(dat){
-  tables_char <- lapply(dat, function(x) capture.output(print(x)))
-
-  # Get width for print output
-    tables_width <- tables_char %>%
-      purrr::map(function(x) purrr::map_int(x, nchar)) %>%
-      unlist() %>%
-      max()
-    assert_that(purrr::is_scalar_integer(output_width))
-
-
-  # Define sepperators
-    indent <- ' `  '
-    sep    <- paste(rep('`', tables_width + nchar(indent) + 1), collapse = '')
-    sep2   <- paste(rep('_', tables_width), collapse = '')
-
-
-
-  cat('', sep, '\n')
-  for(i in seq_along(tables)){
-    lapply(tables[[i]], function(x) cat(indent, x, '\n'))
-    if(i < length(tables)){
-      cat(indent, sep2, '\n')
-    }
-  }
-  cat(' `\n', sep, '\n')
+print.Stacked_table <- function(dat, ...){
+  print_several_tables(dat, indent = ' `  ', sep1 = '`', sep2 = '_')
 }
 
 

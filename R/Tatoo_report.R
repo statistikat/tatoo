@@ -15,6 +15,18 @@ tatoo_report <- function(dat){
 }
 
 
+#' @export
+compile_report <- function(...){
+  compile_report_list(list(...))
+}
+
+
+
+#' @export
+compile_report_list <- function(dat){
+  tatoo_report(dat)
+}
+
 
 
 #' @export
@@ -37,11 +49,9 @@ is_valid.Tatoo_report <- function(dat){
 
 
 #' @export
-print.Tatoo_report <- function(
-  dat,
-  ...){
-
-  for(el in dat){
-    print(el, ...)
-  }
+print.Tatoo_report <- function(dat, ...){
+  classes <- lapply(dat, function(x) class(x)[[1]]) %>%
+    unlist() %>%
+    sprintf('<%s> \n', .)
+  print_several_tables(dat, indent = "::  ", sep1 = 0, sep2 = 2, headings = classes)
 }
