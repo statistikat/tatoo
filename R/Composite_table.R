@@ -26,7 +26,7 @@ Composite_table <- function(
   return(res)
 }
 
-#' Composite Table
+#' Compose Tables
 #'
 #' @param ... \code{comp_table} only:
 #' @param multinames Titles of subtables (one for each element of
@@ -37,10 +37,8 @@ Composite_table <- function(
 #' @param meta a \code{\link{TT_meta}} object. If speciefied, the resulting
 #'   \code{comp_table} will be wrapped in a \code{\link{tag_table}}.
 #'
-#' @return
+#' @return a \code{Composite_table} object.
 #' @export
-#'
-#' @examples
 comp_table <- function(
   ...,
   multinames,
@@ -60,15 +58,11 @@ comp_table <- function(
 
 
 
-#' Composite Table
-#'
 #' @param tables \code{comp_table_list} only: A list of data.frames with the same number of rows
 #'
-#' @return
+#' @return a
 #' @rdname comp_table
 #' @export
-#'
-#' @examples
 comp_table_list <- function(
   tables,
   multinames = names(tables),

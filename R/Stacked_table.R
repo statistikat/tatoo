@@ -22,7 +22,8 @@ Stacked_table <- function(
 
 #' Stack tables
 #'
-#' side by side or on top of each others
+#' Stack tables on top of each other. This can be used to print several tables
+#' on one Excel sheet with \code{as_workbook} or \code{save_xlsx}.
 #'
 #' @param ... A list whos elements can of class
 #'   \code{\link{Tagged_table}},

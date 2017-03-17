@@ -20,22 +20,9 @@ Tagged_table <- function(
   return(res)
 }
 
-#' Umbrella Class for Publication Tables
+#' Tag tables
 #'
-#' The \code{tag_table} class does very little by itself except adding a
-#' metadata attributes to a \code{data.frame} and providing a structure for how
-#' you should procede when creating new reports for publication within the gv*
-#' family of packages.
-#'
-#' A publication table should be a table that is nearly publication ready. It
-#' should contain (only) the data desired in the final publication document, but
-#' still have the original variable names and levels and accuracy (no rounding)
-#' as in the analysis step. To achive the final publication ready table the
-#' function \code{\link{polish}} should be used.
-#'
-#' In practice you will want to create a subclasses of \link{tag_table} for
-#' for each distinct table in your report and implement your own polish methods
-#' for them. Look at the source code of the \code{gvroad} package for examples.
+#' Add metadata to a \code{Tatoo_table} or \code{data.frame}.
 #'
 #' @param dat A \code{Tagged_table}, \code{Mashed_table}, \code{\link{Stacked_table}},
 #'   or anything that can be coerced to a \code{\link{data.table}} with
@@ -121,20 +108,22 @@ print.Tagged_table <- function(dat, ...){
 
 
 
-
-#' Pub Table Metadata
+#' Tagged Table metadata
 #'
-#' Create a pub table metadata object
+#' Create a taged table metadata object
 #'
 #' @param table_id A vector of length 1
 #' @param title A vector of length 1
 #' @param longtitle A vector. If length >1 the title will be displayed in
 #'   several rows
 #' @param subtitle A vector
-#' @param footer A vector
+#' @param footer A vector. If length >1 the title will be displayed in
+#'   several rows
 #' @param ... Additional arguments that will be contained in the final object.
-#'   they are passed on to list. This is only usefull if you develop a package
-#'   that wants to want to create subclasses of tt_meta.
+#'   they are passed on to \code{list}. This is usefull if you develop a package
+#'   that wants to want to subclasses \code{tt_meta}.
+#'
+#' @return a \code{TT_meta} object.
 #'
 #' @export
 tt_meta <- function(

@@ -18,18 +18,15 @@ Mashed_table <- function(
 
 
 
-#' Mash Table
+#' Mash Tables
 #'
-#' Stack tables are designed to make it easy to put together multidimensional
+#' Mash tables are designed to make it easy to put together multidimensional
 #' tables from two data.frames. An example where this might be useful is
 #' if you have a data.frame of numeric values, and a second data.frame of
 #' associated standard errors.
 #'
-#' Stack table provides a framework to stack those two data.frames together
-#' into one data.frame with alternating rows or columns. You can then output the
-#' stacked table as latex \code{\link{print_tex.Mashed_table}}, as xlsx
-#' \code{\link{save_as.Mashed_table}} or simply as data.table or data.frame
-#' via \code{as.data.table} or \code{as.data.frame}.
+#' Mash table provides a framework to mash those two data.frames together
+#' into one data.frame with alternating rows or columns.
 #'
 #' If your goal is to present formated tables as latex or xlsx, you  should aslo
 #' look into \code{\link{df_format}}, \code{\link{df_round}} and
@@ -245,7 +242,6 @@ as.data.table.Mashed_table <- function(
 
 #' Title
 #'
-#' Stacking uses \code{data.table}s internally,
 #'
 #' @param dat
 #' @param mash_method
