@@ -1,12 +1,3 @@
-#' A list of Tagged_tables
-#'
-#' A Pub report is a list of Tagged_tables. Right now this class is mostly a
-#' placeholder, but in the future it will support various export methods.
-#'
-#' @param dat
-#'
-#' @return An object of class 'Tatoo_report'
-#' @export
 tatoo_report <- function(dat){
   res <- data.table::copy(dat)
   class(res) <- union('Tatoo_report', class(res))
@@ -15,6 +6,20 @@ tatoo_report <- function(dat){
 }
 
 
+#' Compile tables into a report
+#'
+#' Compiles tables into a \code{Tatoo_report}. A \code{Tatoo_report} is just
+#' a simple list object, but with special \code{print}, \code{as_workbook},
+#' and \code{save_xlsx} methods. This makes it easy to save an arbitrary
+#' number of tables to a single Excel workbook.
+#'
+#' @param dat for \code{compile_table_list}: A list of containing either
+#'   \code{Tatoo_table} or \code{data.frame} objects.
+#' @param ... for \code{compile_table}: individual \code{Tatoo_table} or
+#'   \code{data.frame} objects
+#'
+#' @rdname compile_report
+#' @return An object of class \code{Tatoo_report}
 #' @export
 compile_report <- function(...){
   compile_report_list(list(...))
@@ -23,6 +28,7 @@ compile_report <- function(...){
 
 
 #' @export
+#' @rdname compile_report
 compile_report_list <- function(dat){
   tatoo_report(dat)
 }
@@ -48,10 +54,28 @@ is_valid.Tatoo_report <- function(dat){
 
 
 
+#' Printing Tatoo Reports
+#'
+#' @param dat A \code{Tatoo_report}
+#' @param ... passed on to \code{\link{print}}
+#'
+#' @return \code{dat} (invisibly)
+#'
 #' @export
 print.Tatoo_report <- function(dat, ...){
-  classes <- lapply(dat, function(x) class(x)[[1]]) %>%
+  classes <- dat %>%
+    lapply(function(x) class(x)[[1]]) %>%
     unlist() %>%
     sprintf('<%s> \n', .)
-  print_several_tables(dat, indent = "::  ", sep1 = 0, sep2 = 2, headings = classes)
+
+  print_several_tables(
+    dat,
+    indent = "::  ",
+    sep1 = 0,
+    sep2 = 2,
+    headings = classes,
+    ...
+  )
+
+  invisible(dat)
 }

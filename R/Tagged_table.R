@@ -92,6 +92,13 @@ tag_table <- function(
 
 
 
+#' Printing Tagged Tables
+#'
+#' @param dat A \code{Tagged_table}
+#' @param ... passed on to \code{\link{print}}
+#'
+#' @return \code{dat} (invisibly)
+#'
 #' @export
 print.Tagged_table <- function(dat, ...){
   dd    <- data.table::copy(dat)
@@ -107,6 +114,8 @@ print.Tagged_table <- function(dat, ...){
     footer <- paste(meta$footer, collapse = '\n')
     cat('\n', footer, '\n')
   }
+
+  invisible(dat)
 }
 
 

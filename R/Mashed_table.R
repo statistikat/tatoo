@@ -407,13 +407,17 @@ mash_cols <- function(
 
 
 
-
+#' Printing Mashed Tables
+#'
+#' @param dat a \code{Mashed_table}
+#' @param ... passed on to \code{\link{print}}
+#'
+#' @return \code{dat} (invisibly)
+#'
 #' @export
-print.Mashed_table <- function(dat, row.names = FALSE, ...){
-  print(as.data.table(dat),
-    row.names = row.names,
-    ...
-  )
+print.Mashed_table <- function(dat, ...){
+  print(as.data.table(dat), ...)
+  invisible(dat)
 }
 
 

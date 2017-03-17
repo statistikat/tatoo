@@ -150,8 +150,22 @@ comp_table_list <- function(
 
 
 
+#' Printing Composite Tables
+#'
+#' @param dat A \code{Tagged_table}
+#' @param right \code{logical}, indicating whether or not strings should be
+#'   right-aligned. The default is left-alignment (the opposite of the
+#'   standard \code{print.data.frame} method.
+#' @param ... passed on to \code{\link{print}}
+#'
+#' @return \code{dat} (invisibly)
+#'
 #' @export
-print.Composite_table <- function(dat, row.names = FALSE, ...){
+print.Composite_table <- function(
+  dat,
+  right = FALSE,
+  ...
+){
   assert_that(has_attr(dat, 'multinames'))
 
   # Pad columns
@@ -205,7 +219,7 @@ print.Composite_table <- function(dat, row.names = FALSE, ...){
     res2 <- unlist(tmp, recursive = FALSE)
     res2 <- as.data.frame(res2, fix.empty.names = FALSE, optional = TRUE)
 
-    print(res2, row.names = FALSE, right = FALSE)
+    print(res2, right = right, ...)
 
     invisible(dat)
 }

@@ -39,6 +39,8 @@ test_that("Tatoo_report works as expected", {
 
 test_that("Tatoo_report print method", {
 #* @testing print.Tatoo_report
+#* @testing compile_report
+#* @testing compile_report_list
 
   tm <- tt_meta(
     table_id = 't001',
@@ -86,5 +88,4 @@ test_that("Tatoo_report print method", {
   tres <- compile_report(tcomp, tdat1, tmeta, tstack, tmeta, tmash)
 
   expect_output(print(tres))
-
 })

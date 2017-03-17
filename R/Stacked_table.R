@@ -72,9 +72,24 @@ stack_table_list <- function(
 
 
 
+#' Printing Stacked Tables
+#'
+#' @param dat A \code{Stacked_table}
+#' @param ... passed on to \code{\link{print}}
+#'
+#' @return \code{dat} (invisibly)
+#'
 #' @export
 print.Stacked_table <- function(dat, ...){
-  print_several_tables(dat, indent = ' `  ', sep1 = '`', sep2 = '_')
+  print_several_tables(
+    dat,
+    indent = ' `  ',
+    sep1 = '`',
+    sep2 = '_',
+    ...
+  )
+
+  invisible(dat)
 }
 
 
