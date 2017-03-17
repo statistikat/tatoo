@@ -2,9 +2,9 @@ Package: tatoo
 Type: Package
 Title: Provide tools for outputing formatted table in excel (and in the future
     latex)
-Version: 0.0.4
-Authors@R: person("Stefan", "Fleck", email = "stefan.fleck@statistik.gv.at", role = c("aut", "cre"))
-Maintainer: Stefan Fleck <stefan.fleck@statistik.gv.at>
+Version: 0.0.5
+Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
+Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description: 
 License: MIT + file LICENSE
 LazyData: TRUE
@@ -20,6 +20,9 @@ Imports:
     stringi
 Suggests:
     testthat,
-    taboo
+    taboo,
+    knitr,
+    rmarkdown
 RoxygenNote: 6.0.1
 Encoding: UTF-8
+VignetteBuilder: knitr
