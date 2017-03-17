@@ -11,12 +11,18 @@ Composite_table <- function(
     names = names(multinames)
   )
 
-  classes <- c('Composite_table', 'data.table', 'data.frame')
-
   res <- data.table::copy(dat) %>%
-    data.table::as.data.table()
-  data.table::setattr(res, 'class', classes)
+    data.table::as.data.table() %>%
+    tatoo_table()
+
+  data.table::setattr(res, 'class', union('Composite_table', class(res)))
   data.table::setattr(res, 'multinames', multinames)
+
+  assert_that(identical(
+    class(res),
+    c('Composite_table', 'Tatoo_table', 'data.table', 'data.frame'))
+  )
+
   return(res)
 }
 

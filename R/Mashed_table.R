@@ -8,8 +8,9 @@ Mashed_table <- function(
     identical(mash_method, 'col')
   )
 
-  res <- data.table::copy(dat)
-  data.table::setattr(res, 'class', c('Mashed_table', 'list'))
+  res <- data.table::copy(dat) %>%
+    tatoo_table()
+  data.table::setattr(res, 'class', union('Mashed_table', class(res)))
   data.table::setattr(res, 'mash_method', mash_method)
   return(res)
 }
