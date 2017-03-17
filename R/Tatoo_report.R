@@ -5,11 +5,11 @@
 #'
 #' @param dat
 #'
-#' @return An object of class 'TT_report'
+#' @return An object of class 'Tatoo_report'
 #' @export
-tt_report <- function(dat){
+tatoo_report <- function(dat){
   res <- data.table::copy(dat)
-  class(res) <- union('TT_report', class(res))
+  class(res) <- union('Tatoo_report', class(res))
   hammr::assert_valid(res)
   return(res)
 }
@@ -18,7 +18,7 @@ tt_report <- function(dat){
 
 
 #' @export
-is_valid.TT_report <- function(dat){
+is_valid.Tatoo_report <- function(dat){
   res <- list()
   check_col_class <- function(x) 'Tagged_table' %in% class(x)
 
@@ -32,7 +32,7 @@ is_valid.TT_report <- function(dat){
 
 
 #' @export
-print.TT_report <- function(
+print.Tatoo_report <- function(
   dat,
   ...){
 
