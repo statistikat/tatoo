@@ -20,10 +20,15 @@ tatoo_report <- function(dat){
 #' @export
 is_valid.Tatoo_report <- function(dat){
   res <- list()
-  check_col_class <- function(x) 'Tagged_table' %in% class(x)
+
+  is_valid_col_class <- function(x) {
+    hammr::is_any_class(x, c('Tatoo_table', 'data.frame'))
+  }
 
   res$class     <- 'list' %in% class(dat)
-  res$elclasses <- all(unlist(lapply(dat, check_col_class)))
+  res$elclasses <- lapply(dat, is_valid_col_class) %>%
+    unlist() %>%
+    all()
 
   all_with_warning(res)
 }
