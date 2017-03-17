@@ -101,13 +101,13 @@ as_workbook.Mashed_table <- function(
 
 
 
-#' When converting a TT_report, which is a named \code{list} with an additional
+#' When converting a Tatoo_report, which is a named \code{list} with an additional
 #' class attribute, sheet names of the resulting \code{Workbook} will be taken
-#' from the element names of TT_report.
+#' from the element names of Tatoo_report.
 #'
 #' @rdname as_workbook
 #' @export
-as_workbook.TT_report <- function(dat, ...){
+as_workbook.Tatoo_report <- function(dat, ...){
   wb <- openxlsx::createWorkbook()
 
   for(i in seq_along(dat)){
