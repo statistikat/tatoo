@@ -26,8 +26,8 @@
 sanitize_excel_sheet_names <- function(x, replace = '_'){
   assert_that(purrr::is_vector(x))
   assert_that(purrr::is_scalar_character(replace))
-
   x <- as.character(x)
+
   invalid_chars_regex <- "\\[|\\]|\\*|\\?|:|\\/|\\\\"
   res <- stringi::stri_replace_all_regex(x, invalid_chars_regex, replace)
   res <- stringi::stri_sub(res, 1, 31)
@@ -43,7 +43,7 @@ sanitize_excel_sheet_names <- function(x, replace = '_'){
   }
 
   assert_that(is.character(res))
-  assert_that(hammr::all_unique(res))
+  assert_that(hammr::all_unique(res, silent = TRUE))
   return(res)
 }
 
