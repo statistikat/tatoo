@@ -86,7 +86,7 @@ tres1 <- tag_table(df1, tmeta)
 # A meta table should be a data.table
   expect_identical(
     class(tres1),
-    c("Tagged_table", "data.table", "data.frame")
+    c("Tagged_table", "Tatoo_table", "data.table", "data.frame")
   )
 
 # Creating a meta-table from a meta table should replace the meta-attribute
@@ -96,7 +96,7 @@ tres1 <- tag_table(df1, tmeta)
   tres2 <- tag_table(tres1, meta = newmeta)
   expect_identical(
     class(tres2),
-    c("Tagged_table", "data.table", "data.frame")
+    c("Tagged_table", "Tatoo_table", "data.table", "data.frame")
   )
 
   expect_identical(
@@ -129,7 +129,7 @@ test_that("metadata replacement functions work", {
 
   expect_identical(
     class(tres),
-    c("Tagged_table", "data.table", "data.frame")
+    c("Tagged_table", 'Tatoo_table', "data.table", "data.frame")
   )
 
   expect_identical(
@@ -150,7 +150,7 @@ test_that("metadata replacement functions work", {
 
   expect_identical(
     class(tres),
-    c("Tagged_table", "data.table", "data.frame")
+    c("Tagged_table", 'Tatoo_table', "data.table", "data.frame")
   )
 
   expected_meta <- tt_meta(
@@ -177,7 +177,7 @@ test_that("metadata replacement functions work", {
 
   expect_identical(
     class(tres),
-    c('data.table', 'data.frame')
+    c('Tatoo_table', 'data.table', 'data.frame')
   )
 
 
