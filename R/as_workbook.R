@@ -326,8 +326,8 @@ write_worksheet.Mashed_table <- function(
   append = FALSE,
   start_row = 1L,
   mash_method = 'row',
-  insert_blank_row = TRUE,
-  sep_height = 30,
+  insert_blank_row = FALSE,
+  sep_height = 24,
   ...
 ){
   # Preconditions
