@@ -39,6 +39,7 @@ mash_table <- function(
 
 
 
+
 #' @export
 #' @rdname mash_table
 mash_table_list <- function(
@@ -216,6 +217,8 @@ as.data.frame.Mashed_table <- function(dat, ...){
 }
 
 
+
+
 #' @param ... either several \code{data.frames} or a single \code{Mashed_table}.
 #' @param rem_ext
 #' @param insert_blank_row whether or not to insert a blank row between mash paris
@@ -287,152 +290,6 @@ cmash <- function(
 
 
 
-# Utility funs -----------------------------------------------------------------
-mash_rows <- function(dat, insert_blank_row = FALSE){
-  dat %assert_class% 'Mashed_table'
-  assert_that(is.flag(insert_blank_row))
-
-
-  dd <- lapply(dat, hammr::df_typecast_all, from = 'factor', to = 'character')
-
-  # flatten
-    if(insert_blank_row){
-      blank_rowks <- rep('', nrow(dd[[1]]) * ncol(dd[[1]])) %>%
-        `dim<-`(dim(dd[[1]])) %>%
-        as.data.table()
-
-      dl <- c(dd, list(blank_rowks))
-
-      res <- data.table::rbindlist(dl)
-    } else {
-      res <- data.table::rbindlist(dd)
-    }
-
-
-  for(i in which(unlist(lapply(dat[[1]], is.factor)))){
-    res[[i]] <- as.factor(res[[i]])
-  }
-
-
-  # Determine output row order ("mash")
-    roworder <- seq_len((length(dat) + insert_blank_row) * nrow(dd[[1]]))
-    roworder <- matrix(
-      roworder,
-      nrow = nrow(dd[[1]]),
-      ncol = (length(dd) + insert_blank_row)
-    )
-    roworder <- as.vector(t(roworder))
-
-
-  # Post condtions
-    assert_that(identical(
-      max(roworder),
-      nrow(res)
-    ))
-
-
-  # Output
-    res <- res[roworder]
-
-    ## Remove trailing blank line
-    if(insert_blank_row){
-      res <- res[-nrow(res)]
-    }
-
-    return(res)
-}
-
-
-
-
-mash_cols <- function(
-  dat,
-  by = NULL,
-  suffixes = names(dat)
-){
-  # Preconditions
-    dat %assert_class% 'Mashed_table'
-    assert_that(
-      is.null(by) ||
-      is.character(by)
-    )
-
-    if (is.null(names(dat)) && is.null(suffixes)) {
-      suffixes <- rep('', length(dat))
-    } else {
-      assert_that(length(suffixes) %identical% length(dat))
-    }
-
-
-  # Prepare inputs
-    dl <- lapply(dat, function(x){
-      data.table::copy(x)
-    })
-
-    for(i in seq_along(dl)){
-      new_names <- names(dl[[i]])
-      new_names[!new_names %in% by] <- paste0(
-          new_names[!new_names %in% by],
-          suffixes[[i]]
-      )
-      data.table::setnames(dl[[i]], new_names)
-    }
-
-
-  # Flatten
-    if (is.null(by)){
-      res <- do.call(cbind, dl)
-    } else {
-      merger <- function(x, y)  {
-        suppressWarnings(
-          merge.data.frame(
-            x,
-            y,
-            by = by,
-            all = TRUE,
-            sort = FALSE,
-            suffixes = c('', ''))
-        )
-      }
-      res <- Reduce(merger, dl) %>%
-        as.data.table()
-    }
-
-  # Determine output col order
-    colorder <- seq_len(
-      length(dat) * (ncol(dat[[1]]) - length(by))
-    )
-
-    colorder <- matrix(
-      colorder,
-      nrow = (ncol(dat[[1]]) - length(by)),
-      ncol = length(dat)
-    )
-
-    colorder <- as.vector(t(colorder))
-
-    if(length(by) > 0){
-      i_by <- seq_along(by)
-      colorder <- colorder + max(i_by)
-      colorder <- c(i_by, colorder)
-    }
-
-
-    assert_that(identical(
-      max(colorder),
-      ncol(res)
-    ))
-
-
-  # Output
-  data.table::setcolorder(res, colorder)
-  data.table::setattr(res, 'by', by)
-  return(res)
-}
-
-
-
-
 # Setters -----------------------------------------------------------------
 
 #' Set the multinames attribute of a Composite_table
@@ -449,3 +306,151 @@ mash_cols <- function(
 
   return(res)
 }
+
+
+
+# Utility funs -----------------------------------------------------------------
+mash_rows <- function(dat, insert_blank_row = FALSE){
+  dat %assert_class% 'Mashed_table'
+  assert_that(is.flag(insert_blank_row))
+
+
+  dd <- lapply(dat, hammr::df_typecast_all, from = 'factor', to = 'character')
+
+  # flatten
+  if(insert_blank_row){
+    blank_rowks <- rep('', nrow(dd[[1]]) * ncol(dd[[1]])) %>%
+      `dim<-`(dim(dd[[1]])) %>%
+      as.data.table()
+
+    dl <- c(dd, list(blank_rowks))
+
+    res <- data.table::rbindlist(dl)
+  } else {
+    res <- data.table::rbindlist(dd)
+  }
+
+
+  for(i in which(unlist(lapply(dat[[1]], is.factor)))){
+    res[[i]] <- as.factor(res[[i]])
+  }
+
+
+  # Determine output row order ("mash")
+  roworder <- seq_len((length(dat) + insert_blank_row) * nrow(dd[[1]]))
+  roworder <- matrix(
+    roworder,
+    nrow = nrow(dd[[1]]),
+    ncol = (length(dd) + insert_blank_row)
+  )
+  roworder <- as.vector(t(roworder))
+
+
+  # Post condtions
+  assert_that(identical(
+    max(roworder),
+    nrow(res)
+  ))
+
+
+  # Output
+  res <- res[roworder]
+
+  ## Remove trailing blank line
+  if(insert_blank_row){
+    res <- res[-nrow(res)]
+  }
+
+  return(res)
+}
+
+
+
+
+mash_cols <- function(
+  dat,
+  by = NULL,
+  suffixes = names(dat)
+){
+  # Preconditions
+  dat %assert_class% 'Mashed_table'
+  assert_that(
+    is.null(by) ||
+      is.character(by)
+  )
+
+  if (is.null(names(dat)) && is.null(suffixes)) {
+    suffixes <- rep('', length(dat))
+  } else {
+    assert_that(length(suffixes) %identical% length(dat))
+  }
+
+
+  # Prepare inputs
+  dl <- lapply(dat, function(x){
+    data.table::copy(x)
+  })
+
+  for(i in seq_along(dl)){
+    new_names <- names(dl[[i]])
+    new_names[!new_names %in% by] <- paste0(
+      new_names[!new_names %in% by],
+      suffixes[[i]]
+    )
+    data.table::setnames(dl[[i]], new_names)
+  }
+
+
+  # Flatten
+  if (is.null(by)){
+    res <- do.call(cbind, dl)
+  } else {
+    merger <- function(x, y)  {
+      suppressWarnings(
+        merge.data.frame(
+          x,
+          y,
+          by = by,
+          all = TRUE,
+          sort = FALSE,
+          suffixes = c('', ''))
+      )
+    }
+    res <- Reduce(merger, dl) %>%
+      as.data.table()
+  }
+
+  # Determine output col order
+  colorder <- seq_len(
+    length(dat) * (ncol(dat[[1]]) - length(by))
+  )
+
+  colorder <- matrix(
+    colorder,
+    nrow = (ncol(dat[[1]]) - length(by)),
+    ncol = length(dat)
+  )
+
+  colorder <- as.vector(t(colorder))
+
+  if(length(by) > 0){
+    i_by <- seq_along(by)
+    colorder <- colorder + max(i_by)
+    colorder <- c(i_by, colorder)
+  }
+
+
+  assert_that(identical(
+    max(colorder),
+    ncol(res)
+  ))
+
+
+  # Output
+  data.table::setcolorder(res, colorder)
+  data.table::setattr(res, 'by', by)
+  return(res)
+}
+
+
+
