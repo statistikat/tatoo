@@ -22,41 +22,61 @@ Tagged_table <- function(
 
 #' Tag tables
 #'
-#' Add metadata to a \code{Tatoo_table} or \code{data.frame}.
+#' Add metadata/captioning (like table_id, title, footer) to a
+#' \code{Tatoo_table} or \code{data.frame}. This metadata will be used by
+#' \code{print} methods and export functions such as \code{\link{as_workbook}}
+#' or \code{\link{save_xlsx}}.
 #'
-#' @param dat A \code{Tagged_table}, \code{Mashed_table}, \code{\link{Stacked_table}},
-#'   or anything that can be coerced to a \code{\link{data.table}} with
-#'   \code{as.data.table}
+#' For convenience, functions to get and set the basic metadata elements
+#' such as \code{title} are also provided. Those can be used to either
+#' modify an existing \code{Tagged_table}, or convert an object that is not yet
+#' a \code{Tagged_table} to one.
+#'
+#' @param dat A \code{Tatto_table} object or anything that can be coerced to a
+#' \code{\link{data.table}} with \code{as.data.table}
 #' @param meta a \code{\link{tt_meta}} object
 #'
-#' @return An object of class 'Tagged_table'
+#' @return a \code{Tagged_table}
+#'
+#' @aliases Tagged_table tagged_table
+#' @seealso tt_meta
+#' @rdname tag_table
 #' @export
 #'
 #' @examples
-#' # Simplified version of how creating and polishing a tag_table could look
 #'
-#' \dontrun{
 #' dat <- data.frame(
 #'   name  = c("hans", "franz", "dolores"),
 #'   grade = c(1, 3, 2)
 #' )
 #'
-#' dat <- tag_table(
-#'   dat,
-#'   tt_meta(
-#'     "tab1",
-#'     "grades",
-#'     "Grades of the final examination")
+#' table_metadata <- tt_meta(
+#'   table_id = "Tab1",
+#'   title = "Grades",
+#'   longtitle = "grades of the final examination"
 #' )
 #'
-#' class(dat) <- c("Tagged_tableTab1", class(dat))
+#' # Metdata can be assign in a formal way or via set functions
+#' dat <- tag_table(dat,  meta = table_metadata)
+#' meta(dat) <- table_metadata
 #'
-#' polish.Tagged_tableTab1 <- function(dat){
-#'  #...
-#' }
+#' # Table metadata is stored as an attribute, and cann be acces thus, or via
+#' # more convientent get and set functions
+#' attr(dat, 'meta')$title
+#' title(dat)
+#' longtitle(dat) <- "Grades of the final examination"
 #'
-#' polish(dat)
-#' }
+#' # [1] "Grades"
+#'
+#' print(dat)
+#'
+#' # Tab1: Grades - Grades of the final examination
+#' #
+#' # name grade
+#' # 1:    hans     1
+#' # 2:   franz     3
+#' # 3: dolores     2
+#'
 tag_table <- function(
   dat,
   meta
@@ -110,20 +130,22 @@ print.Tagged_table <- function(dat, ...){
 
 #' Tagged Table metadata
 #'
-#' Create a taged table metadata object
+#' Create a \code{TT_meta} (tagged table metadata) object. In the future,
+#' different styling will be supported for title, longtitle and subtitle to
+#' make the distinction more meaningfull.
 #'
-#' @param table_id A vector of length 1
-#' @param title A vector of length 1
-#' @param longtitle A vector. If length >1 the title will be displayed in
-#'   several rows
-#' @param subtitle A vector
-#' @param footer A vector. If length >1 the title will be displayed in
-#'   several rows
-#' @param ... Additional arguments that will be contained in the final object.
-#'   they are passed on to \code{list}. This is usefull if you develop a package
-#'   that wants to want to subclasses \code{tt_meta}.
+#' @param table_id A scalar (will be coerced to \code{character})
+#' @param title A scalar (will be coerced to \code{character})
+#' @param longtitle A vector. If \code{length > 1} the title will be displayed
+#'   in several rows
+#' @param subtitle A vector. If \code{length > 1} the title will be displayed
+#'   in several rows
+#' @param footer A vector. If \code{length > 1} the title will be displayed
+#'   in several rows
 #'
 #' @return a \code{TT_meta} object.
+#' @seealso tag_table
+#' @rdname tt_meta
 #'
 #' @export
 tt_meta <- function(
@@ -131,12 +153,14 @@ tt_meta <- function(
   title = NULL,
   longtitle = title,
   subtitle = NULL,
-  footer = NULL,
-  ...
+  footer = NULL
 ){
   assert_that(purrr::is_scalar_atomic(table_id) || is.null(table_id))
   assert_that(purrr::is_scalar_atomic(title) || is.null(title))
-  assert_that(purrr::is_atomic(longtitle) || is.null(longtitle))
+
+  assert_that(is.null(longtitle) ||purrr::is_atomic(longtitle))
+  assert_that(is.null(subtitle) || purrr::is_atomic(subtitle))
+  assert_that(is.null(footer) || purrr::is_atomic(footer))
 
   if(all(
       is.null(table_id),
@@ -151,21 +175,14 @@ tt_meta <- function(
     )
   }
 
-  assert_that(
-    is.null(subtitle) || purrr::is_atomic(subtitle)
-  )
 
-  assert_that(
-    is.null(footer) || purrr::is_atomic(footer)
-  )
 
   res <- list(
     table_id   = table_id,
     title     = title,
     longtitle = longtitle,
     subtitle  = subtitle,
-    footer = footer,
-    ...
+    footer = footer
   )
 
   class(res) <- c('TT_meta', 'list')
@@ -241,6 +258,94 @@ make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
 
 
 # Meta assignment functions -----------------------------------------------
+
+#' @rdname tag_table
+#' @export
+`meta<-` <- function(dat, value){
+  if(is.null(value)){
+    res <- data.table::copy(dat)
+    class(res) <- class(res)[class(res) != 'Tagged_table']
+    attr(res, 'meta', NULL)
+
+  } else{
+    res <- tag_table(dat, value)
+  }
+
+  return(res)
+}
+
+#' @export
+meta <- function(dat){
+  attr(dat, 'meta')
+}
+
+#' @rdname tag_table
+#' @export
+`table_id<-` <- function(dat, value){
+  ass <- list(table_id = value)
+  assign_tt_meta(dat, ass)
+}
+
+#' @export
+table_id <- function(dat){
+  attr(dat, 'meta')$table_id
+}
+
+#' @rdname tag_table
+#' @export
+`title<-` <- function(dat, value){
+  ass <- list(title = value)
+  assign_tt_meta(dat, ass)
+}
+
+#' @export
+title <- function(dat){
+  attr(dat, 'meta')$title
+}
+
+#' @rdname tag_table
+#' @export
+`longtitle<-` <- function(dat, value){
+  ass <- list(longtitle = value)
+  assign_tt_meta(dat, ass)
+}
+
+#' @export
+longtitle <- function(dat){
+  attr(dat, 'meta')$longtitle
+}
+
+#' @rdname tag_table
+#' @export
+`subtitle<-` <- function(dat, value){
+  ass <- list(subtitle = value)
+  assign_tt_meta(dat, ass)
+}
+
+#' @export
+subtitle <- function(dat){
+  attr(dat, 'meta')$subtitle
+}
+
+#' @rdname tag_table
+#' @export
+`footer<-` <- function(dat, value){
+  ass <- list(footer = value)
+  assign_tt_meta(dat, ass)
+}
+
+#' @export
+footer <- function(dat){
+  attr(dat, 'meta')$footer
+}
+
+
+
+# Utils -------------------------------------------------------------------
+
+#' Assign tt_metadata elements
+#'
+#' Internal function used by the metdata set functions
 assign_tt_meta <- function(dat, assignment){
   assert_that(purrr::is_scalar_list(assignment))
   assert_that(identical(
@@ -265,48 +370,4 @@ assign_tt_meta <- function(dat, assignment){
   }
 
   return(res)
-}
-
-#' @export
-`meta<-` <- function(dat, value){
-  if(is.null(value)){
-    res <- data.table::copy(dat)
-    class(res) <- class(res)[class(res) != 'Tagged_table']
-    attr(res, 'meta', NULL)
-
-  } else{
-    res <- tag_table(dat, value)
-  }
-
-  return(res)
-}
-
-#' @export
-`table_id<-` <- function(dat, value){
-  ass <- list(table_id = value)
-  assign_tt_meta(dat, ass)
-}
-
-#' @export
-`title<-` <- function(dat, value){
-  ass <- list(title = value)
-  assign_tt_meta(dat, ass)
-}
-
-#' @export
-`longtitle<-` <- function(dat, value){
-  ass <- list(longtitle = value)
-  assign_tt_meta(dat, ass)
-}
-
-#' @export
-`subtitle<-` <- function(dat, value){
-  ass <- list(subtitle = value)
-  assign_tt_meta(dat, ass)
-}
-
-#' @export
-`footer<-` <- function(dat, value){
-  ass <- list(footer = value)
-  assign_tt_meta(dat, ass)
 }

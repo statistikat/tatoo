@@ -20,7 +20,7 @@ tatoo_report <- function(dat){
 #'
 #' @return An object of class \code{Tatoo_report}
 #' @rdname compile_report
-#' @aliases Tatoo_report
+#' @aliases Tatoo_report tatoo_report
 #'
 #' @export
 compile_report <- function(...){

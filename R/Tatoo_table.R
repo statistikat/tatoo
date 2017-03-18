@@ -1,10 +1,20 @@
 #' Tatoo Table
 #'
-#' Superclass for all tatoo table objects
+#' Constructor for the superclass of all `tatoo` table classes. Does
+#' nothing by itself but is used by a few validity checks in this package.
+#' Currently the followin `Tatoo_table` subclasses exist:
 #'
-#' @param dat
+#' * \code{\link{Tagged_table}}
+#' * \code{\link{Composite_table}}
+#' * \code{\link{Mashed_table}}
+#' * \code{\link{Stacked_table}}
 #'
+#'
+#' @param dat an object of any of the classes listed above
+#'
+#' @aliases Tatoo_table
 #' @return
+#' @md
 #' @examples
 tatoo_table <- function(
   dat

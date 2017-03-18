@@ -39,7 +39,7 @@ Composite_table <- function(
 #'
 #' @return a \code{Composite_table}
 #'
-#' @aliases Composite_table
+#' @aliases Composite_table composite_table
 #' @export
 comp_table <- function(
   ...,

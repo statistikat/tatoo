@@ -39,7 +39,7 @@ Mashed_table <- function(
 #' @return a \code{Mashed_table}
 #'
 #' @rdname mash_table
-#' @aliases Mashed_table
+#' @aliases Mashed_table mashed_table
 #' @export
 #'
 #' @examples

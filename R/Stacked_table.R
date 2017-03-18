@@ -36,7 +36,7 @@ Stacked_table <- function(
 #'
 #' @return a \code{Stacked_table}
 #'
-#' @aliases Stacked_table
+#' @aliases Stacked_table stacked_table
 #' @export
 #'
 #' @examples
