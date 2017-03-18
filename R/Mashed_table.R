@@ -134,6 +134,88 @@ as_mashed_table <- function(dat, ...){
 
 
 
+
+#' Printing Mashed Tables
+#'
+#' @param dat a \code{Mashed_table}
+#' @param ... passed on to \code{\link{print}}
+#'
+#' @return \code{dat} (invisibly)
+#'
+#' @export
+print.Mashed_table <- function(dat, ...){
+  lines <- capture.output(print(as.data.table(dat), ...))
+
+  for(i in seq_along(lines)){
+    cat(lines[[i]], '\n')
+
+    insert_blank <- i > length(dat) &&
+                   (i-1) %% length(dat) == 0
+    assert_that(is.flag(insert_blank))
+
+    if(insert_blank){
+      cat('\n')
+    }
+  }
+
+  invisible(dat)
+}
+
+
+
+
+#' Convert a Mashed Table to a data.table or data.frame
+#'
+#' @param dat a \code{Mashed_table}
+#' @param mash_method either "row" or "col"
+#' @param insert_blank_row logical. Whether to insert blank rows between
+#'   \code{data.frame} columns. Warning: this converts all columns to character.
+#' @param by Only if \code{mash_method == "col"}: If supplied, columns of both
+#'   input tables are combined with \code{\link{merge}}, otherwise
+#'   \code{\link{cbind}} is used.
+#' @param suffixes Only if \code{mash_method == "col"}: a character vector of
+#'   the same length as \code{dat}. Suffixes to append to each column
+#'
+#' @return a \code{data.table} or \code{data.frame}
+#' @export
+#'
+#' @examples
+as.data.table.Mashed_table <- function(
+  dat,
+  mash_method = 'row',
+  insert_blank_row = FALSE,
+  by = NULL,
+  suffixes = NULL
+){
+  assert_that(purrr::is_scalar_character(mash_method))
+  assert_that(is.flag(insert_blank_row))
+  assert_that(is.null(by) || is.character(by))
+  assert_that(is.null(suffixes) || is.character(suffixes) )
+  assert_that(is.null(suffixes) || length(suffixes) %identical% length(dat))
+
+  assert_that(is.scalar(stack))
+  if(mash_method %in% c('c', 'col', 'column', 'columns')){
+    assert_that(insert_blank_row %identical% FALSE)
+    res <- mash_cols(dat, by = by, suffixes = suffixes)
+  } else if(mash_method %in% c('r', 'row', 'rows')) {
+    res <- mash_rows(dat, insert_blank_row = insert_blank_row)
+  } else{
+    stop('mash_method must be either "row" or "col".')
+  }
+
+  return(as.data.table(res))
+}
+
+
+
+
+#' @rdname as.data.table.Mashed_table
+#' @export
+as.data.frame.Mashed_table <- function(dat, mash_method = 'row', ...){
+  as.data.frame(as.data.table.Mashed_table(dat))
+}
+
+
 #' @param ... either several \code{data.frames} or a single \code{Mashed_table}.
 #' @param rem_ext
 #' @param insert_blank_row whether or not to insert a blank row between mash paris
@@ -200,60 +282,6 @@ cmash <- function(
   }
 
   return(res)
-}
-
-
-
-
-#' Title
-#'
-#' @param dat
-#' @param mash_method
-#' @param ... passed on to as.data.frame.data.table
-#'
-#' @return
-#' @export
-#'
-#' @examples
-as.data.table.Mashed_table <- function(
-  dat,
-  mash_method = 'row',
-  insert_blank_row = (mash_method == 'row'),
-  by = NULL,
-  suffixes = NULL
-){
-  assert_that(purrr::is_scalar_character(mash_method))
-  assert_that(is.flag(insert_blank_row))
-
-  assert_that(is.scalar(stack))
-  if(mash_method %in% c('c', 'col', 'column', 'columns')){
-    assert_that(insert_blank_row %identical% FALSE)
-    res <- mash_cols(dat, by = by, suffixes = suffixes)
-  } else if(mash_method %in% c('r', 'row', 'rows')) {
-    res <- mash_rows(dat, insert_blank_row = insert_blank_row)
-  } else{
-    stop('mash_method must be either "row" or "col".')
-  }
-
-  return(as.data.table(res))
-}
-
-
-
-
-#' Title
-#'
-#'
-#' @param dat
-#' @param mash_method
-#' @param ... parameters passed on to \code{as.data.frame.data.table}
-#'
-#' @return
-#' @export
-#'
-#' @examples
-as.data.frame.Mashed_table <- function(dat, mash_method = 'row', ...){
-  as.data.frame(as.data.table(dat))
 }
 
 
@@ -404,20 +432,8 @@ mash_cols <- function(
 
 
 
-#' Printing Mashed Tables
-#'
-#' @param dat a \code{Mashed_table}
-#' @param ... passed on to \code{\link{print}}
-#'
-#' @return \code{dat} (invisibly)
-#'
-#' @export
-print.Mashed_table <- function(dat, ...){
-  print(as.data.table(dat), ...)
-  invisible(dat)
-}
 
-
+# Setters -----------------------------------------------------------------
 
 #' Set the multinames attribute of a Composite_table
 #'
