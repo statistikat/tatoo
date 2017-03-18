@@ -226,12 +226,30 @@ print.Composite_table <- function(
 
 
 
+#' Convert a Composite Table to a plain data.table or data.frame
+#'
+#' As a \code{Composite_table} already is a \code{data.table} this function
+#' does very little except stripping all additional attributes and classes,
+#' as well as offering you the option to prepend the \code{multinames} before
+#' the column names
+#'
+#' @param dat a \code{Composite_table}
+#' @param multinames logical. Whether to prepend multinames before the column
+#'   names
+#' @param sep sepparator between multinames and individual column names
+#' @param ... ignored
+#'
+#' @return a \code{data.table} or \code{data.frame}
+#'
 #' @export
 as.data.table.Composite_table <- function(
   dat,
   multinames = TRUE,
-  sep = '.'
+  sep = '.',
+  ...
 ){
+  assert_that(is.flag(multinames))
+  assert_that(purrr::is_scalar_character(sep))
   if(!multinames){
     return(data.table:::as.data.table.data.table(dat))
   } else {
@@ -253,6 +271,22 @@ as.data.table.Composite_table <- function(
 
     return(data.table:::as.data.table.data.table(res))
   }
+}
+
+
+
+#' @rdname as.data.table.Composite_table
+#' @export
+as.data.frame.Composite_table <- function(
+  dat,
+  multinames = TRUE,
+  sep = '.',
+  ...
+){
+  as.data.frame(as.data.table.Composite_table(
+    dat = dat,
+    multinames = multinames,
+    sep = sep))
 }
 
 

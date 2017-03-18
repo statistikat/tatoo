@@ -211,8 +211,8 @@ as.data.table.Mashed_table <- function(
 
 #' @rdname as.data.table.Mashed_table
 #' @export
-as.data.frame.Mashed_table <- function(dat, mash_method = 'row', ...){
-  as.data.frame(as.data.table.Mashed_table(dat))
+as.data.frame.Mashed_table <- function(dat, ...){
+  as.data.frame(as.data.table.Mashed_table(dat, ...))
 }
 
 
