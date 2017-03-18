@@ -18,8 +18,10 @@ tatoo_report <- function(dat){
 #' @param ... for \code{compile_table}: individual \code{Tatoo_table} or
 #'   \code{data.frame} objects
 #'
-#' @rdname compile_report
 #' @return An object of class \code{Tatoo_report}
+#' @rdname compile_report
+#' @aliases Tatoo_report
+#'
 #' @export
 compile_report <- function(...){
   compile_report_list(list(...))

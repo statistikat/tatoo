@@ -34,7 +34,9 @@ Stacked_table <- function(
 #'
 #' @param meta a \code{\link{tt_meta}} object (optional)
 #'
-#' @return
+#' @return a \code{Stacked_table}
+#'
+#' @aliases Stacked_table
 #' @export
 #'
 #' @examples

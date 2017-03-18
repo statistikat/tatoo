@@ -37,7 +37,9 @@ Composite_table <- function(
 #' @param meta a \code{\link{TT_meta}} object. If speciefied, the resulting
 #'   \code{comp_table} will be wrapped in a \code{\link{tag_table}}.
 #'
-#' @return a \code{Composite_table} object.
+#' @return a \code{Composite_table}
+#'
+#' @aliases Composite_table
 #' @export
 comp_table <- function(
   ...,

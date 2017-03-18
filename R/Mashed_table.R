@@ -36,9 +36,11 @@ Mashed_table <- function(
 #' @param dat2
 #' @param rem_ext
 #'
-#' @return
-#' @export
+#' @return a \code{Mashed_table}
+#'
 #' @rdname mash_table
+#' @aliases Mashed_table
+#' @export
 #'
 #' @examples
 mash_table <- function(
