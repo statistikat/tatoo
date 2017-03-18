@@ -24,10 +24,6 @@ test_that("Tatoo_report works as expected", {
   td <- tempdir()
 
 
-  tfile_txt <- file.path(td, 'pr.txt')
-  expect_silent(save_txt(tdat, tfile_txt))
-  # cat(paste(readLines(tfile_txt), collapse = '\n'))
-
   tfile_xlsx <- file.path(td, 'pr.xlsx')
   expect_silent(
     save_xlsx(tdat, tfile_xlsx, overwrite = TRUE)

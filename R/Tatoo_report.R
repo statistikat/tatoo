@@ -6,11 +6,13 @@
 #' number of tables to a single Excel workbook.
 #'
 #' @param dat for \code{compile_table_list}: A list of containing either
-#'   \code{Tatoo_table} or \code{data.frame} objects.
+#'   \code{Tatoo_table} or \code{data.frame} objects. If dat is not named
+#'   and contains \code{Tagged_tables}, names will automatically be set based
+#'   on the Tagged_table \code{table_id} attributes.
 #' @param ... for \code{compile_table}: individual \code{Tatoo_table} or
 #'   \code{data.frame} objects
 #'
-#' @return An object of class \code{Tatoo_report}
+#' @return An named \code{list} of class \code{Tatoo_report}
 #' @rdname compile_report
 #' @aliases Tatoo_report tatoo_report
 #'
@@ -24,7 +26,16 @@ compile_report <- function(...){
 #' @export
 #' @rdname compile_report
 compile_report_list <- function(dat){
-  tatoo_report(dat)
+  res <- data.table::copy(dat)
+
+  if(is.null(names(dat))){
+    table_ids <- dat %>%
+      lapply(function(x) meta(x)$table_id %||% "") %>%
+      sanitize_excel_sheet_names()
+    res <- setNames(dat, table_ids)
+  }
+
+  tatoo_report(res)
 }
 
 
@@ -48,7 +59,7 @@ is_valid.Tatoo_report <- function(dat){
     hammr::is_any_class(x, c('Tatoo_table', 'data.frame'))
   }
 
-  res$class     <- 'list' %in% class(dat)
+  res$class <- is.list(dat)
   res$elclasses <- lapply(dat, is_valid_col_class) %>%
     unlist() %>%
     all()
@@ -71,7 +82,7 @@ print.Tatoo_report <- function(dat, ...){
   classes <- dat %>%
     lapply(function(x) class(x)[[1]]) %>%
     unlist() %>%
-    sprintf('<%s> \n', .)
+    sprintf('%s <%s> \n', names(dat) %||% '', .)
 
   print_several_tables(
     dat,
