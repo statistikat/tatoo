@@ -1,31 +1,3 @@
-Composite_table <- function(
-  dat,
-  multinames
-){
-  assert_that(is.data.frame(dat))
-  assert_that(is.numeric(multinames))
-  assert_that(all(hammr::looks_like_integer(multinames)))
-
-  multinames <- structure(
-    as.integer(multinames),
-    names = names(multinames)
-  )
-
-  res <- data.table::copy(dat) %>%
-    data.table::as.data.table() %>%
-    tatoo_table()
-
-  data.table::setattr(res, 'class', union('Composite_table', class(res)))
-  data.table::setattr(res, 'multinames', multinames)
-
-  assert_that(identical(
-    class(res),
-    c('Composite_table', 'Tatoo_table', 'data.table', 'data.frame'))
-  )
-
-  return(res)
-}
-
 #' Compose Tables
 #'
 #' @param ... \code{comp_table} only:
@@ -72,77 +44,109 @@ comp_table_list <- function(
   meta = NULL
 ){
   # Pre-conditions
-    assert_that(is.list(tables))
-    for(table in tables){
-      table %assert_class% 'data.frame'
-      assert_that(nrow(table)  %identical% nrow(tables[[1]]))
-    }
+  assert_that(is.list(tables))
+  for(table in tables){
+    table %assert_class% 'data.frame'
+    assert_that(nrow(table)  %identical% nrow(tables[[1]]))
+  }
 
-    if(!length(multinames) %identical% length(tables)){
-      stop(strwrap(
-          'multinames must be specified, otherwise comp_table
-           would just be a wrapper for cbind.'))
-    }
+  if(!length(multinames) %identical% length(tables)){
+    stop(strwrap(
+      'multinames must be specified, otherwise comp_table
+      would just be a wrapper for cbind.'))
+  }
 
 
   # Combine the tables
-    if(is.null(by)){
-      res          <- dplyr::bind_cols(tables)
-    } else {
-      merger <- function(x, y)  {suppressWarnings(
-          merge.data.frame(
-            x,
-            y,
-            by = by,
-            all = TRUE,
-            suffixes = c('', ''),
-            sort = FALSE)
-        )}
-      res <- Reduce(merger, tables)
-    }
+  if(is.null(by)){
+    res          <- dplyr::bind_cols(tables)
+  } else {
+    merger <- function(x, y)  {suppressWarnings(
+      merge.data.frame(
+        x,
+        y,
+        by = by,
+        all = TRUE,
+        suffixes = c('', ''),
+        sort = FALSE)
+    )}
+    res <- Reduce(merger, tables)
+  }
 
 
   # Generate table-title cell positions (for xlsx / latex export).
   # if a "by" was specified, this has to be considered when creating the indices
-    table_multinames <- vector('integer', length(tables))
-    for(i in seq_along(table_multinames)){
-      table_multinames[[i]] <- ncol(tables[[i]]) - length(by)
-    }
+  table_multinames <- vector('integer', length(tables))
+  for(i in seq_along(table_multinames)){
+    table_multinames[[i]] <- ncol(tables[[i]]) - length(by)
+  }
 
-    if(length(by) > 0){
-      table_multinames <- c(length(by), table_multinames)
-      multinames       <- c('', multinames)
-    }
+  if(length(by) > 0){
+    table_multinames <- c(length(by), table_multinames)
+    multinames       <- c('', multinames)
+  }
 
-    table_multinames <- cumsum(table_multinames)
-    names(table_multinames) <- multinames
+  table_multinames <- cumsum(table_multinames)
+  names(table_multinames) <- multinames
 
 
   # post conditions
-    assert_that(max(table_multinames) %identical% ncol(res))
+  assert_that(max(table_multinames) %identical% ncol(res))
 
-    if(length(by) %identical% 0L){
-      assert_that(min(table_multinames) %identical% ncol(tables[[1]]))
-    } else {
-      assert_that(min(table_multinames) %identical% length(by))
-    }
+  if(length(by) %identical% 0L){
+    assert_that(min(table_multinames) %identical% ncol(tables[[1]]))
+  } else {
+    assert_that(min(table_multinames) %identical% length(by))
+  }
 
-    assert_that(table_multinames %identical% sort(table_multinames))
+  assert_that(table_multinames %identical% sort(table_multinames))
 
 
   # Return
-    res <- Composite_table(
-      res,
-      multinames = table_multinames
-    )
+  res <- Composite_table(
+    res,
+    multinames = table_multinames
+  )
 
 
-    if(!is.null(meta)){
-      res <- tag_table(res, meta = meta)
-    }
+  if(!is.null(meta)){
+    res <- tag_table(res, meta = meta)
+  }
 
   return(res)
 }
+
+
+
+
+Composite_table <- function(
+  dat,
+  multinames
+){
+  assert_that(is.data.frame(dat))
+  assert_that(is.numeric(multinames))
+  assert_that(all(hammr::looks_like_integer(multinames)))
+
+  multinames <- structure(
+    as.integer(multinames),
+    names = names(multinames)
+  )
+
+  res <- data.table::copy(dat) %>%
+    data.table::as.data.table() %>%
+    tatoo_table()
+
+  data.table::setattr(res, 'class', union('Composite_table', class(res)))
+  data.table::setattr(res, 'multinames', multinames)
+
+  assert_that(identical(
+    class(res),
+    c('Composite_table', 'Tatoo_table', 'data.table', 'data.frame'))
+  )
+
+  return(res)
+}
+
 
 
 
@@ -250,6 +254,7 @@ as.data.table.Composite_table <- function(
     return(data.table:::as.data.table.data.table(res))
   }
 }
+
 
 
 composite_name <- function(x, y, sep){

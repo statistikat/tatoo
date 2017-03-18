@@ -1,23 +1,3 @@
-Mashed_table <- function(
-  dat,
-  mash_method
-){
-  assert_that(is.list(dat))
-  assert_that(
-    identical(mash_method, 'row') ||
-    identical(mash_method, 'col')
-  )
-
-  res <- data.table::copy(dat) %>%
-    tatoo_table()
-  data.table::setattr(res, 'class', union('Mashed_table', class(res)))
-  data.table::setattr(res, 'mash_method', mash_method)
-  return(res)
-}
-
-
-
-
 #' Mash Tables
 #'
 #' Mash tables are designed to make it easy to put together multidimensional
@@ -48,7 +28,7 @@ mash_table <- function(
   rem_ext = NULL,
   mash_method = 'row',
   meta = NULL
-  ){
+){
   mash_table_list(
     list(...),
     rem_ext = rem_ext,
@@ -56,7 +36,6 @@ mash_table <- function(
     meta = meta
   )
 }
-
 
 
 
@@ -128,9 +107,29 @@ mash_table_list <- function(
 
 
 
+Mashed_table <- function(
+  dat,
+  mash_method
+){
+  assert_that(is.list(dat))
+  assert_that(
+    identical(mash_method, 'row') ||
+    identical(mash_method, 'col')
+  )
+
+  res <- data.table::copy(dat) %>%
+    tatoo_table()
+  data.table::setattr(res, 'class', union('Mashed_table', class(res)))
+  data.table::setattr(res, 'mash_method', mash_method)
+  return(res)
+}
+
+
+
+
 #' @export
-as_mash_table <- function(dat, ...){
-  UseMethod('as_mash_table')
+as_mashed_table <- function(dat, ...){
+  UseMethod('as_mashed_table')
 }
 
 

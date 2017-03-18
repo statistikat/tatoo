@@ -1,25 +1,3 @@
-Stacked_table <- function(
-  dat,
-  spacing
-){
-  assert_that(is.list(dat))
-  valid_classes <- c('Tatoo_table', 'data.table')
-  assert_that(all(unlist(lapply(dat, hammr::is_any_class, valid_classes))))
-
-  assert_that(purrr::is_scalar_numeric(spacing))
-  assert_that(hammr::looks_like_integer(spacing))
-
-  res <- data.table::copy(dat) %>%
-    tatoo_table()
-
-  data.table::setattr(res, 'class', union('Stacked_table', class(res)))
-  data.table::setattr(res, 'spacing', as.integer(spacing))
-  return(res)
-}
-
-
-
-
 #' Stack tables
 #'
 #' Stack tables on top of each other. This can be used to print several tables
@@ -52,6 +30,9 @@ stack_table <- function(
   )
 }
 
+
+
+
 #' @export
 stack_table_list <- function(
   tables,
@@ -69,6 +50,28 @@ stack_table_list <- function(
     res <- tag_table(res, meta = meta)
   }
 
+  return(res)
+}
+
+
+
+
+Stacked_table <- function(
+  dat,
+  spacing
+){
+  assert_that(is.list(dat))
+  valid_classes <- c('Tatoo_table', 'data.table')
+  assert_that(all(unlist(lapply(dat, hammr::is_any_class, valid_classes))))
+
+  assert_that(purrr::is_scalar_numeric(spacing))
+  assert_that(hammr::looks_like_integer(spacing))
+
+  res <- data.table::copy(dat) %>%
+    tatoo_table()
+
+  data.table::setattr(res, 'class', union('Stacked_table', class(res)))
+  data.table::setattr(res, 'spacing', as.integer(spacing))
   return(res)
 }
 

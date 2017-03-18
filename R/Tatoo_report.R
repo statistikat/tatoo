@@ -1,11 +1,3 @@
-tatoo_report <- function(dat){
-  res <- data.table::copy(dat)
-  class(res) <- union('Tatoo_report', class(res))
-  hammr::assert_valid(res)
-  return(res)
-}
-
-
 #' Compile tables into a report
 #'
 #' Compiles tables into a \code{Tatoo_report}. A \code{Tatoo_report} is just
@@ -34,6 +26,17 @@ compile_report <- function(...){
 compile_report_list <- function(dat){
   tatoo_report(dat)
 }
+
+
+
+
+tatoo_report <- function(dat){
+  res <- data.table::copy(dat)
+  class(res) <- union('Tatoo_report', class(res))
+  hammr::assert_valid(res)
+  return(res)
+}
+
 
 
 
