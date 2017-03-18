@@ -1,29 +1,7 @@
-Tagged_table <- function(
-  dat,
-  meta
-){
-  assert_that(hammr::is_any_class(
-    dat,
-    c('Tatoo_table', 'data.table')
-  ))
-  assert_that(is.list(meta))
-
-
-  res <- data.table::copy(dat)
-  if(!inherits(res, 'Tatoo_table')){
-    res <- tatoo_table(res)
-  }
-
-  data.table::setattr(res, 'class', union('Tagged_table', class(res)))
-  data.table::setattr(res, 'meta', meta)
-
-  return(res)
-}
-
 #' Tag tables
 #'
 #' Add metadata/captioning (like table_id, title, footer) to a
-#' \code{Tatoo_table} or \code{data.frame}. This metadata will be used by
+#' \code{\link{Tatoo_table}} or \code{data.frame}. This metadata will be used by
 #' \code{print} methods and export functions such as \code{\link{as_workbook}}
 #' or \code{\link{save_xlsx}}.
 #'
@@ -60,10 +38,10 @@ Tagged_table <- function(
 #' dat <- tag_table(dat,  meta = table_metadata)
 #' meta(dat) <- table_metadata
 #'
-#' # Table metadata is stored as an attribute, and cann be acces thus, or via
-#' # more convientent get and set functions
+#' # Table metadata is stored as an attribute, and cann be acces thus. It can
+#' # also be modified via convenient set functions
 #' attr(dat, 'meta')$title
-#' title(dat)
+#' meta(dat)$title
 #' longtitle(dat) <- "Grades of the final examination"
 #'
 #' # [1] "Grades"
@@ -99,6 +77,31 @@ tag_table <- function(
 
 
 
+Tagged_table <- function(
+  dat,
+  meta
+){
+  assert_that(hammr::is_any_class(
+    dat,
+    c('Tatoo_table', 'data.table')
+  ))
+  assert_that(is.list(meta))
+
+
+  res <- data.table::copy(dat)
+  if(!inherits(res, 'Tatoo_table')){
+    res <- tatoo_table(res)
+  }
+
+  data.table::setattr(res, 'class', union('Tagged_table', class(res)))
+  data.table::setattr(res, 'meta', meta)
+
+  return(res)
+}
+
+
+
+
 #' Printing Tagged Tables
 #'
 #' @param dat A \code{Tagged_table}
@@ -128,6 +131,8 @@ print.Tagged_table <- function(dat, ...){
 
 
 
+# Tagged Table Metadata ---------------------------------------------------
+
 #' Tagged Table metadata
 #'
 #' Create a \code{TT_meta} (tagged table metadata) object. In the future,
@@ -145,6 +150,7 @@ print.Tagged_table <- function(dat, ...){
 #'
 #' @return a \code{TT_meta} object.
 #' @seealso tag_table
+#' @aliases TT_meta
 #' @rdname tt_meta
 #'
 #' @export
@@ -176,7 +182,6 @@ tt_meta <- function(
   }
 
 
-
   res <- list(
     table_id   = table_id,
     title     = title,
@@ -202,6 +207,32 @@ is_valid.TT_meta <- function(dat){
   ))
 
   hammr::all_with_warning(res)
+}
+
+
+#' Printing Tagged Table Metdata
+#'
+#' @param dat A \code{TT_meta} object
+#' @param ... ignored
+#'
+#' @return \code{dat} (invisibly)
+#'
+#' @export
+#'
+print.TT_meta <- function(dat, ...){
+  name_width   <- max(unlist(lapply(names(dat), nchar))) + 1
+  print_string <- paste0('%', name_width, 's: %s\n')
+  padded_newline <- rep(' ', name_width + 2) %>%
+    paste(collapse = '') %>%
+    paste0('\n', .)
+
+  for(i in seq_along(dat)){
+    cat(sprintf(
+      print_string,
+      names(dat)[[i]], paste(dat[[i]], collapse = padded_newline)
+    ))
+  }
+  invisible(dat)
 }
 
 
@@ -286,21 +317,11 @@ meta <- function(dat){
   assign_tt_meta(dat, ass)
 }
 
-#' @export
-table_id <- function(dat){
-  attr(dat, 'meta')$table_id
-}
-
 #' @rdname tag_table
 #' @export
 `title<-` <- function(dat, value){
   ass <- list(title = value)
   assign_tt_meta(dat, ass)
-}
-
-#' @export
-title <- function(dat){
-  attr(dat, 'meta')$title
 }
 
 #' @rdname tag_table
@@ -310,21 +331,11 @@ title <- function(dat){
   assign_tt_meta(dat, ass)
 }
 
-#' @export
-longtitle <- function(dat){
-  attr(dat, 'meta')$longtitle
-}
-
 #' @rdname tag_table
 #' @export
 `subtitle<-` <- function(dat, value){
   ass <- list(subtitle = value)
   assign_tt_meta(dat, ass)
-}
-
-#' @export
-subtitle <- function(dat){
-  attr(dat, 'meta')$subtitle
 }
 
 #' @rdname tag_table
@@ -334,10 +345,6 @@ subtitle <- function(dat){
   assign_tt_meta(dat, ass)
 }
 
-#' @export
-footer <- function(dat){
-  attr(dat, 'meta')$footer
-}
 
 
 
