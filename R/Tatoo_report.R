@@ -6,9 +6,7 @@
 #' number of tables to a single Excel workbook.
 #'
 #' @param dat for \code{compile_table_list}: A list of containing either
-#'   \code{Tatoo_table} or \code{data.frame} objects. If dat is not named
-#'   and contains \code{Tagged_tables}, names will automatically be set based
-#'   on the Tagged_table \code{table_id} attributes.
+#'   \code{Tatoo_table} or \code{data.frame} objects.
 #' @param ... for \code{compile_table}: individual \code{Tatoo_table} or
 #'   \code{data.frame} objects
 #'
@@ -23,18 +21,11 @@ compile_report <- function(...){
 
 
 
+
 #' @export
 #' @rdname compile_report
 compile_report_list <- function(dat){
   res <- data.table::copy(dat)
-
-  if(is.null(names(dat))){
-    table_ids <- dat %>%
-      lapply(function(x) meta(x)$table_id %||% "") %>%
-      sanitize_excel_sheet_names()
-    res <- setNames(dat, table_ids)
-  }
-
   tatoo_report(res)
 }
 
