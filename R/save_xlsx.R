@@ -7,10 +7,9 @@
 #' @param overwrite logical. If \code{TRUE}, overwrite any existing file.
 #' @param ... passed onto \code{\link{write_worksheet}}
 #'
-#' @return
+#' @seealso write_worksheet as_workbook
+#' @return TRUE on success
 #' @export
-#'
-#' @examples
 save_xlsx <- function(
   dat,
   outfile,
@@ -35,4 +34,5 @@ save_xlsx.default <- function(
 ){
   wb <- as_workbook(dat, ...)
   openxlsx::saveWorkbook(wb, outfile, overwrite)
+  TRUE
 }

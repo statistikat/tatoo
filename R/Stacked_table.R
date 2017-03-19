@@ -1,24 +1,22 @@
 #' Stack tables
 #'
 #' Stack tables on top of each other. This can be used to print several tables
-#' on one Excel sheet with \code{as_workbook} or \code{save_xlsx}.
+#' on one Excel sheet with `as_workbook` or `save_xlsx`.
 #'
-#' @param ... `stack_table()` only: Any number of objects of the following classes:
-#'   \code{\link{Tagged_table}},
-#'   \code{\link{Mashed_table}},
-#'   \code{\link{Composite_table}},
-#'   or anything that can be coerced to a \code{data.frame} with
-#'   \code{as.data.frame}
+#' @param ... `stack_table()` only: Any number of objects of the following
+#'   classes: `\link{Tagged_table}`, `\link{Mashed_table}`,
+#'   `\link{Composite_table}`, or anything that can be coerced to a `data.frame`
+#'   with `as.data.frame`
 #'
-#' @param tables `stack_table_list()` only: Same as (`...`) for `stack_table`, just that a
-#'   list can be supplied instead of individual arguments.
-#' @param meta a \code{\link{tt_meta}} object (optional)
+#' @param tables `stack_table_list()` only: Same as `(...)` for `stack_table`,
+#'   just that a list can be supplied instead of individual arguments.
+#' @param meta a `\link{tt_meta}` object (optional)
 #' @param spacing Number of lineskips between the tables when exporting
 #'   stacked_tables
 #'
-#' @return a \code{Stacked_table}: a \code{list} of \code{Tatoo_table}s with
-#'   additonal `spacing` attribute that influences the spacing between the
-#'   component tables when it is exported.
+#' @return a `Stacked_table`: a `list` of `Tatoo_table`s with additonal
+#'   `spacing` attribute that controls the default spacing between the tables
+#'   when it is exported.
 #'
 #' @md
 #' @rdname Stacked_table

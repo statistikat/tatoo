@@ -1,18 +1,18 @@
 #' Tag tables
 #'
-#' Add metadata/captioning (like table_id, title, footer) to a
-#' `\link{Tatoo_table}` or \code{data.frame}. This metadata will be used by
-#' \code{print} methods and export functions such as \code{\link{as_workbook}}
-#' or \code{\link{save_xlsx}}.
+#' Add metadata/captioning (like `table_id`, `title`, `footer`) to a
+#' `\link{Tatoo_table}` or `data.frame`. This metadata will be used by
+#' `print` methods and export functions such as `\link{as_workbook}`
+#' or `\link{save_xlsx}`.
 #'
 #' For convenience, functions to get and set the basic metadata elements
-#' such as \code{title} are also provided. Those can be used to either
-#' modify an existing \code{Tagged_table}, or convert an object that is not yet
-#' a \code{Tagged_table} to one.
+#' such as `title` are also provided. Those can be used to either
+#' modify an existing `Tagged_table`, or convert an object that is not yet
+#' a `Tagged_table` to one.
 #'
-#' @param dat A \code{Tatto_table} object or anything that can be coerced to a
-#' \code{\link{data.table}} with \code{as.data.table}
-#' @param meta a \code{\link{tt_meta}} object
+#' @param dat A `Tatto_table` object or anything that can be coerced to a
+#' `\link{data.table}` with `as.data.table`
+#' @param meta a `\link{tt_meta}` object
 #'
 #' @return a `Tagged_table`: a `Tatoo_table` with an additional `meta`
 #'   attribute

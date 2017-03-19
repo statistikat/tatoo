@@ -1,17 +1,19 @@
 #' Compile tables into a report
 #'
-#' Compiles tables into a \code{Tatoo_report}. A \code{Tatoo_report} is just
-#' a simple list object, but with special \code{print}, \code{as_workbook},
-#' and \code{save_xlsx} methods. This makes it easy to save an arbitrary
+#' Compiles tables into a `Tatoo_report`. A `Tatoo_report` is just
+#' a simple list object, but with special `print`, `as_workbook`,
+#' and `save_xlsx` methods. This makes it easy to save an arbitrary
 #' number of tables to a single Excel workbook.
 #'
-#' @param dat for \code{compile_table_list}: A list of containing either
-#'   \code{Tatoo_table} or \code{data.frame} objects.
-#' @param ... for \code{compile_table}: individual \code{Tatoo_table} or
-#'   \code{data.frame} objects
+#' @param dat for `compile_table_list`: A list of containing either
+#'   `Tatoo_table` or `data.frame` objects.
+#' @param ... for compile_table`: individual Tatoo_table` or
+#'   data.frame` objects
 #'
-#' @return An named \code{list} of class \code{Tatoo_report}
+#' @return A `Tatoo_report`: A list whose elements are either `data.frame`s
+#'   or `\link{Tatoo_table}`s
 #'
+#' @md
 #' @rdname Tatoo_report
 #' @aliases Tatoo_report tatoo_report compile_report
 #' @export
