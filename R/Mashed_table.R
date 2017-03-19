@@ -283,7 +283,7 @@ as.data.frame.Mashed_table <- function(
   id_vars = attr(dat, 'id_vars'),
   suffixes = NULL
 ){
-  as.data.frame(as.data.table.Mashed_table(dat, ...))
+  as.data.frame(as.data.table.Mashed_table(dat))
 }
 
 
