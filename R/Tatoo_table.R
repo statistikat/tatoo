@@ -12,7 +12,7 @@
 #' with your own code.
 #'
 #' @param dat an object of any of the classes listed in the description
-#'
+#' @family Tatto tables
 #' @aliases Tatoo_table
 #' @md
 tatoo_table <- function(

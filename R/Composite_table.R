@@ -14,6 +14,7 @@
 #' @return a \code{Composite_table}
 #'
 #' @aliases Composite_table composite_table
+#' @family Tatto tables
 #' @export
 comp_table <- function(
   ...,

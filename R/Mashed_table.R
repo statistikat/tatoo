@@ -43,6 +43,7 @@
 #' @md
 #' @rdname Mashed_table
 #' @aliases Mashed_table mashed_table mash_table
+#' @family Tatto tables
 #' @export
 #'
 #' @examples
@@ -196,6 +197,10 @@ is_valid.Mashed_table <- function(dat){
 }
 
 
+is_Mashed_table <- function(dat, ...){
+  inherits(dat, 'Mashed_table') && is_valid(dat)
+}
+
 #' @export
 as_mashed_table <- function(dat, ...){
   UseMethod('as_mashed_table')
@@ -298,37 +303,54 @@ as.data.frame.Mashed_table <- function(
 
 #  Shortcut functions -----------------------------------------------------
 
+#' Mash R objects by Rows or Columns
+#'
+#'
+#'
 #' @param ... either several \code{data.frames} or a single \code{Mashed_table}.
+#'
 #' @param rem_ext
-#' @param insert_blank_row whether or not to insert a blank row between mash paris
+#' @param insert_blank_row `rbind` onlywhether or not to insert a blank row between mash paris
+#' @param data.table
 #'
 #' @export
-#' @rdname Mashed_table
+#' @rdname rmash
 rmash <- function(
   ...,
   rem_ext = NULL,
-  insert_blank_row = FALSE
+  insert_blank_row = FALSE,
+  data.table = TRUE
 ){
   dots <- list(...)
 
-  if(length(dots) %identical% 1L && is_class(dots[[1]], 'Mashed_table')){
+  input_is_Mashed_table <-
+    purrr::is_scalar_list(dots)
+    is_Mashed_table(dots)
+
+  if(input_is_Mashed_table){
     res <- dots[[1]] %>%
       as.data.table(
         mash_method = 'row',
         insert_blank_row = insert_blank_row
       )
+
   } else {
-    res <- mash_table_list(dots, rem_ext = rem_ext) %>%
-      as.data.table(
+    res <- dots %>%
+      mash_table_list(
+        rem_ext = rem_ext,
         mash_method = 'row',
-        insert_blank_row = insert_blank_row
-    )
+        insert_blank_row = insert_blank_row) %>%
+      as.data.table()
   }
 
   assert_that(identical(
     class(res),
     c('data.table', 'data.frame')
   ))
+
+  if(!data.table){
+    res <- as.data.frame(res)
+  }
 
   return(res)
 }
@@ -337,30 +359,37 @@ rmash <- function(
 
 
 #' @export
-#' @rdname Mashed_table
+#' @rdname rmash
 cmash <- function(
   ...,
   rem_ext = NULL,
   id_vars = NULL,
   suffixes = NULL,
-  meta = NULL
+  data.table = TRUE
 ){
   dots <- list(...)
 
-  if(length(dots) %identical% 1L && is_class(dots[[1]], 'Mashed_table')){
+  input_is_Mashed_table <-
+    purrr::is_scalar_list(dots)
+    is_Mashed_table(dots)
+
+  if(input_is_Mashed_table){
     res <- dots[[1]] %>%
       as.data.table(
         mash_method = 'col',
         suffixes = suffixes
       )
-    meta(res) <- attr(dots[[1]], 'meta')
   } else {
-    res <-  mash_table_list(dots, rem_ext = rem_ext) %>%
-      as.data.table(
+    res <-  dots %>%
+      mash_table_list(
         mash_method = 'col',
         id_vars = id_vars,
-        suffixes = suffixes
-    )
+        rem_ext = rem_ext) %>%
+      as.data.table(suffixes = suffixes)
+  }
+
+  if(!data.table){
+    res <- as.data.frame(res)
   }
 
   return(res)

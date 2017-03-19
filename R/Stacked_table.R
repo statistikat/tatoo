@@ -23,6 +23,7 @@
 #' @md
 #' @rdname Stacked_table
 #' @aliases Stacked_table stacked_table stack_table
+#' @family Tatto tables
 #' @export
 #'
 #' @examples

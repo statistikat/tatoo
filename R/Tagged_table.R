@@ -21,6 +21,7 @@
 #'
 #' @md
 #' @aliases Tagged_table tagged_table tag_table
+#' @family Tatto tables
 #' @seealso tt_meta
 #' @rdname Tagged_table
 #' @export
@@ -109,7 +110,7 @@ Tagged_table <- function(
 #' @rdname Tagged_table
 #' @export
 is_Tagged_table <- function(x){
-  inherits(x, "Tagged_table")
+  inherits(x, "Tagged_table") && is_valid(x)
 }
 
 
