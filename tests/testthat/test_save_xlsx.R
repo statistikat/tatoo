@@ -7,6 +7,7 @@ test_that('save_xlsx mash_table', {
   #* @testing save_xlsx.Mashed_table
   #* @testing write_worksheet.Mashed_table
   #* @testing as_workbook.Mashed_table
+  #* @testing save_xlsx.Tatoo_report
 
   tdat1 <- data.frame(
     numbers = c(1.434, 190.3, 228.311, 5.210, 4321543),
@@ -16,26 +17,47 @@ test_that('save_xlsx mash_table', {
     stringsAsFactors = FALSE
   )
 
-  expect_silent(st1 <- mash_table(tdat1, tdat1, tdat1, tdat1, rem_ext = '_xt'))
-  of <- file.path(outdir, 'mash_table.xlsx')
-  save_xlsx(st1, of, overwrite = TRUE)
-  # hammr::excel(of)
-
-  save_xlsx(st1, of, overwrite = TRUE, mash_method = 'col')
-  # hammr::excel(of)
-
-
-  of2 <- file.path(test_path(), 'test_out', 'mash_table_meta.xlsx')
-  st1_meta <- tag_table(
-    st1,
-    tt_meta(
-      table_id = 'tid',
-      title = 'title',
-      longtitle = 'longitle',
-      subtitle = 'subtitle',
-      footer = ' ---------------- ')
+  tmeta <- tt_meta(
+    table_id = 'tid',
+    title = 'title',
+    longtitle = 'longitle',
+    subtitle = 'subtitle',
+    footer = ' ---------------- '
   )
-  save_xlsx(st1_meta, of2, overwrite = TRUE)
+
+
+  expect_silent(st1 <- mash_table(tdat1, tdat1, tdat1, tdat1))
+
+  expect_silent(st2 <- mash_table(
+    tdat1, tdat1, tdat1,
+    mash_method = 'col'
+  ))
+
+  expect_silent(st3 <- mash_table(
+    tdat1, tdat1, tdat1,
+    mash_method = 'col',
+    id_vars = 'factors'
+  ))
+
+  expect_silent(st4 <- mash_table(
+    tdat1, tdat1, tdat1,
+    mash_method = 'col',
+    id_vars = 'factors',
+    sep_height = 50,
+    meta = tmeta
+  ))
+
+
+  expect_silent(tres <- compile_report(
+    row = st1,
+    col = st2,
+    colby = st3,
+    meta = st4
+  ))
+
+  of <- file.path(outdir, 'mash_table.xlsx')
+  save_xlsx(tres, of, overwrite = TRUE)
+  # openxlsx::openXL(of)
   # hammr::excel(of2)
 })
 

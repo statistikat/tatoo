@@ -12,7 +12,6 @@
 #' look into `\link{df_format}`, `\link{df_round}` and
 #' `\link{df_signif}`.
 #'
-
 #' @param ... `mash_table()` only: `data.frame`s with the same row and column
 #'   count.
 #' @param `mash_table_list()` only: a `list` of `data.frame`s as described for
@@ -57,6 +56,7 @@ mash_table <- function(
   mash_table_list(
     list(...),
     mash_method = mash_method,
+    id_vars = id_vars,
     insert_blank_row = insert_blank_row,
     sep_height = sep_height,
     meta = meta,
@@ -125,7 +125,10 @@ mash_table_list <- function(
 
   res <- Mashed_table(
     res,
-    mash_method = mash_method
+    mash_method = mash_method,
+    id_vars = id_vars,
+    insert_blank_row = insert_blank_row,
+    sep_height = sep_height
   )
 
   if(!is.null(meta)){
