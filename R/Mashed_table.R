@@ -25,6 +25,8 @@
 #' @param insert_blank_row Only if mashing rows: logical. Whether to insert
 #'   blank rows between mash-groups. *Warning: this converts all columns to
 #'   character.* Use with care.
+#' @param suffixes Only if mashing columns: a character vector of
+#'   the same length as \code{dat}. Suffixes to append to each column
 #' @param sep_height Only has an effect when exporting to `xlsx`. if
 #'   `insert_blank_row == TRUE`, hight of the inserted row, else height of the
 #'   top row of each mash-group.
@@ -50,6 +52,7 @@ mash_table <- function(
   mash_method = 'row',
   id_vars = NULL,
   insert_blank_row = FALSE,
+  suffixes = FALSE,
   sep_height = 24,
   meta = NULL,
   rem_ext = NULL
@@ -59,6 +62,7 @@ mash_table <- function(
     mash_method = mash_method,
     id_vars = id_vars,
     insert_blank_row = insert_blank_row,
+    suffixes = suffixes,
     sep_height = sep_height,
     meta = meta,
     rem_ext = rem_ext
@@ -75,6 +79,7 @@ mash_table_list <- function(
   mash_method = 'row',
   id_vars = NULL,
   insert_blank_row = FALSE,
+  suffixes = NULL,
   sep_height = 24,
   meta = NULL,
   rem_ext = NULL
@@ -129,6 +134,7 @@ mash_table_list <- function(
     mash_method = mash_method,
     id_vars = id_vars,
     insert_blank_row = insert_blank_row,
+    suffixes = suffixes,
     sep_height = sep_height
   )
 
@@ -147,6 +153,7 @@ Mashed_table <- function(
   mash_method = 'row',
   id_vars = NULL,
   insert_blank_row = FALSE,
+  suffixes = NULL,
   sep_height = 24
 ){
   assert_that(is.list(dat))
@@ -248,8 +255,6 @@ print.Mashed_table <- function(dat, ...){
 #'
 #' @param dat a \code{Mashed_table}
 #' @inheritParams mash_table
-#' @param suffixes Only if mashign columns: a character vector of
-#'   the same length as \code{dat}. Suffixes to append to each column
 #'
 #' @return a \code{data.table} or \code{data.frame}
 #' @export
@@ -258,7 +263,7 @@ as.data.table.Mashed_table <- function(
   mash_method = attr(dat, 'mash_method'),
   insert_blank_row = attr(dat, 'insert_blank_row'),
   id_vars = attr(dat, 'id_vars'),
-  suffixes = NULL
+  suffixes = attr(dat, 'suffixes')
 ){
   assert_that(purrr::is_scalar_character(mash_method))
   assert_that(is.flag(insert_blank_row))
@@ -287,7 +292,7 @@ as.data.frame.Mashed_table <- function(
   mash_method = attr(dat, 'mash_method'),
   insert_blank_row = attr(dat, 'insert_blank_row'),
   id_vars = attr(dat, 'id_vars'),
-  suffixes = NULL
+  suffixes = attr(dat, 'suffixes')
 ){
   as.data.frame(as.data.table.Mashed_table(dat))
 }
@@ -470,6 +475,21 @@ cmash <- function(
   return(res)
 }
 
+#' @rdname Mashed_table
+#' @export
+`suffixes<-` <- function(dat, value){
+  dat %assert_class% 'Mashed_table'
+  assert_that(is.character(value))
+  assert_that(identical(
+    length(dat),
+    length(value)
+  ))
+
+  res <- data.table::copy(dat)
+
+  data.table::setattr(res, 'suffixes', value)
+  return(res)
+}
 
 
 
