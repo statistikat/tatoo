@@ -61,7 +61,6 @@ test_that('mash_table: stacking tables by row works', {
     ## For better visual differentiation, blank rows can be inserted between
     ## mashes (useful especially for latex or xlsx export)
       expect_silent(res1 <- as.data.table(st1, insert_blank_row = TRUE))
-      expect_error(as.data.table(st1, mash_method = 'col', insert_blank_row = TRUE))
 
       sel <- seq(3, nrow(res1), 3)
       expect_true(all(rowSums(res1[sel] == '') == ncol(res1)))
@@ -90,11 +89,11 @@ test_that('mash_table: stacking tables by col works', {
   st1[[2]]$id_2 <- letters[6:10]
 
   expect_silent(res1 <- mash_cols(
-    st1, by = c('id_1', 'id_2')
+    st1, id_vars = c('id_1', 'id_2')
   ))
   expect_silent(res2 <- mash_cols(
     st1,
-    by = c('id_1', 'id_2'),
+    id_vars = c('id_1', 'id_2'),
     suffixes = c('foo', 'bar')
   ))
   expect_silent(res3 <- mash_cols(st1))
@@ -137,5 +136,67 @@ test_that('mash_table: stacking tables by col works', {
   }) %>% mash_table_list()
 
   expect_silent(mash_cols(st3id))
-  expect_silent(mash_cols(st3id, by = c('id', 'id2')))
+  expect_silent(mash_cols(st3id, id_vars = c('id', 'id2')))
+})
+
+
+
+test_that('mash_table: as.data.table and setters work', {
+  expect_silent(st1 <- mash_table(tdat1, tdat2, rem_ext = '_xt'))
+  st1[[1]]$id_1 <- LETTERS[1:5]
+  st1[[2]]$id_1 <- LETTERS[1:5]
+  st1[[1]]$id_2 <- letters[6:10]
+  st1[[2]]$id_2 <- letters[6:10]
+
+  # See if as.data.table outputs the correct number of rows
+    expect_identical(
+      nrow(as.data.table(st1)),
+      10L
+    )
+
+    expect_identical(
+      length(capture.output(print(st1))),
+      11L
+    )
+
+
+  # Default parameters can be overwritten in as.data.table or modifed via set
+    tres1 <- as.data.table(st1, insert_blank_row = TRUE)
+
+    expect_identical(
+      nrow(tres1),
+      14L
+    )
+
+    insert_blank_row(st1) <- TRUE
+
+    expect_identical(
+      as.data.table(st1),
+      tres1
+    )
+
+    expect_identical(
+      length(capture.output(print(st1))),
+      15L
+    )
+
+  # Set stack method
+    mash_method(st1) <- 'col'
+    expect_identical(
+      nrow(as.data.table(st1)),
+      5L
+    )
+
+  # set by
+    id_vars(st1) <- c('id_1', 'id_2')
+
+    expect_identical(
+      nrow(as.data.table(st1)),
+      5L
+    )
+
+    expect_identical(
+      length(capture.output(print(st1))),
+      6L
+    )
 })
