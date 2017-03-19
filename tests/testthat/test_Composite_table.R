@@ -42,7 +42,7 @@ test_that("Composite_table works as expected", {
     expect_silent(tres <- comp_table(
       tdat[[1]], tdat[[2]], tdat[[3]],
       table_names = c('tab1', 'tab2', 'tab3'),
-      by = 'id'
+      id_vars = 'id'
     ))
 
   # display print (manual check)
@@ -81,7 +81,7 @@ test_that("as.data.table.Composite_table works as expected", {
   tdat2 <- comp_table_list(
     tl,
     c('tab1', 'tab2', 'tab3'),
-    by = 'id'
+    id_vars = 'id'
   )
 
   expect_identical(

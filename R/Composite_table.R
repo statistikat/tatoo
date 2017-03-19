@@ -3,8 +3,8 @@
 #' @param ... \code{comp_table} only:
 #' @param multinames Titles of subtables (one for each element of
 #'   \code{...} / \code{tables})
-#' @param by If \code{by} is specified, the tables will be combined using
-#'   \code{\link{merge}} on the columns specified in by, otherwise the tables
+#' @param id_vars If \code{id_vars} is specified, the tables will be combined using
+#'   \code{\link{merge}} on the columns specified in id_vars, otherwise the tables
 #'   will be combined with \code{\link{cbind}}.
 #' @param meta a \code{\link{TT_meta}} object. If speciefied, the resulting
 #'   \code{comp_table} will be wrapped in a \code{\link{tag_table}}.
@@ -16,7 +16,7 @@
 comp_table <- function(
   ...,
   table_names,
-  by = NULL,
+  id_vars = NULL,
   meta = NULL
 ){
   force(table_names) # fail early if argument was not provided
@@ -24,7 +24,7 @@ comp_table <- function(
   comp_table_list(
     tables = list(...),
     table_names = table_names,
-    by = by,
+    id_vars = id_vars,
     meta = meta
   )
 }
@@ -40,7 +40,7 @@ comp_table <- function(
 comp_table_list <- function(
   tables,
   table_names = names(tables),
-  by = NULL,
+  id_vars = NULL,
   meta = NULL
 ){
   # Pre-conditions
@@ -58,14 +58,14 @@ comp_table_list <- function(
 
 
   # Combine the tables
-  if(is.null(by)){
+  if(is.null(id_vars)){
     res          <- dplyr::bind_cols(tables)
   } else {
     merger <- function(x, y)  {suppressWarnings(
       merge.data.frame(
         x,
         y,
-        by = by,
+        by = id_vars,
         all = TRUE,
         suffixes = c('', ''),
         sort = FALSE)
@@ -75,14 +75,14 @@ comp_table_list <- function(
 
 
   # Generate table-title cell positions (for xlsx / latex export).
-  # if a "by" was specified, this has to be considered when creating the indices
+  # if a "id_vars" was specified, this has to be considered when creating the indices
   table_multinames <- vector('integer', length(tables))
   for(i in seq_along(table_multinames)){
-    table_multinames[[i]] <- ncol(tables[[i]]) - length(by)
+    table_multinames[[i]] <- ncol(tables[[i]]) - length(id_vars)
   }
 
-  if(length(by) > 0){
-    table_multinames <- c(length(by), table_multinames)
+  if(length(id_vars) > 0){
+    table_multinames <- c(length(id_vars), table_multinames)
     table_names       <- c('', table_names)
   }
 
@@ -93,10 +93,10 @@ comp_table_list <- function(
   # post conditions
   assert_that(max(table_multinames) %identical% ncol(res))
 
-  if(length(by) %identical% 0L){
+  if(length(id_vars) %identical% 0L){
     assert_that(min(table_multinames) %identical% ncol(tables[[1]]))
   } else {
-    assert_that(min(table_multinames) %identical% length(by))
+    assert_that(min(table_multinames) %identical% length(id_vars))
   }
 
   assert_that(table_multinames %identical% sort(table_multinames))
