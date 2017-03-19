@@ -9,31 +9,58 @@
 #' into one data.frame with alternating rows or columns.
 #'
 #' If your goal is to present formated tables as latex or xlsx, you  should aslo
-#' look into \code{\link{df_format}}, \code{\link{df_round}} and
-#' \code{\link{df_signif}}.
+#' look into `\link{df_format}`, `\link{df_round}` and
+#' `\link{df_signif}`.
 #'
-#' @param dat1
-#' @param dat2
-#' @param rem_ext
+
+#' @param ... `mash_table()` only: `data.frame`s with the same row and column
+#'   count.
+#' @param `mash_table_list()` only: a `list` of `data.frame`s as described for
+#'   `(...)`
+#' @param mash_method either `"row"` or `"col"`. should the tables be mashed by
+#'   row or by column?
+#' @param id_vars Only if `mash_method == "col"`: If supplied, columns of both
+#'   input tables are combined with `\link{merge}`, otherwise `\link{cbind}` is
+#'   used.
+#' @param insert_blank_row logical. Whether to insert blank rows between
+#'   \code{data.frame} columns. Warning: this converts all columns to character.
+#' @param sep_height Only has an effect when exporting to `xlsx`. if
+#'   `insert_blank_row == TRUE`, hight of the inserted row, else height of the
+#'   top row of each mash-group.
+#' @param meta A `\link{TT_meta} object. if supplied, output will also be a
+#'   `\link{Tagged_table}`
+#' @param rem_ext `character`. For `mash_table` to work, the column names of
+#'   all elements of `dat` must be identical. Sometimes you will have the
+#'   situation that column names are identical except for a suffix, such as
+#'   `length` and `lenght.sd`. The `rem_ext` option can be used to remove
+#'   such suffixes.
 #'
-#' @return a \code{Mashed_table}
+#' @return a \code{Mashed_table}: a `list` of `data.table`s with additonal
+#'   `mash_method`, `insert_blank_row` and `sep_height` attributes, that
+#'   influence how the table looks when it is printed or exported.
 #'
-#' @rdname mash_table
-#' @aliases Mashed_table mashed_table
+#' @md
+#' @rdname Mashed_table
+#' @aliases Mashed_table mashed_table mash_table
 #' @export
 #'
 #' @examples
 mash_table <- function(
   ...,
-  rem_ext = NULL,
   mash_method = 'row',
-  meta = NULL
+  id_vars = NULL,
+  insert_blank_row = FALSE,
+  sep_height = 24,
+  meta = NULL,
+  rem_ext = NULL
 ){
   mash_table_list(
     list(...),
-    rem_ext = rem_ext,
     mash_method = mash_method,
-    meta = meta
+    insert_blank_row = insert_blank_row,
+    sep_height = sep_height,
+    meta = meta,
+    rem_ext = rem_ext
   )
 }
 
@@ -41,12 +68,15 @@ mash_table <- function(
 
 
 #' @export
-#' @rdname mash_table
+#' @rdname Mashed_table
 mash_table_list <- function(
   tables,
   mash_method = 'row',
-  rem_ext = NULL,
-  meta = NULL
+  id_vars = NULL,
+  insert_blank_row = FALSE,
+  sep_height = 24,
+  meta = NULL,
+  rem_ext = NULL
 ){
   assert_that(is.list(tables))
   assert_that(is.null(meta) || is_class(meta, 'TT_meta'))
@@ -110,22 +140,50 @@ mash_table_list <- function(
 
 Mashed_table <- function(
   dat,
-  mash_method
+  mash_method = 'row',
+  id_vars = NULL,
+  insert_blank_row = FALSE,
+  sep_height = 24
 ){
   assert_that(is.list(dat))
   assert_that(
     identical(mash_method, 'row') ||
     identical(mash_method, 'col')
   )
+  assert_that(is.number(sep_height))
+  assert_that(looks_like_integer(sep_height))
+
+  sep_height <- as.integer(sep_height)
 
   res <- data.table::copy(dat) %>%
     tatoo_table()
+
   data.table::setattr(res, 'class', union('Mashed_table', class(res)))
   data.table::setattr(res, 'mash_method', mash_method)
+  data.table::setattr(res, 'id_vars', id_vars)
+  data.table::setattr(res, 'insert_blank_row', insert_blank_row)
+  data.table::setattr(res, 'sep_height', sep_height)
+
+  assert_valid(res)
   return(res)
 }
 
 
+
+
+is_valid.Mashed_table <- function(dat){
+  res <- list(
+    is_list          = is.list(dat),
+    mash_method      = identical(attr(dat, 'mash_method'), 'row') ||
+                       identical(attr(dat, 'mash_method'), 'col'),
+    id_vars               = is.null(attr(dat, 'id_vars')) ||
+                       is.character(attr(dat, 'id_vars')),
+    insert_blank_row = is.flag(attr(dat, 'insert_blank_row')),
+    sep_height       = purrr::is_scalar_integer(attr(dat, 'sep_height'))
+  )
+
+  all_with_warning(res)
+}
 
 
 #' @export
@@ -145,17 +203,27 @@ as_mashed_table <- function(dat, ...){
 #'
 #' @export
 print.Mashed_table <- function(dat, ...){
-  lines <- capture.output(print(as.data.table(dat), ...))
+  lines <- capture.output(print(
+    as.data.table(dat, insert_blank_row = FALSE),
+    ...
+  ))
 
   for(i in seq_along(lines)){
     cat(lines[[i]], '\n')
 
-    insert_blank <- i > length(dat) &&
-                   (i-1) %% length(dat) == 0
-    assert_that(is.flag(insert_blank))
+    if(attr(dat, 'insert_blank_row') &&
+       attr(dat, 'mash_method') %identical% 'row'
+    ){
+      insert_blank <-
+         i > length(dat) &&
+        (i-1) %% length(dat) == 0 &&
+        !identical(i, length(lines))
 
-    if(insert_blank){
-      cat('\n')
+      assert_that(is.flag(insert_blank))
+
+      if(insert_blank){
+        cat('\n')
+      }
     }
   }
 
@@ -168,12 +236,7 @@ print.Mashed_table <- function(dat, ...){
 #' Convert a Mashed Table to a data.table or data.frame
 #'
 #' @param dat a \code{Mashed_table}
-#' @param mash_method either "row" or "col"
-#' @param insert_blank_row logical. Whether to insert blank rows between
-#'   \code{data.frame} columns. Warning: this converts all columns to character.
-#' @param by Only if \code{mash_method == "col"}: If supplied, columns of both
-#'   input tables are combined with \code{\link{merge}}, otherwise
-#'   \code{\link{cbind}} is used.
+#' @inheritParams mash_table
 #' @param suffixes Only if \code{mash_method == "col"}: a character vector of
 #'   the same length as \code{dat}. Suffixes to append to each column
 #'
@@ -183,21 +246,19 @@ print.Mashed_table <- function(dat, ...){
 #' @examples
 as.data.table.Mashed_table <- function(
   dat,
-  mash_method = 'row',
-  insert_blank_row = FALSE,
-  by = NULL,
+  mash_method = attr(dat, 'mash_method'),
+  insert_blank_row = attr(dat, 'insert_blank_row'),
+  id_vars = attr(dat, 'id_vars'),
   suffixes = NULL
 ){
   assert_that(purrr::is_scalar_character(mash_method))
   assert_that(is.flag(insert_blank_row))
-  assert_that(is.null(by) || is.character(by))
+  assert_that(is.null(id_vars) || is.character(id_vars))
   assert_that(is.null(suffixes) || is.character(suffixes) )
   assert_that(is.null(suffixes) || length(suffixes) %identical% length(dat))
 
-  assert_that(is.scalar(stack))
   if(mash_method %in% c('c', 'col', 'column', 'columns')){
-    assert_that(insert_blank_row %identical% FALSE)
-    res <- mash_cols(dat, by = by, suffixes = suffixes)
+    res <- mash_cols(dat, id_vars = id_vars, suffixes = suffixes)
   } else if(mash_method %in% c('r', 'row', 'rows')) {
     res <- mash_rows(dat, insert_blank_row = insert_blank_row)
   } else{
@@ -212,7 +273,13 @@ as.data.table.Mashed_table <- function(
 
 #' @rdname as.data.table.Mashed_table
 #' @export
-as.data.frame.Mashed_table <- function(dat, ...){
+as.data.frame.Mashed_table <- function(
+  dat,
+  mash_method = attr(dat, 'mash_method'),
+  insert_blank_row = attr(dat, 'insert_blank_row'),
+  id_vars = attr(dat, 'id_vars'),
+  suffixes = NULL
+){
   as.data.frame(as.data.table.Mashed_table(dat, ...))
 }
 
@@ -224,7 +291,7 @@ as.data.frame.Mashed_table <- function(dat, ...){
 #' @param insert_blank_row whether or not to insert a blank row between mash paris
 #'
 #' @export
-#' @rdname mash_table
+#' @rdname Mashed_table
 rmash <- function(
   ...,
   rem_ext = NULL,
@@ -258,11 +325,11 @@ rmash <- function(
 
 
 #' @export
-#' @rdname mash_table
+#' @rdname Mashed_table
 cmash <- function(
   ...,
   rem_ext = NULL,
-  by = NULL,
+  id_vars = NULL,
   suffixes = NULL,
   meta = NULL
 ){
@@ -279,7 +346,7 @@ cmash <- function(
     res <-  mash_table_list(dots, rem_ext = rem_ext) %>%
       as.data.table(
         mash_method = 'col',
-        by = by,
+        id_vars = id_vars,
         suffixes = suffixes
     )
   }
@@ -292,20 +359,56 @@ cmash <- function(
 
 # Setters -----------------------------------------------------------------
 
-#' Set the multinames attribute of a Composite_table
-#'
-#' @param dat a Composite_table or data.frame
-#' @param value a named character vector (see example)
-#'
+#' @rdname Mashed_table
 #' @export
 `mash_method<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
+  assert_that(identical(value, 'row') || identical(value, 'col'))
 
   res <- data.table::copy(dat)
-  data.table::setattr(res, 'mash_method', value)
 
+  data.table::setattr(res, 'mash_method', value)
   return(res)
 }
+
+#' @rdname Mashed_table
+#' @export
+`insert_blank_row<-` <- function(dat, value){
+  dat %assert_class% 'Mashed_table'
+  assert_that(is.flag(value))
+
+  res <- data.table::copy(dat)
+
+  data.table::setattr(res, 'insert_blank_row', value)
+  return(res)
+}
+
+#' @rdname Mashed_table
+#' @export
+`sep_height<-` <- function(dat, value){
+  dat %assert_class% 'Mashed_table'
+  assert_that(hammr::looks_like_integer(value))
+
+  value <- as.integer(value)
+  res <- data.table::copy(dat)
+
+  data.table::setattr(res, 'sep_height', value)
+  return(res)
+}
+
+#' @rdname Mashed_table
+#' @export
+`id_vars<-` <- function(dat, value){
+  dat %assert_class% 'Mashed_table'
+  assert_that(is.character(value))
+
+  res <- data.table::copy(dat)
+
+  data.table::setattr(res, 'id_vars', value)
+  return(res)
+}
+
+
 
 
 
@@ -369,14 +472,14 @@ mash_rows <- function(dat, insert_blank_row = FALSE){
 
 mash_cols <- function(
   dat,
-  by = NULL,
+  id_vars = NULL,
   suffixes = names(dat)
 ){
   # Preconditions
   dat %assert_class% 'Mashed_table'
   assert_that(
-    is.null(by) ||
-      is.character(by)
+    is.null(id_vars) ||
+      is.character(id_vars)
   )
 
   if (is.null(names(dat)) && is.null(suffixes)) {
@@ -393,8 +496,8 @@ mash_cols <- function(
 
   for(i in seq_along(dl)){
     new_names <- names(dl[[i]])
-    new_names[!new_names %in% by] <- paste0(
-      new_names[!new_names %in% by],
+    new_names[!new_names %in% id_vars] <- paste0(
+      new_names[!new_names %in% id_vars],
       suffixes[[i]]
     )
     data.table::setnames(dl[[i]], new_names)
@@ -402,7 +505,7 @@ mash_cols <- function(
 
 
   # Flatten
-  if (is.null(by)){
+  if (is.null(id_vars)){
     res <- do.call(cbind, dl)
   } else {
     merger <- function(x, y)  {
@@ -410,7 +513,7 @@ mash_cols <- function(
         merge.data.frame(
           x,
           y,
-          by = by,
+          by = id_vars,
           all = TRUE,
           sort = FALSE,
           suffixes = c('', ''))
@@ -422,21 +525,21 @@ mash_cols <- function(
 
   # Determine output col order
   colorder <- seq_len(
-    length(dat) * (ncol(dat[[1]]) - length(by))
+    length(dat) * (ncol(dat[[1]]) - length(id_vars))
   )
 
   colorder <- matrix(
     colorder,
-    nrow = (ncol(dat[[1]]) - length(by)),
+    nrow = (ncol(dat[[1]]) - length(id_vars)),
     ncol = length(dat)
   )
 
   colorder <- as.vector(t(colorder))
 
-  if(length(by) > 0){
-    i_by <- seq_along(by)
-    colorder <- colorder + max(i_by)
-    colorder <- c(i_by, colorder)
+  if(length(id_vars) > 0){
+    i_id_vars <- seq_along(id_vars)
+    colorder <- colorder + max(i_id_vars)
+    colorder <- c(i_id_vars, colorder)
   }
 
 
@@ -448,7 +551,7 @@ mash_cols <- function(
 
   # Output
   data.table::setcolorder(res, colorder)
-  data.table::setattr(res, 'by', by)
+  data.table::setattr(res, 'id_vars', id_vars)
   return(res)
 }
 
