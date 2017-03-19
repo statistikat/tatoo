@@ -9,27 +9,22 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r include = FALSE}
+```{r message=FALSE, warning=FALSE}
 library(dplyr)
 library(tatoo)
 ```
 
 # Introduction
 
-Tatoo ("Table Tools") provides three straight-forward helper functions to 
-construct tables that are otherwise awkward to create in base-r, and a
-way to add metadata (id, title, ...) to a table. Those are the
-kinds of tables that you, as a data scientist, likely do not want to create
-in the first place, but that your boss likes a lot. 
+Tatoo ("Table Tools") provides three straight-forward helper to combine multiple
+`data.frames` to tables that are otherwise awkward to create in base-r, and a
+way to add metadata (id, title, ...) to a table. 
 
-Tatoo tables can directly be saved to `.xlsx` files, or convert to `Workbook` 
-objects with `as_workbook` so that you can process them further using the 
-awesome `openxlsx` package. Tatoo also convenient print methods so that you
-can preview the tables you created in the console.
-
-In the future, latex and html export is also planned, but there is no roadmap
-for that yet. Since this is an open source project, any help is highly 
-appreciated.
+Tatoo tables can directly be saved to .xlsx files, or convert to `Workbook` 
+objects with `as_workbook()` so that you can process them further using the 
+awesome `openxlsx` package. While tatoo implements convenient print methods so 
+that you can preview the tables you created in the console, most of the
+functionality provided by this package only makes real sense for .xlsx export.
 
 # Setup example data
 ```{r}
@@ -49,51 +44,120 @@ df2 <- iris %>%
 ```
 
 
-# Mash tables
+# Mashed tables
 
-## Mash by row
+Combine two `data.frames` in such a way that you and up with alternating rows
+or columns. Internally, a `Mashed_table` is just a list of two or more tables,
+and metadata on how to combine them.
+
+`Mashed_tables` can be constructed from individual `data.frames` or a `list` of 
+`data.frames`
+
 ```{r}
-mt <- mash_table(df1, df2)
-rmash(mt)
-rmash(df1, df2)
+mt_default <- mash_table(df1, df2)
+mt_default <- mash_table_list(list(df1, df2))
+
+print(mt_default)
+
+```
+
+Additional formatting parameters can be saved as attributes to a mash table. 
+Those attributes honored by the print and (more significantly) the as_workbook 
+methods.
+
+```{r}
+mt_row <- mash_table(df1, df2, mash_method = 'row', insert_blank_row = TRUE)
+print(mt_row)
+
+mt_col <- mash_table(df1, df2, mash_method = 'col', id_vars = 'Species')
+print(mt_col)
+```
+
+The display parameters are just saved as attributes, and can be modified
+conveniently via set functions
+
+```{r}
+attributes(mt_default)
+
+mash_method(mt_default) <- 'col'
+id_vars(mt_default) <- 'Species'
+
+print(mt_default)
+```
+
+All Tatoo table classes can be converted to openxlsx Workbooks via 
+`as_workbook()`. Examples for finished `.xlsx` files are beyond the scope
+of this vignette.
+
+```{r message=FALSE}
+as_workbook(mt_default)
+```
+
+
+
+## rmash and cmash
+
+`rmash()` and `cmash()` are convient shortcut functions if you just need to quickly
+mash together a `data.frame` (similar to `rbind()` and `cbind()`). Note that the
+result is a `data.table` and not a `data.frame`, so if you are not familiar with
+the `data.table` package you might want to manually convert the result to a
+`data.frame` to prevent headaches.
+```{r}
+rmash(mt_default) # rmash can be used on a Mash_table
+rmash(df1, df2) # or on several data.frames
 rmash(df1, df2, insert_blank_row = TRUE)
-as_workbook(mt, se)
-```
 
-## Mash by collumn
-```{r}
-cmash(mt)
+cmash(mt_default)
 cmash(df1, df2, suffixes = c('_mean', '_sd'))
-cmash(df1, df2, by = 'Species')
+cmash(df1, df2, id_vars = 'Species') %>% 
+  as.data.frame()
 ```
 
 
-# Comp tables
+# Composite tables
+
+`comp_table()` works like `cbind()`, but separate super-headings are preserved 
+for each table. 
+
 ```{r}
-comp_table(
+ct1 <- comp_table(
   df1, 
-  df2,
-  titles = c('mean', 'sd')
+  df2
+)
+print(ct1)
+```
+
+Names for each table can be provided directly, or alternatively the 
+`comp_table_list()` constructor can be used as above with mash_table.
+
+```{r}
+ct2 <- comp_table(
+  mean = df1, 
+  sd = df2
 )
 
-comp_table(
-  df1, 
-  df2,
-  titles = c('mean', 'sd'),
-  by = 'Species'
-)
-
-comp_table_list(
+ct2 <- comp_table_list(
   list(
     mean = df1,
-    sd = df2),
-  by = 'Species'
+    sd = df2)
 )
 
+print(ct2)
+```
+
+The id_vars argument can be used to combine the tables via merge, rather
+than via cbind
+
+```{r}
+comp_table(
+  mean = df1, 
+  sd = df2,
+  id_vars = 'Species'
+)
 ```
 
 
-# Stack table
+# Stacked tables
 ```{r}
 tatoo::stack_table(
   df1, 
@@ -101,7 +165,7 @@ tatoo::stack_table(
 )
 ```
 
-# Meta table - Add metadata to a table
+# Tagged tables - Add metadata to a table
 
 ```{r}
 # Create metadata object
@@ -114,26 +178,18 @@ ex_meta <- tt_meta(
 )
 
 # Create metadata object
-res <- tag_table(
+tt1 <- tag_table(
   df1,
   meta = ex_meta
 )
 
-
-cmash(
-  df1, 
-  df2,
-  by = 'Species',
-  meta = ex_meta
+tt2 <- comp_table(
+  mean = df1, 
+  sd = df2,
+  id_vars = 'Species'
 )
 
-comp_table(
-  df1, 
-  df2,
-  titles = c('mean', 'sd'),
-  by = 'Species',
-  meta = ex_meta
-)
+meta(tt2) <- ex_meta
 
 ```
 
