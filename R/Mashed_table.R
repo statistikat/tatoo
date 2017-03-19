@@ -3,38 +3,37 @@
 #' Mash Tables
 #'
 #' Mash tables are designed to make it easy to put together multidimensional
-#' tables from two data.frames. An example where this might be useful is
-#' if you have a data.frame of numeric values, and a second data.frame of
-#' associated standard errors.
+#' tables from two data.frames. An example where this might be useful is if you
+#' have a data.frame of numeric values, and a second data.frame of associated
+#' standard errors.
 #'
-#' Mash table provides a framework to mash those two data.frames together
-#' into one data.frame with alternating rows or columns.
+#' Mash table provides a framework to mash those two data.frames together into
+#' one data.frame with alternating rows or columns.
 #'
 #' If your goal is to present formated tables as latex or xlsx, you  should aslo
-#' look into `\link{df_format}`, `\link{df_round}` and
-#' `\link{df_signif}`.
+#' look into `\link{df_format}`, `\link{df_round}` and `\link{df_signif}`.
 #'
 #' @param ... `mash_table()` only: `data.frame`s with the same row and column
 #'   count.
-#' @param `mash_table_list()` only: a `list` of `data.frame`s as described for
-#'   `(...)`
+#' @param tables `mash_table_list()` only: a `list` of `data.frame`s as
+#'   described for `(...)`
 #' @param mash_method either `"row"` or `"col"`. should the tables be mashed by
 #'   row or by column?
-#' @param id_vars Only if `mash_method == "col"`: If supplied, columns of both
-#'   input tables are combined with `\link{merge}`, otherwise `\link{cbind}` is
-#'   used.
-#' @param insert_blank_row logical. Whether to insert blank rows between
-#'   \code{data.frame} columns. Warning: this converts all columns to character.
+#' @param id_vars Only if mashing columns: one ore more colnames of the tables
+#'   to be mashed. If supplied, columns of both input tables are combined with
+#'   `\link{merge}`, otherwise `\link{cbind}` is used.
+#' @param insert_blank_row Only if mashing rows: logical. Whether to insert
+#'   blank rows between mash-groups. *Warning: this converts all columns to
+#'   character.* Use with care.
 #' @param sep_height Only has an effect when exporting to `xlsx`. if
 #'   `insert_blank_row == TRUE`, hight of the inserted row, else height of the
 #'   top row of each mash-group.
 #' @param meta A `\link{TT_meta} object. if supplied, output will also be a
 #'   `\link{Tagged_table}`
-#' @param rem_ext `character`. For `mash_table` to work, the column names of
-#'   all elements of `dat` must be identical. Sometimes you will have the
-#'   situation that column names are identical except for a suffix, such as
-#'   `length` and `lenght.sd`. The `rem_ext` option can be used to remove
-#'   such suffixes.
+#' @param rem_ext `character`. For `mash_table` to work, the column names of all
+#'   elements of `dat` must be identical. Sometimes you will have the situation
+#'   that column names are identical except for a suffix, such as `length` and
+#'   `lenght.sd`. The `rem_ext` option can be used to remove such suffixes.
 #'
 #' @return a \code{Mashed_table}: a `list` of `data.table`s with additonal
 #'   `mash_method`, `insert_blank_row` and `sep_height` attributes, that
@@ -46,7 +45,6 @@
 #' @family Tatto tables
 #' @export
 #'
-#' @examples
 mash_table <- function(
   ...,
   mash_method = 'row',
@@ -66,9 +64,6 @@ mash_table <- function(
     rem_ext = rem_ext
   )
 }
-
-
-
 
 
 
@@ -252,7 +247,7 @@ print.Mashed_table <- function(dat, ...){
 #'
 #' @param dat a \code{Mashed_table}
 #' @inheritParams mash_table
-#' @param suffixes Only if \code{mash_method == "col"}: a character vector of
+#' @param suffixes Only if mashign columns: a character vector of
 #'   the same length as \code{dat}. Suffixes to append to each column
 #'
 #' @return a \code{data.table} or \code{data.frame}
@@ -305,21 +300,56 @@ as.data.frame.Mashed_table <- function(
 
 #' Mash R objects by Rows or Columns
 #'
-#'
+#' `rmash` and `cmash` are convience function to mash `data.frames` together
+#' with a single command. They behave similar to [base::cbind()] and
+#' [base::rbind()], just that the result will have have alternating rows/colums.
 #'
 #' @param ... either several \code{data.frames} or a single \code{Mashed_table}.
+#'   All `data.frames` must have the same number of columns
+#' @inheritParams mash_table
+#' @inheritParams as.data.table.Mashed_table
 #'
-#' @param rem_ext
-#' @param insert_blank_row `rbind` onlywhether or not to insert a blank row between mash paris
-#' @param data.table
+#' @return a `data.table`. if you are unfamiliar with the [data.table] package,
+#'   you will want to coerce the result with [as.data.frame()]
 #'
+#' @md
 #' @export
 #' @rdname rmash
+#'
+#' @examples
+#'
+#' dat1 <- data.frame(
+#' x = 1:3,
+#' y = 4:6
+#' )
+#'
+#' dat2 <- data.frame(
+#'   x = letters[1:3],
+#'   y = letters[4:6]
+#' )
+#'
+#' rmash(dat1, dat2)
+#'
+#' #    x y
+#' # 1: 1 4
+#' # 2: a d
+#' # 3: 2 5
+#' # 4: b e
+#' # 5: 3 6
+#' # 6: c f
+#'
+#' cmash(dat1, dat2)
+#'
+#' #    x x y y
+#' # 1: 1 a 4 d
+#' # 2: 2 b 5 e
+#' # 3: 3 c 6 f
+#'
+#'
 rmash <- function(
   ...,
   rem_ext = NULL,
-  insert_blank_row = FALSE,
-  data.table = TRUE
+  insert_blank_row = FALSE
 ){
   dots <- list(...)
 
@@ -348,10 +378,6 @@ rmash <- function(
     c('data.table', 'data.frame')
   ))
 
-  if(!data.table){
-    res <- as.data.frame(res)
-  }
-
   return(res)
 }
 
@@ -364,8 +390,7 @@ cmash <- function(
   ...,
   rem_ext = NULL,
   id_vars = NULL,
-  suffixes = NULL,
-  data.table = TRUE
+  suffixes = NULL
 ){
   dots <- list(...)
 
@@ -386,10 +411,6 @@ cmash <- function(
         id_vars = id_vars,
         rem_ext = rem_ext) %>%
       as.data.table(suffixes = suffixes)
-  }
-
-  if(!data.table){
-    res <- as.data.frame(res)
   }
 
   return(res)
