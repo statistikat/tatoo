@@ -275,6 +275,7 @@ as.data.table.Composite_table <- function(
 
 
 
+
 #' @rdname as.data.table.Composite_table
 #' @export
 as.data.frame.Composite_table <- function(
@@ -291,6 +292,7 @@ as.data.frame.Composite_table <- function(
 
 
 
+
 composite_name <- function(x, y, sep){
   if(x == ''){
     return(y)
@@ -298,6 +300,7 @@ composite_name <- function(x, y, sep){
     paste(x, y, sep = sep)
   }
 }
+
 
 
 
