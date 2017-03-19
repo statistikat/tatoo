@@ -313,14 +313,16 @@ as.data.frame.Mashed_table <- function(
 #'   you will want to coerce the result with [as.data.frame()]
 #'
 #' @md
-#' @export
 #' @rdname rmash
+#' @seealso [Mashed_table]
+#' @export
+
 #'
 #' @examples
 #'
 #' dat1 <- data.frame(
-#' x = 1:3,
-#' y = 4:6
+#'   x = 1:3,
+#'   y = 4:6
 #' )
 #'
 #' dat2 <- data.frame(

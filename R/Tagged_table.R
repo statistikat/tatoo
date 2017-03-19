@@ -22,7 +22,7 @@
 #' @md
 #' @aliases Tagged_table tagged_table tag_table
 #' @family Tatto tables
-#' @seealso tt_meta
+#' @seealso [tt_meta]
 #' @rdname Tagged_table
 #' @export
 #'
