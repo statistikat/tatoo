@@ -3,18 +3,26 @@
 #' Stack tables on top of each other. This can be used to print several tables
 #' on one Excel sheet with \code{as_workbook} or \code{save_xlsx}.
 #'
-#' @param ... A list whos elements can of class
+#' @param ... `stack_table()` only: Any number of objects of the following classes:
 #'   \code{\link{Tagged_table}},
 #'   \code{\link{Mashed_table}},
 #'   \code{\link{Composite_table}},
 #'   or anything that can be coerced to a \code{data.frame} with
 #'   \code{as.data.frame}
 #'
+#' @param tables `stack_table_list()` only: Same as (`...`) for `stack_table`, just that a
+#'   list can be supplied instead of individual arguments.
 #' @param meta a \code{\link{tt_meta}} object (optional)
+#' @param spacing Number of lineskips between the tables when exporting
+#'   stacked_tables
 #'
-#' @return a \code{Stacked_table}
+#' @return a \code{Stacked_table}: a \code{list} of \code{Tatoo_table}s with
+#'   additonal `spacing` attribute that influences the spacing between the
+#'   component tables when it is exported.
 #'
-#' @aliases Stacked_table stacked_table
+#' @md
+#' @rdname Stacked_table
+#' @aliases Stacked_table stacked_table stack_table
 #' @export
 #'
 #' @examples
@@ -33,6 +41,7 @@ stack_table <- function(
 
 
 
+#' @rdname Stacked_table
 #' @export
 stack_table_list <- function(
   tables,
@@ -63,7 +72,6 @@ Stacked_table <- function(
   assert_that(is.list(dat))
   valid_classes <- c('Tatoo_table', 'data.table')
   assert_that(all(unlist(lapply(dat, hammr::is_any_class, valid_classes))))
-
   assert_that(purrr::is_scalar_numeric(spacing))
   assert_that(hammr::looks_like_integer(spacing))
 
@@ -72,7 +80,19 @@ Stacked_table <- function(
 
   data.table::setattr(res, 'class', union('Stacked_table', class(res)))
   data.table::setattr(res, 'spacing', as.integer(spacing))
+
+  assert_valid(res)
   return(res)
+}
+
+
+
+is_valid.Stacked_table <- function(dat){
+  res <- list(
+    is_list     <- is.list(dat),
+    has_spacing <- purrr::is_scalar_integer(attr(dat, 'spacing'))
+  )
+  all_with_warning(res)
 }
 
 
@@ -97,6 +117,7 @@ print.Stacked_table <- function(dat, ...){
 
   invisible(dat)
 }
+
 
 
 
