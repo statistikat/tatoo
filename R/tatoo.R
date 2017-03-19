@@ -13,5 +13,5 @@
 #'
 #' @docType package
 #' @name tatoo
-NULL
+"_PACKAGE"
 

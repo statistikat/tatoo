@@ -1,5 +1,7 @@
 #* @testfile test_save_xlsx
 
+# as_workbook -------------------------------------------------------------
+
 #' Convert a Tatto table object to an Excel workbook
 #'
 #' This function converts \code{\link{Tatoo_table}} obects directly to
@@ -82,8 +84,6 @@ as_workbook.Tatoo_report <- function(dat, ...){
 
 
 # write_worksheet ---------------------------------------------------------
-
-
 
 #' Write data to an openxlsx Worksheet
 #'

@@ -1,3 +1,5 @@
+# Ctors -------------------------------------------------------------------
+
 #' Compile tables into a report
 #'
 #' Compiles tables into a `Tatoo_report`. A `Tatoo_report` is just
@@ -44,16 +46,18 @@ tatoo_report <- function(dat){
 
 
 
+# methods -----------------------------------------------------------------
+
 #' @export
 is_valid.Tatoo_report <- function(dat){
   res <- list()
 
-  is_valid_col_class <- function(x) {
+  is_valid_elclass <- function(x) {
     hammr::is_any_class(x, c('Tatoo_table', 'data.frame'))
   }
 
   res$class <- is.list(dat)
-  res$elclasses <- lapply(dat, is_valid_col_class) %>%
+  res$elclasses <- lapply(dat, is_valid_elclass) %>%
     unlist() %>%
     all()
 

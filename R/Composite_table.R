@@ -1,3 +1,5 @@
+# Ctors -------------------------------------------------------------------
+
 #' Compose Tables
 #'
 #' @param ... \code{comp_table} only:
@@ -150,6 +152,8 @@ Composite_table <- function(
 
 
 
+# Methods -----------------------------------------------------------------
+
 #' Printing Composite Tables
 #'
 #' @param dat A \code{Tagged_table}
@@ -291,18 +295,7 @@ as.data.frame.Composite_table <- function(
 }
 
 
-
-
-composite_name <- function(x, y, sep){
-  if(x == ''){
-    return(y)
-  } else {
-    paste(x, y, sep = sep)
-  }
-}
-
-
-
+# Setters -----------------------------------------------------------------
 
 #' Set the multinames attribute of a Composite_table
 #'
@@ -323,3 +316,20 @@ composite_name <- function(x, y, sep){
 
   return(res)
 }
+
+
+
+
+# Utils -------------------------------------------------------------------
+
+composite_name <- function(x, y, sep){
+  if(x == ''){
+    return(y)
+  } else {
+    paste(x, y, sep = sep)
+  }
+}
+
+
+
+

@@ -1,3 +1,5 @@
+# Ctors -------------------------------------------------------------------
+
 #' Mash Tables
 #'
 #' Mash tables are designed to make it easy to put together multidimensional
@@ -63,6 +65,9 @@ mash_table <- function(
     rem_ext = rem_ext
   )
 }
+
+
+
 
 
 
@@ -173,6 +178,8 @@ Mashed_table <- function(
 
 
 
+
+# Methods -----------------------------------------------------------------
 
 is_valid.Mashed_table <- function(dat){
   res <- list(
@@ -288,6 +295,8 @@ as.data.frame.Mashed_table <- function(
 
 
 
+
+#  Shortcut functions -----------------------------------------------------
 
 #' @param ... either several \code{data.frames} or a single \code{Mashed_table}.
 #' @param rem_ext
@@ -415,7 +424,9 @@ cmash <- function(
 
 
 
-# Utility funs -----------------------------------------------------------------
+
+# Utils -------------------------------------------------------------------
+
 mash_rows <- function(dat, insert_blank_row = FALSE){
   dat %assert_class% 'Mashed_table'
   assert_that(is.flag(insert_blank_row))

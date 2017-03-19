@@ -1,3 +1,5 @@
+# Ctors - Tagged Table ----------------------------------------------------
+
 #' Tag tables
 #'
 #' Add metadata/captioning (like `table_id`, `title`, `footer`) to a
@@ -103,6 +105,7 @@ Tagged_table <- function(
 
 
 
+
 #' @rdname Tagged_table
 #' @export
 is_Tagged_table <- function(x){
@@ -112,36 +115,7 @@ is_Tagged_table <- function(x){
 
 
 
-#' Printing Tagged Tables
-#'
-#' @param dat A \code{Tagged_table}
-#' @param ... passed on to \code{\link{print}}
-#'
-#' @return \code{dat} (invisibly)
-#'
-#' @export
-print.Tagged_table <- function(dat, ...){
-  dd    <- data.table::copy(dat)
-  meta  <- attr(dd, 'meta')
-
-  if(!is.null(meta)){
-    cat(make_tag_table_print_title(meta), '\n\n')
-  }
-
-  NextMethod(print, dd, ...)
-
-  if(!is.null(meta$footer)){
-    footer <- paste(meta$footer, collapse = '\n')
-    cat('\n', footer, '\n')
-  }
-
-  invisible(dat)
-}
-
-
-
-
-# Tagged Table Metadata ---------------------------------------------------
+# Ctors - TT_meta (Tagged Table Metadata) ---------------------------------
 
 #' Tagged Table metadata
 #'
@@ -208,6 +182,37 @@ tt_meta <- function(
 
 
 
+
+# Methods -----------------------------------------------------------------
+
+#' Printing Tagged Tables
+#'
+#' @param dat A \code{Tagged_table}
+#' @param ... passed on to \code{\link{print}}
+#'
+#' @return \code{dat} (invisibly)
+#'
+#' @export
+print.Tagged_table <- function(dat, ...){
+  dd    <- data.table::copy(dat)
+  meta  <- attr(dd, 'meta')
+
+  if(!is.null(meta)){
+    cat(make_tag_table_print_title(meta), '\n\n')
+  }
+
+  NextMethod(print, dd, ...)
+
+  if(!is.null(meta$footer)){
+    footer <- paste(meta$footer, collapse = '\n')
+    cat('\n', footer, '\n')
+  }
+
+  invisible(dat)
+}
+
+
+
 #' @export
 is_valid.TT_meta <- function(dat){
   res <- list()
@@ -218,6 +223,8 @@ is_valid.TT_meta <- function(dat){
 
   hammr::all_with_warning(res)
 }
+
+
 
 
 #' Printing Tagged Table Metdata
@@ -248,57 +255,7 @@ print.TT_meta <- function(dat, ...){
 
 
 
-#' @export
-make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
-  assert_that(is.flag(show_subtitle))
-  meta %assert_class% 'TT_meta'
-
-  table_id  <- meta$table_id
-  title     <- meta$title %||% ''
-  longtitle <- paste(meta$longtitle, collapse = '\n')
-
-  if(!is.null(meta$subtitle)){
-    subtitle <- paste(meta$subtitle, collapse = '\n')
-  } else {
-    subtitle <- NULL
-  }
-
-  res <- ''
-
-  if(!is.null(table_id)){
-    res <- table_id
-  }
-
-  if(!is.null(title)){
-    if(nchar(res) > 0){
-      res <- sprintf('%s: %s', table_id, title)
-    } else {
-      res <- title
-    }
-  }
-
-  if(nchar(longtitle) > 0 && !identical(longtitle, title)){
-    if(nchar(res) > 0){
-      res <- sprintf('%s - %s', res, longtitle)
-    } else {
-      res <- longtitle
-    }
-  }
-
-  if(show_subtitle && !is.null(subtitle)){
-    res <- paste0(
-      res, '\n', subtitle
-    )
-    assert_that(length(res) %identical% 1L)
-  }
-
-  return(res)
-}
-
-
-
-
-# Meta assignment functions -----------------------------------------------
+# Setters -----------------------------------------------------------------
 
 #' @rdname Tagged_table
 #' @export
@@ -384,6 +341,56 @@ assign_tt_meta <- function(dat, assignment){
       dat,
       meta = do.call(tt_meta, assignment)
     )
+  }
+
+  return(res)
+}
+
+
+
+
+#' @export
+make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
+  assert_that(is.flag(show_subtitle))
+  meta %assert_class% 'TT_meta'
+
+  table_id  <- meta$table_id
+  title     <- meta$title %||% ''
+  longtitle <- paste(meta$longtitle, collapse = '\n')
+
+  if(!is.null(meta$subtitle)){
+    subtitle <- paste(meta$subtitle, collapse = '\n')
+  } else {
+    subtitle <- NULL
+  }
+
+  res <- ''
+
+  if(!is.null(table_id)){
+    res <- table_id
+  }
+
+  if(!is.null(title)){
+    if(nchar(res) > 0){
+      res <- sprintf('%s: %s', table_id, title)
+    } else {
+      res <- title
+    }
+  }
+
+  if(nchar(longtitle) > 0 && !identical(longtitle, title)){
+    if(nchar(res) > 0){
+      res <- sprintf('%s - %s', res, longtitle)
+    } else {
+      res <- longtitle
+    }
+  }
+
+  if(show_subtitle && !is.null(subtitle)){
+    res <- paste0(
+      res, '\n', subtitle
+    )
+    assert_that(length(res) %identical% 1L)
   }
 
   return(res)

@@ -1,3 +1,5 @@
+# Constructors ------------------------------------------------------------
+
 #' Stack tables
 #'
 #' Stack tables on top of each other. This can be used to print several tables
@@ -96,6 +98,9 @@ is_valid.Stacked_table <- function(dat){
 
 
 
+
+# Methods -----------------------------------------------------------------
+
 #' Printing Stacked Tables
 #'
 #' @param dat A \code{Stacked_table}
@@ -119,6 +124,8 @@ print.Stacked_table <- function(dat, ...){
 
 
 
+# Setters -----------------------------------------------------------------
+
 #' @rdname Stacked_table
 #' @export
 `spacing<-` <- function(dat, value){
@@ -131,6 +138,8 @@ print.Stacked_table <- function(dat, ...){
   data.table::setattr(res, 'spacing', value)
   return(res)
 }
+
+
 
 
 # Utils -------------------------------------------------------------------
