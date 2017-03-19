@@ -2,12 +2,11 @@
 
 #' Compose Tables
 #'
-#' @param ... \code{comp_table} only:
-#' @param multinames Titles of subtables (one for each element of
-#'   \code{...} / \code{tables})
-#' @param id_vars If \code{id_vars} is specified, the tables will be combined using
-#'   \code{\link{merge}} on the columns specified in id_vars, otherwise the tables
-#'   will be combined with \code{\link{cbind}}.
+#' @param ... \code{comp_table} only: individual `data.frames`. A name must be
+#'   provided for each `data.frame` (see examples).
+#' @param id_vars If \code{id_vars} is specified, the tables will be combined
+#'   using \code{\link{merge}} on the columns specified in id_vars, otherwise
+#'   the tables will be combined with \code{\link{cbind}}.
 #' @param meta a \code{\link{TT_meta}} object. If speciefied, the resulting
 #'   \code{comp_table} will be wrapped in a \code{\link{tag_table}}.
 #'
@@ -18,15 +17,16 @@
 #' @export
 comp_table <- function(
   ...,
-  table_names,
   id_vars = NULL,
   meta = NULL
 ){
-  force(table_names) # fail early if argument was not provided
+  dots <- list(...)
+
+  is_named_list <- identical(length(names(dots)), length(dots))
+  assert_that(is_named_list)
 
   comp_table_list(
-    tables = list(...),
-    table_names = table_names,
+    tables = dots,
     id_vars = id_vars,
     meta = meta
   )
@@ -35,35 +35,40 @@ comp_table <- function(
 
 
 
-#' @param tables \code{comp_table_list} only: A list of data.frames with the same number of rows
+#' @param tables \code{comp_table_list} only: A named list of data.frames with
+#'   the same number of rows
 #'
-#' @return a
 #' @rdname comp_table
 #' @export
 comp_table_list <- function(
   tables,
-  table_names = names(tables),
   id_vars = NULL,
   meta = NULL
 ){
   # Pre-conditions
   assert_that(is.list(tables))
+
   for(table in tables){
-    table %assert_class% 'data.frame'
-    assert_that(nrow(table)  %identical% nrow(tables[[1]]))
+    assert_that(is.data.frame(table))
+    assert_that(nrow(table) %identical% nrow(tables[[1]]))
   }
 
-  if(!length(table_names) %identical% length(tables)){
-    stop(strwrap(
-      'table_names must be specified, otherwise comp_table
+  if(!length(names(tables)) %identical% length(tables)){
+    stop(hammr::str_nobreak(
+      'names(tables) must be specified, otherwise comp_table
       would just be a wrapper for cbind.'))
   }
-
 
   # Combine the tables
   if(is.null(id_vars)){
     res          <- dplyr::bind_cols(tables)
   } else {
+    id_vars_in_colnames <- tables %>%
+      purrr::map(names) %>%
+      purrr::map_lgl(function (x) id_vars %in% x)
+
+    assert_that(all(id_vars_in_colnames))
+
     merger <- function(x, y)  {suppressWarnings(
       merge.data.frame(
         x,
@@ -76,7 +81,6 @@ comp_table_list <- function(
     res <- Reduce(merger, tables)
   }
 
-
   # Generate table-title cell positions (for xlsx / latex export).
   # if a "id_vars" was specified, this has to be considered when creating the indices
   table_multinames <- vector('integer', length(tables))
@@ -86,7 +90,9 @@ comp_table_list <- function(
 
   if(length(id_vars) > 0){
     table_multinames <- c(length(id_vars), table_multinames)
-    table_names       <- c('', table_names)
+    table_names <- c('', names(tables))
+  } else {
+    table_names <- names(tables)
   }
 
   table_multinames <- cumsum(table_multinames)

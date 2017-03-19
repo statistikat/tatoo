@@ -18,38 +18,25 @@ test_that("Composite_table works as expected", {
 
   # Ursula wants to combine several tables to a Composite_table (side-by-side tables)
 
-  ## table_names must be specified (otherwise comp_table would just be a wrapper for
+  ## table names must be specified (otherwise comp_table would just be a wrapper for
   ## cbind)
     expect_error(tres <- comp_table(tdat[[1]], tdat[[2]], tdat[[3]]))
     expect_error(tres <- comp_table_list(tdat))
 
-  ## If "tables" is a named list, table_names are automatically set to element names
+  ## If "tables" is a named list, table names are automatically set to element names
     names(tdat) <- c('a', 'b', 'c')
     expect_silent(tres <- comp_table_list(tdat))
     expect_s3_class(tres, 'Composite_table')
-
-  ## Alternatively, table names can be specified manually
-    names(tdat) <- NULL
-    expect_silent(tres <- comp_table_list(
-      tdat,
-      table_names = c('tab1', 'tab2', 'tab3')
-    ))
-    expect_s3_class(tres, 'Composite_table')
-
 
   # Ursulas table have an ID column. She wants to merge them, instead of
   # cbinding them. This has the advantage of avoiding duplicate ID columns
   # and ensuring data integrity
     expect_silent(tres <- comp_table(
-      tdat[[1]], tdat[[2]], tdat[[3]],
-      table_names = c('tab1', 'tab2', 'tab3'),
+      tab1 = tdat[[1]],
+      tab2 = tdat[[2]],
+      tab3 = tdat[[3]],
       id_vars = 'id'
     ))
-
-  # display print (manual check)
-    # names(attr(tres, 'table_names'))[[3]] <- 'a very long title, very long'
-    # print(tres)
-
 })
 
 
@@ -66,13 +53,12 @@ test_that("as.data.table.Composite_table works as expected", {
     )
   }
 
-  tdat1 <- comp_table_list(
-    tl,
-    c('tab1', 'tab2', 'tab3')
-  )
+  names(tl) <- c('tab1', 'tab2', 'tab3')
+
+  tdat1 <- comp_table_list(tl)
 
   expect_identical(
-    names(as.data.table(tdat1)),
+    names(as.data.table(tdat1, multinames = TRUE)),
     c("tab1.id", "tab1.small", "tab1.tall", "tab2.id", "tab2.small",
       "tab2.tall", "tab3.id", "tab3.small", "tab3.tall")
   )
@@ -84,7 +70,6 @@ test_that("as.data.table.Composite_table works as expected", {
 
   tdat2 <- comp_table_list(
     tl,
-    c('tab1', 'tab2', 'tab3'),
     id_vars = 'id'
   )
 

@@ -88,6 +88,8 @@ Stacked_table <- function(
 
 
 
+
+#' @export
 is_valid.Stacked_table <- function(dat){
   res <- list(
     is_list     <- is.list(dat),

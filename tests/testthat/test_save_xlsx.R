@@ -80,6 +80,8 @@ test_that("xlsx output for comp_tables works", {
     )
   }
 
+  names(tdat) <- c('tab1', 'tab2', 'tab3')
+
   tm <- tt_meta(
     table_id = 'tid',
     title = 'title',
@@ -91,20 +93,15 @@ test_that("xlsx output for comp_tables works", {
 
   # Ursula wants to export her comp_table as .xlsx
   # (the xlsx files have to be checked manually)
-  expect_silent(ct1 <- comp_table_list(
-    tdat,
-    table_names = c('tab1', 'tab2', 'tab3')
-  ))
+  expect_silent(ct1 <- comp_table_list(tdat))
 
   expect_silent(ct2 <- comp_table_list(
     tdat,
-    table_names = c('tab1', 'tab2', 'tab3'),
     id_vars = 'id'
   ))
 
   expect_silent(ct3 <- comp_table_list(
     tdat,
-    table_names = c('tab1', 'tab2', 'tab3'),
     id_vars = 'id',
     meta = tm
   ))
@@ -165,9 +162,11 @@ test_that("xlsx output for stack_tables works", {
       tall = LETTERS[i:(i+5)]
     )
   }
+
+  names(tdat) <- c('tab1', 'tab2', 'tab3')
+
   tcomp <- comp_table_list(
     tdat,
-    table_names = c('tab1', 'tab2', 'tab3'),
     meta = tt_meta('t03', 'a comp table')
   )
 

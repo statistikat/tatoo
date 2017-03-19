@@ -43,9 +43,11 @@ test_that("Stacked_table works as expected", {
         tall = LETTERS[i:(i+5)]
       )
     }
+
+    names(tdat) <- c('tab1', 'tab2', 'tab3')
+
     tcomp <- comp_table_list(
       tdat,
-      table_names = c('tab1', 'tab2', 'tab3'),
       meta = tt_meta('t03', 'a comp table')
     )
 
@@ -54,7 +56,10 @@ test_that("Stacked_table works as expected", {
     tdat <- stack_table(tmeta, tmash, tcomp, meta = tt_meta(
       table_id = 'rp1',
       title = 'stack table 1',
-      longtitle = c('stack table 1 is a stack of tables', 'with a very long title', 'that spans several rows'),
+      longtitle = c(
+        'stack table 1 is a stack of tables',
+        'with a very long title',
+        'that spans several rows'),
       subtitle = 'with a subtitle',
       footer = c('that has a footer also', 'which goes over man lines')
     ))

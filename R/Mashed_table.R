@@ -177,6 +177,7 @@ Mashed_table <- function(
 
 # Methods -----------------------------------------------------------------
 
+#' @export
 is_valid.Mashed_table <- function(dat){
   res <- list(
     is_list          = is.list(dat),
@@ -252,8 +253,6 @@ print.Mashed_table <- function(dat, ...){
 #'
 #' @return a \code{data.table} or \code{data.frame}
 #' @export
-#'
-#' @examples
 as.data.table.Mashed_table <- function(
   dat,
   mash_method = attr(dat, 'mash_method'),
@@ -316,7 +315,6 @@ as.data.frame.Mashed_table <- function(
 #' @rdname rmash
 #' @seealso [Mashed_table]
 #' @export
-
 #'
 #' @examples
 #'

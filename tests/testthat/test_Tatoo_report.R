@@ -77,9 +77,11 @@ test_that("Tatoo_report print method", {
       tall = LETTERS[i:(i+5)]
     )
   }
+
+  names(tdat) <- c('tab1', 'tab2', 'tab3')
+
   tcomp <- comp_table_list(
     tdat,
-    table_names = c('tab1', 'tab2', 'tab3'),
     meta = tt_meta('t03', 'a comp table')
   )
 
