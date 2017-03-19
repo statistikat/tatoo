@@ -214,5 +214,36 @@ test_that('mash_table: as.data.table and setters work', {
       as.data.table(as.data.frame(st1)),
       as.data.table(st1)
     )
-
 })
+
+
+test_that('rmash and cmash behave as expected', {
+  expect_silent(st1 <- mash_table(tdat1, tdat2, rem_ext = '_xt'))
+  st1[[1]]$id_1 <- LETTERS[1:5]
+  st1[[2]]$id_1 <- LETTERS[1:5]
+  st1[[1]]$id_2 <- letters[6:10]
+  st1[[2]]$id_2 <- letters[6:10]
+
+
+  tres1 <- rmash(st1)
+  tres2 <- rmash(st1[[1]], st1[[2]], insert_blank_row = TRUE)
+
+  expect_identical(nrow(tres1), 10L)
+  expect_identical(nrow(tres2), 14L)
+  expect_identical(class(tres1), c('data.table', 'data.frame'))
+
+
+  tres3 <- cmash(st1)
+  tres4 <- cmash(st1[[1]], st1[[2]], id_vars = c('id_1', 'id_2'))
+
+  expect_identical(
+    ncol(tres3),
+    sum(sapply(st1, ncol))
+  )
+
+  expect_identical(
+    ncol(tres4),
+    sum(sapply(st1, ncol)) - 2L
+  )
+})
+
