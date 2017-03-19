@@ -2,8 +2,9 @@
 
 #' Compose Tables
 #'
-#' @param ... \code{comp_table} only: individual `data.frames`. A name must be
-#'   provided for each `data.frame` (see examples).
+#' @param ... \code{comp_table} only: individual `data.frames`. A name can be
+#'   provided for each `data.frame`, otherwise the object names are used
+#'   (see examples).
 #' @param id_vars If \code{id_vars} is specified, the tables will be combined
 #'   using \code{\link{merge}} on the columns specified in id_vars, otherwise
 #'   the tables will be combined with \code{\link{cbind}}.
@@ -23,7 +24,9 @@ comp_table <- function(
   dots <- list(...)
 
   is_named_list <- identical(length(names(dots)), length(dots))
-  assert_that(is_named_list)
+  if(!is_named_list){
+    names(dots) <- get_dot_names(...)
+  }
 
   comp_table_list(
     tables = dots,

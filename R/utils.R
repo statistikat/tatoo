@@ -136,3 +136,7 @@ print_several_tables <- function(
 
   invisible(dat)
 }
+
+get_dot_names <- function(...){
+  sapply(as.list(substitute(list(...)))[-1L], deparse)
+}

@@ -20,7 +20,11 @@ test_that("Composite_table works as expected", {
 
   ## table names must be specified (otherwise comp_table would just be a wrapper for
   ## cbind)
-    expect_error(tres <- comp_table(tdat[[1]], tdat[[2]], tdat[[3]]))
+    expect_silent(tres <- comp_table(tdat[[1]], tdat[[2]], tdat[[3]]))
+    expect_identical(
+      names(attr(tres, 'multinames')),
+      c("tdat[[1]]", "tdat[[2]]", "tdat[[3]]")
+    )
     expect_error(tres <- comp_table_list(tdat))
 
   ## If "tables" is a named list, table names are automatically set to element names
