@@ -98,18 +98,14 @@ as_workbook.Tatoo_report <- function(dat, ...){
 #' @param append Logical. Whether or not to append to an exisiting worksheet or
 #'   create a new one
 #' @param start_row A scalar specifiying the starting row to write to.
-#' @param mash_method for \code{Mashed_tables}: mash by \code{"row"} or by
-#'   \code{"col"}
-#' @param insert_blank_row for \code{Mashed_tables}: logical. insert a blank row
-#'   between mash-pairs? (only available when mashing by row)
-#' @param sep_height for \code{Mashed_tables}: If \code{insert_blank_row} is
-#'   \code{TRUE}, height of the sepparating blank line, else height of the first
-#'   line of the mash pair (starting with the second mash pair)
-#' @param ... ignored
+#' @param ... additional options that can be used override the styling
+#'   attributes of the \code{\link{Tatoo_table}} you want to export.
 #'
 #' @return an \code{openxlsx Workbook}
 #'
 #' @export
+#'
+#' @example
 #'
 write_worksheet <- function(
   dat,
@@ -325,18 +321,21 @@ write_worksheet.Mashed_table <- function(
   sheet,
   append = FALSE,
   start_row = 1L,
-  mash_method = 'row',
-  insert_blank_row = FALSE,
-  sep_height = 24,
+  mash_method = attr(dat, 'mash_method'),
+  id_vars  = attr(dat, 'id_vars'),
+  insert_blank_row = attr(dat, 'insert_blank_row'),
+  sep_height = attr(dat, 'sep_height'),
   ...
 ){
   # Preconditions
-  assert_that(is.scalar(mash_method))
-  assert_that(is.flag(insert_blank_row))
-  assert_that(is.number(sep_height))
+    assert_that(mash_method %identical% 'col' || mash_method %identical% 'row')
+    assert_that(is.flag(insert_blank_row))
+    assert_that(looks_like_integer(sep_height))
+    assert_that(is.null(id_vars) || is.character(id_vars))
 
 
   # Process arguments
+  sep_height <- as.integer(sep_height)
   wb <- wb$copy()
 
   if(!append){
@@ -346,6 +345,7 @@ write_worksheet.Mashed_table <- function(
   res <- as.data.table(
     dat,
     mash_method = mash_method,
+    id_vars = id_vars,
     insert_blank_row = insert_blank_row
   )
 
@@ -389,6 +389,7 @@ write_worksheet.Mashed_table <- function(
 
 
 
+
 #' @rdname write_worksheet
 #' @export
 write_worksheet.Stacked_table <- function(
@@ -397,11 +398,10 @@ write_worksheet.Stacked_table <- function(
   sheet,
   append = FALSE,
   start_row = 1L,
+  spacing = attr(dat, 'spacing'),
   ...
 ){
   crow    <- start_row
-  spacing <- attr(dat, 'spacing')
-
 
   wb <- write_worksheet(
     dat[[1]],
