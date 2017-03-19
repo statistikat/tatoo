@@ -17,7 +17,7 @@ test_that('save_xlsx mash_table', {
     stringsAsFactors = FALSE
   )
 
-  tmeta <- tt_meta(
+  tm <- tt_meta(
     table_id = 'tid',
     title = 'title',
     longtitle = 'longitle',
@@ -44,7 +44,7 @@ test_that('save_xlsx mash_table', {
     mash_method = 'col',
     id_vars = 'factors',
     sep_height = 50,
-    meta = tmeta
+    meta = tm
   ))
 
 
@@ -77,50 +77,45 @@ test_that("xlsx output for comp_tables works", {
     )
   }
 
-  expect_silent(tres <- comp_table_list(
+  tm <- tt_meta(
+    table_id = 'tid',
+    title = 'title',
+    longtitle = 'longitle',
+    subtitle = 'subtitle',
+    footer = ' ---------------- '
+  )
+
+
+  # Ursula wants to export her comp_table as .xlsx
+  # (the xlsx files have to be checked manually)
+  expect_silent(ct1 <- comp_table_list(
     tdat,
     table_names = c('tab1', 'tab2', 'tab3')
   ))
 
-  pub_tres <- tag_table(
-    tres,
-    tt_meta(
-      't1',
-      'comp pub tab',
-      'a composite pub table',
-      'for a testing purpose'
-    ))
-
-  # Ursula wants to export her comp_table as .xlsx
-  # (the xlsx files have to be checked manually)
-  td <- tempdir()
-  wb <- as_workbook(tres)
-  outfile <- file.path(td, 'comp_table.xlsx')
-
-  expect_silent(openxlsx::saveWorkbook(wb, outfile, overwrite = TRUE))
-  pub_wb    <- as_workbook(pub_tres)
-  outfile <- file.path(td, 'pub_comp_table.xlsx')
-  expect_silent(openxlsx::saveWorkbook(pub_wb, outfile, overwrite = TRUE))
-  # hammr::excel(outfile)
-
-
-  # When exporting comp_tables created with "by", the super-headings should
-  # not cover the id_vars
-  expect_silent(tres <- comp_table_list(
+  expect_silent(ct2 <- comp_table_list(
     tdat,
     table_names = c('tab1', 'tab2', 'tab3'),
-    by = 'id'
+    id_vars = 'id'
   ))
-  wb <- as_workbook(tres)
 
-  outfile <- file.path(td, 'pub_comp_table_idvars.xlsx')
-  expect_silent(openxlsx::saveWorkbook(wb, outfile, overwrite = TRUE))
-  # hammr::excel(outfile)
+  expect_silent(ct3 <- comp_table_list(
+    tdat,
+    table_names = c('tab1', 'tab2', 'tab3'),
+    id_vars = 'id',
+    meta = tm
+  ))
 
+  tres <- compile_report(
+    normal = ct1,
+    id_vars = ct2,
+    meta = ct3
+  )
 
-  outfile <- file.path(td, 'pub_comp_table_meta.xlsx')
-  save_xlsx(pub_tres, outfile)
-  #hammr::excel(outfile)
+  of <- file.path(outdir, 'comp_table.xlsx')
+  save_xlsx(tres, of, overwrite = TRUE)
+  # openxlsx::openXL(of)
+  # hammr::excel(of2)
 })
 
 
@@ -133,12 +128,13 @@ test_that("xlsx output for stack_tables works", {
 
   # Generate test data
   tm <- tt_meta(
-    table_id = 't001',
-    title = 'Table 1',
-    longtitle = 'Table of Numbers',
-    subtitle = 'A table that contains numbers but maybe also letters',
-    footer = 'a footer'
+    table_id = 'tid',
+    title = 'title',
+    longtitle = 'longitle',
+    subtitle = 'subtitle',
+    footer = ' ---------------- '
   )
+
   tdat <- data.frame(
     x = letters[1:5],
     y = letters[10:14]
@@ -177,7 +173,7 @@ test_that("xlsx output for stack_tables works", {
 
 
   # Constructor works
-  tdat <- stack_table(tmash, tcomp, tmeta, meta = tt_meta(
+  sk1 <- stack_table(tmash, tcomp, tmeta, meta = tt_meta(
     table_id = 'rp1',
     title = 'stack table 1',
     longtitle = c('stack table 1 is a stack of tables', 'with a very long title', 'that spans several rows'),
@@ -185,15 +181,19 @@ test_that("xlsx output for stack_tables works", {
     footer = c('that has a footer also', 'which goes over man lines')
   ))
 
+  sk2 <- sk1
+  spacing(sk2) <- 7
 
-  outfile <- file.path(outdir, 'stack_table.xlsx')
-  wb <- as_workbook(tdat, insert_blank_row = FALSE)
-  expect_silent(openxlsx::saveWorkbook(
-    wb,
-    outfile,
-    overwrite = TRUE
-  ))
-  # openxlsx::openXL(outfile)
+  tres <- compile_report(
+    normal = sk1,
+    spacing = sk2
+  )
+
+  of <- file.path(outdir, 'stack_table.xlsx')
+  save_xlsx(tres, of, TRUE)
+
+  # openxlsx::openXL(of)
+  # hammr::excel(of)
 })
 
 
