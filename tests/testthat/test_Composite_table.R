@@ -1,6 +1,7 @@
 context("Composite_table")
 
-
+#* @testing comp_table
+#* @testing composite_table
 
 test_that("Composite_table works as expected", {
   #* @testing comp_table
@@ -53,6 +54,9 @@ test_that("Composite_table works as expected", {
 
 
 test_that("as.data.table.Composite_table works as expected", {
+  #* @testing as.data.frame.Composite_table
+  #* @testing as.data.table.Composite_table
+
   tl <- list()
   for(i in seq_len(3)){
     tl[[i]] <- data.frame(

@@ -1,5 +1,7 @@
 context("Tagged_table")
 
+#* @testing tagged_table
+#* @testing tag_table
 
 test_that("make_tag_table_print_title works as expected", {
   tmeta <- tt_meta(

@@ -1,5 +1,8 @@
 context('Mashed_table')
 
+#* @testing mashed_table
+#* @testing mash_table
+
 tdat1 <- data.frame(
   numbers = c(1.434, 190.3, 228.311, 5.210, 4321543),
   animals = c('dog', 'cat', 'camel', 'pig', 'mouse'),
@@ -27,6 +30,9 @@ tdat3 <- data.frame(
 
 test_that('mash_table: stacking tables by row works', {
   #* @testing mash_table
+  #* @testing mash_rows
+  #* @testing as.data.table.Mashed_table
+  #* @testing as.data.frame.Mashed_table
 
   # Creating mash tables works for two elements (legacy version of the function
   # only accepted two arguments)
@@ -38,10 +44,6 @@ test_that('mash_table: stacking tables by row works', {
     expect_error(mash_table(tdat1, tdat2, tdat1, tdat2))
     expect_silent(st3 <- mash_table(tdat1, tdat2, tdat1, tdat2, rem_ext = '_xt'))
     expect_silent(st4 <- mash_table(tdat1, tdat3, tdat1, tdat2, rem_ext = '_xt'))
-
-
-  #* @testing mash_rows
-  #* @testing as.data.table.Mashed_table
 
   # Testing if row mashing works
     ## Input must be a mash_table
@@ -142,6 +144,9 @@ test_that('mash_table: stacking tables by col works', {
 
 
 test_that('mash_table: as.data.table and setters work', {
+  #* @testing as.data.table.Mashed_table
+  #* @testing as.data.frame.Mashed_table
+
   expect_silent(st1 <- mash_table(tdat1, tdat2, rem_ext = '_xt'))
   st1[[1]]$id_1 <- LETTERS[1:5]
   st1[[2]]$id_1 <- LETTERS[1:5]
@@ -199,4 +204,15 @@ test_that('mash_table: as.data.table and setters work', {
       length(capture.output(print(st1))),
       6L
     )
+
+    expect_identical(
+      as.data.frame(st1),
+      as.data.frame(as.data.table(st1))
+    )
+
+    expect_identical(
+      as.data.table(as.data.frame(st1)),
+      as.data.table(st1)
+    )
+
 })

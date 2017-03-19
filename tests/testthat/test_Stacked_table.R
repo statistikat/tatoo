@@ -1,9 +1,9 @@
 context("Stacked_table")
 
+#* @testing stack_table
+#* @testing stacked_table
 
 test_that("Stacked_table works as expected", {
-  #* @testing stack_table
-
 
   # Generate test data
     tm <- tt_meta(

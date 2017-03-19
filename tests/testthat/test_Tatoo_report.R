@@ -1,5 +1,8 @@
 context("Tatoo_report")
 
+#* @testing compile_report
+#* @testing tatoo_report
+
 
 test_that("Tatoo_report works as expected", {
   tdat <- list()
