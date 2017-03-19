@@ -300,7 +300,7 @@ write_worksheet.Composite_table <- function(
     wb,
     sheet = sheet,
     startRow = crow,
-    dat,
+    as.data.frame(dat, multinames = FALSE),
     colNames = TRUE
   )
 
