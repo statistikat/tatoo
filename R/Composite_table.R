@@ -15,15 +15,15 @@
 #' @export
 comp_table <- function(
   ...,
-  multinames,
+  table_names,
   by = NULL,
   meta = NULL
 ){
-  force(multinames) # fail early if argument was not provided
+  force(table_names) # fail early if argument was not provided
 
   comp_table_list(
     tables = list(...),
-    multinames = multinames,
+    table_names = table_names,
     by = by,
     meta = meta
   )
@@ -39,7 +39,7 @@ comp_table <- function(
 #' @export
 comp_table_list <- function(
   tables,
-  multinames = names(tables),
+  table_names = names(tables),
   by = NULL,
   meta = NULL
 ){
@@ -50,9 +50,9 @@ comp_table_list <- function(
     assert_that(nrow(table)  %identical% nrow(tables[[1]]))
   }
 
-  if(!length(multinames) %identical% length(tables)){
+  if(!length(table_names) %identical% length(tables)){
     stop(strwrap(
-      'multinames must be specified, otherwise comp_table
+      'table_names must be specified, otherwise comp_table
       would just be a wrapper for cbind.'))
   }
 
@@ -83,11 +83,11 @@ comp_table_list <- function(
 
   if(length(by) > 0){
     table_multinames <- c(length(by), table_multinames)
-    multinames       <- c('', multinames)
+    table_names       <- c('', table_names)
   }
 
   table_multinames <- cumsum(table_multinames)
-  names(table_multinames) <- multinames
+  names(table_multinames) <- table_names
 
 
   # post conditions

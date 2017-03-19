@@ -17,12 +17,12 @@ test_that("Composite_table works as expected", {
 
   # Ursula wants to combine several tables to a Composite_table (side-by-side tables)
 
-  ## multinames must be specified (otherwise comp_table would just be a wrapper for
+  ## table_names must be specified (otherwise comp_table would just be a wrapper for
   ## cbind)
     expect_error(tres <- comp_table(tdat[[1]], tdat[[2]], tdat[[3]]))
     expect_error(tres <- comp_table_list(tdat))
 
-  ## If "tables" is a named list, multinames are automatically set to element names
+  ## If "tables" is a named list, table_names are automatically set to element names
     names(tdat) <- c('a', 'b', 'c')
     expect_silent(tres <- comp_table_list(tdat))
     expect_s3_class(tres, 'Composite_table')
@@ -31,7 +31,7 @@ test_that("Composite_table works as expected", {
     names(tdat) <- NULL
     expect_silent(tres <- comp_table_list(
       tdat,
-      multinames = c('tab1', 'tab2', 'tab3')
+      table_names = c('tab1', 'tab2', 'tab3')
     ))
     expect_s3_class(tres, 'Composite_table')
 
@@ -41,12 +41,12 @@ test_that("Composite_table works as expected", {
   # and ensuring data integrity
     expect_silent(tres <- comp_table(
       tdat[[1]], tdat[[2]], tdat[[3]],
-      multinames = c('tab1', 'tab2', 'tab3'),
+      table_names = c('tab1', 'tab2', 'tab3'),
       by = 'id'
     ))
 
   # display print (manual check)
-    # names(attr(tres, 'multinames'))[[3]] <- 'a very long title, very long'
+    # names(attr(tres, 'table_names'))[[3]] <- 'a very long title, very long'
     # print(tres)
 
 })

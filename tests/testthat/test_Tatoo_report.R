@@ -76,7 +76,7 @@ test_that("Tatoo_report print method", {
   }
   tcomp <- comp_table_list(
     tdat,
-    multinames = c('tab1', 'tab2', 'tab3'),
+    table_names = c('tab1', 'tab2', 'tab3'),
     meta = tt_meta('t03', 'a comp table')
   )
 
