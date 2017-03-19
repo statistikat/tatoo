@@ -11,9 +11,9 @@
 #'   \code{data.frame} objects
 #'
 #' @return An named \code{list} of class \code{Tatoo_report}
-#' @rdname compile_report
-#' @aliases Tatoo_report tatoo_report
 #'
+#' @rdname Tatoo_report
+#' @aliases Tatoo_report tatoo_report compile_report
 #' @export
 compile_report <- function(...){
   compile_report_list(list(...))
@@ -23,7 +23,7 @@ compile_report <- function(...){
 
 
 #' @export
-#' @rdname compile_report
+#' @rdname Tatoo_report
 compile_report_list <- function(dat){
   res <- data.table::copy(dat)
   tatoo_report(res)

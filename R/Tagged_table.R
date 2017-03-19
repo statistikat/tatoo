@@ -1,7 +1,7 @@
 #' Tag tables
 #'
 #' Add metadata/captioning (like table_id, title, footer) to a
-#' \code{\link{Tatoo_table}} or \code{data.frame}. This metadata will be used by
+#' `\link{Tatoo_table}` or \code{data.frame}. This metadata will be used by
 #' \code{print} methods and export functions such as \code{\link{as_workbook}}
 #' or \code{\link{save_xlsx}}.
 #'
@@ -14,11 +14,13 @@
 #' \code{\link{data.table}} with \code{as.data.table}
 #' @param meta a \code{\link{tt_meta}} object
 #'
-#' @return a \code{Tagged_table}
+#' @return a `Tagged_table`: a `Tatoo_table` with an additional `meta`
+#'   attribute
 #'
-#' @aliases Tagged_table tagged_table
+#' @md
+#' @aliases Tagged_table tagged_table tag_table
 #' @seealso tt_meta
-#' @rdname tag_table
+#' @rdname Tagged_table
 #' @export
 #'
 #' @examples
@@ -97,6 +99,14 @@ Tagged_table <- function(
   data.table::setattr(res, 'meta', meta)
 
   return(res)
+}
+
+
+
+#' @rdname Tagged_table
+#' @export
+is_Tagged_table <- function(x){
+  inherits(x, "Tagged_table")
 }
 
 
@@ -290,7 +300,7 @@ make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
 
 # Meta assignment functions -----------------------------------------------
 
-#' @rdname tag_table
+#' @rdname Tagged_table
 #' @export
 `meta<-` <- function(dat, value){
   if(is.null(value)){
@@ -310,35 +320,35 @@ meta <- function(dat){
   attr(dat, 'meta')
 }
 
-#' @rdname tag_table
+#' @rdname Tagged_table
 #' @export
 `table_id<-` <- function(dat, value){
   ass <- list(table_id = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname tag_table
+#' @rdname Tagged_table
 #' @export
 `title<-` <- function(dat, value){
   ass <- list(title = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname tag_table
+#' @rdname Tagged_table
 #' @export
 `longtitle<-` <- function(dat, value){
   ass <- list(longtitle = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname tag_table
+#' @rdname Tagged_table
 #' @export
 `subtitle<-` <- function(dat, value){
   ass <- list(subtitle = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname tag_table
+#' @rdname Tagged_table
 #' @export
 `footer<-` <- function(dat, value){
   ass <- list(footer = value)
