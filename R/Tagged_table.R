@@ -14,7 +14,7 @@
 #'
 #' @param dat A `Tatto_table` object or anything that can be coerced to a
 #' `\link{data.table}` with `as.data.table`
-#' @param meta a `\link{tt_meta}` object
+#' @param meta a `[tt_meta]` object
 #'
 #' @return a `Tagged_table`: a `Tatoo_table` with an additional `meta`
 #'   attribute
