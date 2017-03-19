@@ -119,6 +119,20 @@ print.Stacked_table <- function(dat, ...){
 
 
 
+#' @rdname Stacked_table
+#' @export
+`spacing<-` <- function(dat, value){
+  dat %assert_class% 'Stacked_table'
+  assert_that(hammr::looks_like_integer(value))
+
+  value <- as.integer(value)
+  res <- data.table::copy(dat)
+
+  data.table::setattr(res, 'spacing', value)
+  return(res)
+}
+
+
 # Utils -------------------------------------------------------------------
 ensure_valid_stack_table_classes <- function(x){
   if(hammr::is_any_class(
