@@ -46,6 +46,8 @@ df2 <- iris %>%
 
 # Mashed tables
 
+![](mashed_table.png)
+
 Combine two `data.frames` in such a way that you and up with alternating rows
 or columns. Internally, a `Mashed_table` is just a list of two or more tables,
 and metadata on how to combine them.
@@ -54,10 +56,10 @@ and metadata on how to combine them.
 `data.frames`
 
 ```{r}
-mt_default <- mash_table(df1, df2)
-mt_default <- mash_table_list(list(df1, df2))
+mt1 <- mash_table(df1, df2)
+mt1 <- mash_table_list(list(df1, df2))
 
-print(mt_default)
+print(mt1)
 
 ```
 
@@ -77,12 +79,13 @@ The display parameters are just saved as attributes, and can be modified
 conveniently via set functions
 
 ```{r}
-attributes(mt_default)
+attributes(mt1)
 
-mash_method(mt_default) <- 'col'
-id_vars(mt_default) <- 'Species'
+mash_method(mt1) <- 'col'
+id_vars(mt1) <- 'Species'
+suffixes(mt1) <- c('.mean', '.sd')
 
-print(mt_default)
+print(mt1)
 ```
 
 All Tatoo table classes can be converted to openxlsx Workbooks via 
@@ -90,7 +93,7 @@ All Tatoo table classes can be converted to openxlsx Workbooks via
 of this vignette.
 
 ```{r message=FALSE}
-as_workbook(mt_default)
+as_workbook(mt1)
 ```
 
 
@@ -103,11 +106,11 @@ result is a `data.table` and not a `data.frame`, so if you are not familiar with
 the `data.table` package you might want to manually convert the result to a
 `data.frame` to prevent headaches.
 ```{r}
-rmash(mt_default) # rmash can be used on a Mash_table
+rmash(mt1) # rmash can be used on a Mash_table
 rmash(df1, df2) # or on several data.frames
 rmash(df1, df2, insert_blank_row = TRUE)
 
-cmash(mt_default)
+cmash(mt1)
 cmash(df1, df2, suffixes = c('_mean', '_sd'))
 cmash(df1, df2, id_vars = 'Species') %>% 
   as.data.frame()
@@ -115,6 +118,8 @@ cmash(df1, df2, id_vars = 'Species') %>%
 
 
 # Composite tables
+
+![Composite Table](composite_table.png)
 
 `comp_table()` works like `cbind()`, but separate super-headings are preserved 
 for each table. 
@@ -149,7 +154,7 @@ The id_vars argument can be used to combine the tables via merge, rather
 than via cbind
 
 ```{r}
-comp_table(
+ct3 <- comp_table(
   mean = df1, 
   sd = df2,
   id_vars = 'Species'
@@ -167,14 +172,21 @@ tatoo::stack_table(
 
 # Tagged tables - Add metadata to a table
 
+![Tagged table](tagged_table.png)
+
+`tag_table()` allows you to attach titles to a data.frame or tatoo table, that
+can be used for printing or xlsx export. 
+
 ```{r}
 # Create metadata object
 ex_meta <- tt_meta(
-  table_id  = 'T01',  # Required
-  title     = 'Example Table', # Required
-  longtitle = 'This is an example for tables created with the tatool package', # optional
-  subtitle  = 'enough titles alread', # optional
-  footer    = 'This table was created from the iris dataset' # optional
+  table_id  = 'T01',  
+  title     = 'Example Table', 
+  longtitle = 'This is an example for tables created with the tatool package', 
+  subtitle  = 'It features a lot of titles and very little data', 
+  footer    = c('This table was created from the iris dataset', 
+                'This data sets consists of 3 different types of irises’',
+                 '(Setosa, Versicolour, and Virginica)') 
 )
 
 # Create metadata object
@@ -192,6 +204,16 @@ tt2 <- comp_table(
 meta(tt2) <- ex_meta
 
 ```
+
+```{r}
+
+tr <- compile_report(mt1, ct3, tt1)
+
+save_xlsx(tr, 'report_example.xlsx', overwrite = TRUE)
+
+
+```
+
 
 
 # Technical details
