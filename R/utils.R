@@ -102,17 +102,18 @@ print_several_tables <- function(
 
 
   # Define sepperators
-  make_sepline <- function(x){
+  make_sepline <- function(x, offset = 0){
     if(is.character(x)){
-      sepline1 <- paste(rep(x, tables_width + nchar(indent) + 1), collapse = '')
+      res <- paste(rep(x, tables_width + offset), collapse = '')
     } else if (is.numeric(x)){
-      sepline1 <- paste0(paste0(rep('\n', x), collapse = ''))
+      res <- paste0(paste0(rep('\n', x), collapse = ''))
     } else {
       stop('Sep must be either character or an integer number (for number of blank lines to insert)')
     }
+    return(res)
   }
 
-  sepline1 <- make_sepline(sep1)
+  sepline1 <- make_sepline(sep1, offset = nchar(indent))
   sepline2 <- make_sepline(sep2)
 
   cat('', sepline1, '\n')
