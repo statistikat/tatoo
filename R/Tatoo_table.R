@@ -30,3 +30,12 @@ tatoo_table <- function(
 
   return(res)
 }
+
+
+
+
+#' @rdname tatoo_table
+#' @export
+is_Tatoo_table <- function(dat){
+  inherits(dat, 'Tatoo_table')
+}
