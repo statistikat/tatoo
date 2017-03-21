@@ -164,6 +164,13 @@ Composite_table <- function(
 
 # Methods -----------------------------------------------------------------
 
+#' @rdname Composite_table
+#' @export
+is_Composite_table <- function(dat, ...){
+  inherits(dat, 'Composite_table')
+}
+
+
 #' Printing Composite Tables
 #'
 #' @param dat A \code{Tagged_table}

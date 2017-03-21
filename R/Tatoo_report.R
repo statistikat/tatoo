@@ -48,6 +48,13 @@ tatoo_report <- function(dat){
 
 # methods -----------------------------------------------------------------
 
+#' @rdname Tatoo_report
+#' @export
+is_Tatoo_report <- function(dat, ...){
+  inherits(dat, 'Tatoo_report')
+}
+
+
 #' @export
 is_valid.Tatoo_report <- function(dat){
   res <- list()

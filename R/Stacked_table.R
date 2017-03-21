@@ -128,6 +128,15 @@ is_valid.Stacked_table <- function(dat){
 
 # Methods -----------------------------------------------------------------
 
+#' @rdname Stacked_table
+#' @export
+is_Stacked_table <- function(dat, ...){
+  inherits(dat, 'Stacked_table')
+}
+
+
+
+
 #' Printing Stacked Tables
 #'
 #' @param dat A \code{Stacked_table}

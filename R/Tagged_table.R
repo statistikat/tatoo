@@ -186,6 +186,15 @@ tt_meta <- function(
 
 # Methods -----------------------------------------------------------------
 
+#' @rdname Tagged_table
+#' @export
+is_Tagged_table <- function(dat, ...){
+  inherits(dat, 'Tagged_table')
+}
+
+
+
+
 #' Printing Tagged Tables
 #'
 #' @param dat A \code{Tagged_table}

@@ -200,9 +200,17 @@ is_valid.Mashed_table <- function(dat){
 }
 
 
+
+
+#' @rdname Mashed_table
+#' @export
 is_Mashed_table <- function(dat, ...){
-  inherits(dat, 'Mashed_table') && is_valid(dat)
+  inherits(dat, 'Mashed_table')
 }
+
+
+
+
 
 #' @export
 as_mashed_table <- function(dat, ...){
