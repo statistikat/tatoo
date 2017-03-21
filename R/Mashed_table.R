@@ -313,8 +313,8 @@ as.data.frame.Mashed_table <- function(
 #' @inheritParams mash_table
 #' @inheritParams as.data.table.Mashed_table
 #'
-#' @return a `data.table`. if you are unfamiliar with the [data.table] package,
-#'   you will want to coerce the result with [as.data.frame()]
+#' @return If any element of `(...)` is a `[data.table::data.table]`` or
+#'   `[Tatoo_table]`, a `data.table`, else a `data.frame`.
 #'
 #' @md
 #' @rdname rmash
@@ -378,12 +378,21 @@ rmash <- function(
       as.data.table()
   }
 
-  assert_that(identical(
-    class(res),
-    c('data.table', 'data.frame')
-  ))
+  input_contains_dt <- lapply(dots, tt_or_dt) %>%
+    unlist() %>%
+    any()
 
-  return(res)
+
+  if(input_contains_dt){
+    assert_that(identical(
+      class(res),
+      c('data.table', 'data.frame')
+    ))
+
+    return(res)
+  } else {
+    return(as.data.frame(res))
+  }
 }
 
 
@@ -399,6 +408,7 @@ cmash <- function(
 ){
   dots <- list(...)
 
+
   input_is_Mashed_table <-
     purrr::is_scalar_list(dots)
     is_Mashed_table(dots)
@@ -409,6 +419,7 @@ cmash <- function(
         mash_method = 'col',
         suffixes = suffixes
       )
+
   } else {
     res <-  dots %>%
       mash_table_list(
@@ -418,7 +429,21 @@ cmash <- function(
       as.data.table(suffixes = suffixes)
   }
 
-  return(res)
+
+  input_contains_dt <- lapply(dots, tt_or_dt) %>%
+    unlist() %>%
+    any()
+
+  if(input_contains_dt){
+    assert_that(identical(
+      class(res),
+      c('data.table', 'data.frame')
+    ))
+    return(res)
+
+  } else {
+    return(as.data.frame(res))
+  }
 }
 
 
@@ -641,3 +666,6 @@ mash_cols <- function(
 
 
 
+tt_or_dt <- function(x) {
+  data.table::is.data.table(x) || is_Tatoo_table(x)
+}

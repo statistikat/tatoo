@@ -224,26 +224,39 @@ test_that('rmash and cmash behave as expected', {
   st1[[1]]$id_2 <- letters[6:10]
   st1[[2]]$id_2 <- letters[6:10]
 
+  expect_silent(tres1 <- rmash(st1))
+  expect_silent(tres2 <- rmash(
+    tdat1,
+    tdat2,
+    rem_ext = '_xt',
+    insert_blank_row = TRUE
+  ))
 
-  tres1 <- rmash(st1)
-  tres2 <- rmash(st1[[1]], st1[[2]], insert_blank_row = TRUE)
+  # Check output for correct number of rows
+    expect_identical(nrow(tres1), 10L)
+    expect_identical(nrow(tres2), 14L)
 
-  expect_identical(nrow(tres1), 10L)
-  expect_identical(nrow(tres2), 14L)
-  expect_identical(class(tres1), c('data.table', 'data.frame'))
+  # If dat is a Tatoo_table or data.table, return a data.table, else return
+  # a plain data.frame
+    expect_identical(class(tres1), c('data.table', 'data.frame'))
+    expect_identical(class(tres2), c('data.frame'))
 
 
-  tres3 <- cmash(st1)
-  tres4 <- cmash(st1[[1]], st1[[2]], id_vars = c('id_1', 'id_2'))
+    expect_silent(tres3 <- cmash(st1))
+    expect_silent(tres4 <- cmash(
+      st1[[1]],
+      st1[[2]],
+      id_vars = c('id_1', 'id_2')
+    ))
 
-  expect_identical(
-    ncol(tres3),
-    sum(sapply(st1, ncol))
-  )
+    expect_identical(
+      ncol(tres3),
+      sum(sapply(st1, ncol))
+    )
 
-  expect_identical(
-    ncol(tres4),
-    sum(sapply(st1, ncol)) - 2L
-  )
+    expect_identical(
+      ncol(tres4),
+      sum(sapply(st1, ncol)) - 2L
+    )
 })
 
