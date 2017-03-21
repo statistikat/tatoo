@@ -163,14 +163,19 @@ ct3 <- comp_table(
 
 
 # Stacked tables
+
+![Stacked Table](stacked_table.png)
+
 ```{r}
-tatoo::stack_table(
+tst <- tatoo::stack_table(
   df1, 
   df2
 )
+
+print(tst)
 ```
 
-# Tagged tables - Add metadata to a table
+# Tagged tables
 
 ![Tagged table](tagged_table.png)
 
@@ -195,23 +200,31 @@ tt1 <- tag_table(
   meta = ex_meta
 )
 
-tt2 <- comp_table(
-  mean = df1, 
-  sd = df2,
-  id_vars = 'Species'
-)
+print(tt1)
 
-meta(tt2) <- ex_meta
+
 
 ```
 
+Metdata cann also be assigned an modified via set function
+
+```{r}
+meta(tst)  <- ex_meta
+title(ct3) <- 'An example Composite table'
+
+print(ct3)
+print(tst)
+```
+
+# Tatoo Report
+
 ```{r}
 
-tr <- compile_report(mt1, ct3, tt1)
+tr <- compile_report(mt1, ct3, tt1, tst)
+
+print(tr)
 
 save_xlsx(tr, 'report_example.xlsx', overwrite = TRUE)
-
-
 ```
 
 
