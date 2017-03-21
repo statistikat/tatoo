@@ -83,10 +83,22 @@ is_valid.Tatoo_report <- function(dat){
 #'
 #' @export
 print.Tatoo_report <- function(dat, ...){
+
+  make_table_heading <- function(x) {
+    if ('Tagged_table' %in% class(x)){
+      paste(class(x)[1:2], collapse = '> <')
+    } else {
+      class(x)[[1]]
+    }
+  }
+
   classes <- dat %>%
-    lapply(function(x) class(x)[[1]]) %>%
-    unlist() %>%
+    lapply(make_table_heading) %>%
     sprintf('%s <%s> \n', names(dat) %||% '', .)
+
+  browser()
+
+
 
   print_several_tables(
     dat,
