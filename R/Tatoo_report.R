@@ -97,7 +97,6 @@ print.Tatoo_report <- function(dat, ...){
     sprintf('%s <%s> \n', names(dat) %||% '', .)
 
 
-
   print_several_tables(
     dat,
     indent = "::  ",
