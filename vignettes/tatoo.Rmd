@@ -63,19 +63,21 @@ ex_meta <- tt_meta(
 )
 
 # Create metadata object
-tt1 <- tag_table(
+tagged_table <- tag_table(
   df1,
   meta = ex_meta
 )
 
-print(tt1)
+print(tagged_table)
 ```
 
 Metdata cann also be assigned an modified via set function.
 
 ```{r}
 meta(df1)  <- ex_meta # df1 gets automatically converted to a Tagged_table
-title(df1) <- 'A second example with less titles'
+
+title(df1) <- 'A table with a title'
+table_id(df1) <- NULL
 longtitle(df1) <- NULL
 subtitle(df1) <- NULL
 footer(df1) <- NULL
@@ -162,40 +164,24 @@ cmash(df1, df2, id_vars = 'Species') %>%
 ![Composite Table](composite_table.png)
 
 `comp_table()` works like `cbind()`, but separate super-headings are preserved 
-for each table. 
+for each table. Names for each table can be provided directly, or alternatively 
+the `comp_table_list()` constructor can be used as above with mash_table.
 
 ```{r}
-composite_table <- comp_table(
-  df1, 
-  df2
-)
-print(composite_table)
+composite_table <- comp_table(mean = df1, sd = df2)
+composite_table <- comp_table_list(list(mean = df1, sd = df2))
+
+title(composite_table) <- 'A composite table'
+subtitle(composite_table) <- 
+  'Two or more tables put side by side, with multi-column-headings'
 ```
 
-Names for each table can be provided directly, or alternatively the 
-`comp_table_list()` constructor can be used as above with mash_table.
+When creating a Composite table, the `id_vars` argument can be used to combine 
+the tables via merge, rather than via cbind.
 
 ```{r}
-ct2 <- comp_table(
-  mean = df1, 
-  sd = df2
-)
-
-ct2 <- comp_table_list(
-  list(
-    mean = df1,
-    sd = df2)
-)
-
-print(ct2)
-```
-
-The id_vars argument can be used to combine the tables via merge, rather
-than via cbind
-
-```{r}
-ct3 <- comp_table(
-  mean = df1, 
+comp_table(
+  mean = df1,   
   sd = df2,
   id_vars = 'Species'
 )
@@ -212,41 +198,30 @@ on the same `.xlsx` sheet. A stack table can be consist of an arbitrary number
 of data.frames or Tatoo_tables -- except other Stacked_tables.
 
 ```{r}
-tst <- tatoo::stack_table(
-  df1, 
-  df2
-)
+stacked_table <- tatoo::stack_table(df1, mashed_table, composite_table)
 
-print(tst)
-```
+title(stacked_table) <- 'A stacked table'
+subtitle(stacked_table) <- 
+  'A list of multiple tables, mainly useful for xlsx export'
 
-
-
-
-`Stacked_tables`, and the element tables they consist of, can also be tagged:
-
-```{r}
-longtitle(tst) <- 'Stacked tables can be tagged'
-subtitle(tst) <- 'since they are just another subclass of Tatoo_table'
-
-title(tst[[1]]) <- 'So can each element table of a stack table'
-title(tst[[2]]) <- 'Which gives you a lot of freedom for composing excel sheets'
+print(stacked_table)
 ```
 
 
 # Tatoo Report
 
+A tatoo report is a list of an arbitrary number of Tatoo tables. When exported
+to xlsx, a sepparate worksheet will be created for each element table.
+
 ```{r}
+tatoo_report <- compile_report(
+  tagged = tagged_table, 
+  mashed = mashed_table, 
+  composite = composite_table, 
+  stacked = stacked_table
+)
 
-tr <- compile_report(mashed_table, ct3, tt1, tst)
+print(tatoo_report)
 
-print(tr)
-
-save_xlsx(tr, 'report_example.xlsx', overwrite = TRUE)
+save_xlsx(tatoo_report, 'report_example.xlsx', overwrite = TRUE)
 ```
-
-
-
-# Technical details
-
-* Internally tatoo makes heavy use of the `data.table` package
