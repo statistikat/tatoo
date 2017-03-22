@@ -43,6 +43,46 @@ df2 <- iris %>%
   hammr::df_round(2)
 ```
 
+# Tagged tables
+
+![Tagged table](tagged_table.png)
+
+`tag_table()` allows you to attach metadata to a `data.frame` or `Tatoo_table`.
+This allows for captioning for printing and .xlsx export.
+
+```{r}
+# Create metadata object
+ex_meta <- tt_meta(
+  table_id  = 'T01',  
+  title     = 'Example Table', 
+  longtitle = 'This is an example for tables created with the tatool package', 
+  subtitle  = 'It features a lot of titles and very little data', 
+  footer    = c('This table was created from the iris dataset', 
+                'It consists of 3 different types of irises’',
+                 '(Setosa, Versicolour, and Virginica)') 
+)
+
+# Create metadata object
+tt1 <- tag_table(
+  df1,
+  meta = ex_meta
+)
+
+print(tt1)
+```
+
+Metdata cann also be assigned an modified via set function.
+
+```{r}
+meta(df1)  <- ex_meta # df1 gets automatically converted to a Tagged_table
+title(df1) <- 'A second example with less titles'
+longtitle(df1) <- NULL
+subtitle(df1) <- NULL
+footer(df1) <- NULL
+
+print(df1)
+```
+
 
 # Mashed tables
 
@@ -56,11 +96,14 @@ and metadata on how to combine them.
 `data.frames`
 
 ```{r}
-mt1 <- mash_table(df1, df2)
-mt1 <- mash_table_list(list(df1, df2))
+mashed_table <- mash_table(df1, df2)
+mashed_table <- mash_table_list(list(df1, df2))
 
-print(mt1)
+title(mashed_table) <- 'A mashed table'
+subtitle(mashed_table) <- 
+  'Two or more tables mashed together so that rows or columns alternate'
 
+print(mashed_table)
 ```
 
 Additional formatting parameters can be saved as attributes to a mash table. 
@@ -68,24 +111,21 @@ Those attributes honored by the print and (more significantly) the as_workbook
 methods.
 
 ```{r}
-mt_row <- mash_table(df1, df2, mash_method = 'row', insert_blank_row = TRUE)
-print(mt_row)
-
-mt_col <- mash_table(df1, df2, mash_method = 'col', id_vars = 'Species')
-print(mt_col)
+mash_table(df1, df2, mash_method = 'row', insert_blank_row = TRUE)
+mash_table(df1, df2, mash_method = 'col', id_vars = 'Species')
 ```
 
 The display parameters are just saved as attributes, and can be modified
 conveniently via set functions
 
 ```{r}
-attributes(mt1)
+attributes(mashed_table)
 
-mash_method(mt1) <- 'col'
-id_vars(mt1) <- 'Species'
-suffixes(mt1) <- c('.mean', '.sd')
+mash_method(mashed_table) <- 'col'
+id_vars(mashed_table) <- 'Species'
+suffixes(mashed_table) <- c('.mean', '.sd')
 
-print(mt1)
+print(mashed_table)
 ```
 
 All Tatoo table classes can be converted to openxlsx Workbooks via 
@@ -93,7 +133,7 @@ All Tatoo table classes can be converted to openxlsx Workbooks via
 of this vignette.
 
 ```{r message=FALSE}
-as_workbook(mt1)
+as_workbook(mashed_table)
 ```
 
 
@@ -106,11 +146,11 @@ result is a `data.table` and not a `data.frame`, so if you are not familiar with
 the `data.table` package you might want to manually convert the result to a
 `data.frame` to prevent headaches.
 ```{r}
-rmash(mt1) # rmash can be used on a Mash_table
+rmash(mashed_table) # rmash can be used on a Mash_table
 rmash(df1, df2) # or on several data.frames
 rmash(df1, df2, insert_blank_row = TRUE)
 
-cmash(mt1)
+cmash(mashed_table)
 cmash(df1, df2, suffixes = c('_mean', '_sd'))
 cmash(df1, df2, id_vars = 'Species') %>% 
   as.data.frame()
@@ -125,11 +165,11 @@ cmash(df1, df2, id_vars = 'Species') %>%
 for each table. 
 
 ```{r}
-ct1 <- comp_table(
+composite_table <- comp_table(
   df1, 
   df2
 )
-print(ct1)
+print(composite_table)
 ```
 
 Names for each table can be provided directly, or alternatively the 
@@ -180,54 +220,17 @@ tst <- tatoo::stack_table(
 print(tst)
 ```
 
-# Tagged tables
 
-![Tagged table](tagged_table.png)
 
-`tag_table()` allows you to attach titles to a data.frame or tatoo table, that
-can be used for printing or xlsx export. 
-
-```{r}
-# Create metadata object
-ex_meta <- tt_meta(
-  table_id  = 'T01',  
-  title     = 'Example Table', 
-  longtitle = 'This is an example for tables created with the tatool package', 
-  subtitle  = 'It features a lot of titles and very little data', 
-  footer    = c('This table was created from the iris dataset', 
-                'This data sets consists of 3 different types of irises’',
-                 '(Setosa, Versicolour, and Virginica)') 
-)
-
-# Create metadata object
-tt1 <- tag_table(
-  df1,
-  meta = ex_meta
-)
-
-print(tt1)
-```
-
-Metdata cann also be assigned an modified via set function.
-
-```{r}
-meta(tst)  <- ex_meta
-title(ct3) <- 'An example Composite table'
-
-print(ct3)
-print(tst)
-```
 
 `Stacked_tables`, and the element tables they consist of, can also be tagged:
 
 ```{r}
-title(tst) <- 'Stacked tables can be tagged'
+longtitle(tst) <- 'Stacked tables can be tagged'
 subtitle(tst) <- 'since they are just another subclass of Tatoo_table'
 
 title(tst[[1]]) <- 'So can each element table of a stack table'
 title(tst[[2]]) <- 'Which gives you a lot of freedom for composing excel sheets'
-
-
 ```
 
 
@@ -235,7 +238,7 @@ title(tst[[2]]) <- 'Which gives you a lot of freedom for composing excel sheets'
 
 ```{r}
 
-tr <- compile_report(mt1, ct3, tt1, tst)
+tr <- compile_report(mashed_table, ct3, tt1, tst)
 
 print(tr)
 
