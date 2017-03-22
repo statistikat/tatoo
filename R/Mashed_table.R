@@ -21,23 +21,23 @@
 #'   row or by column?
 #' @param id_vars Only if mashing columns: one ore more colnames of the tables
 #'   to be mashed. If supplied, columns of both input tables are combined with
-#'   `\link{merge}`, otherwise `\link{cbind}` is used.
+#'   [merge()], otherwise [cbind()] is used.
 #' @param insert_blank_row Only if mashing rows: logical. Whether to insert
 #'   blank rows between mash-groups. *Warning: this converts all columns to
 #'   character.* Use with care.
 #' @param suffixes Only if mashing columns: a character vector of
-#'   the same length as \code{dat}. Suffixes to append to each column
+#'   the same length as `dat`. Suffixes to append to each column
 #' @param sep_height Only has an effect when exporting to `xlsx`. if
 #'   `insert_blank_row == TRUE`, hight of the inserted row, else height of the
 #'   top row of each mash-group.
-#' @param meta A `\link{TT_meta} object. if supplied, output will also be a
-#'   `\link{Tagged_table}`
+#' @param meta A  [TT_meta] object. if supplied, output will also be a
+#'   [Tagged_table].
 #' @param rem_ext `character`. For `mash_table` to work, the column names of all
 #'   elements of `dat` must be identical. Sometimes you will have the situation
 #'   that column names are identical except for a suffix, such as `length` and
 #'   `lenght.sd`. The `rem_ext` option can be used to remove such suffixes.
 #'
-#' @return a \code{Mashed_table}: a `list` of `data.table`s with additonal
+#' @return a `Mashed_table`: a `list` of `data.table`s with additonal
 #'   `mash_method`, `insert_blank_row` and `sep_height` attributes, that
 #'   influence how the table looks when it is printed or exported.
 #'
@@ -313,19 +313,22 @@ as.data.frame.Mashed_table <- function(
 #' Mash R objects by Rows or Columns
 #'
 #' `rmash` and `cmash` are convience function to mash `data.frames` together
-#' with a single command. They behave similar to [base::cbind()] and
-#' [base::rbind()], just that the result will have have alternating rows/colums.
+#' with a single command. They behave similar to [cbind()] and
+#' [rbind()], just that the result will have have alternating rows/colums.
 #'
-#' @param ... either several \code{data.frames} or a single \code{Mashed_table}.
-#'   All `data.frames` must have the same number of columns
+#' @param ... either several \code{data.frames} or a single [Mashed_table].
+#'   All `data.frames` must have the same number of columns.
 #' @inheritParams mash_table
 #' @inheritParams as.data.table.Mashed_table
 #'
-#' @return If any element of `(...)` is a `[data.table::data.table]`` or
-#'   `[Tatoo_table]`, a `data.table`, else a `data.frame`.
+#' @return A [data.table] if
+#'   any element of `(...)` is a data.table
+#'   or [Tatoo_table],
+#'   or if `meta` is supplied;
+#'   else a `data.frame`.
 #'
 #' @md
-#' @rdname rmash
+#' @rdname cmash
 #' @seealso [Mashed_table]
 #' @export
 #'
@@ -362,7 +365,8 @@ as.data.frame.Mashed_table <- function(
 rmash <- function(
   ...,
   rem_ext = NULL,
-  insert_blank_row = FALSE
+  insert_blank_row = FALSE,
+  meta = NULL
 ){
   dots <- list(...)
 
@@ -390,29 +394,26 @@ rmash <- function(
     unlist() %>%
     any()
 
-
-  if(input_contains_dt){
-    assert_that(identical(
-      class(res),
-      c('data.table', 'data.frame')
-    ))
-
-    return(res)
-  } else {
-    return(as.data.frame(res))
+  if (!is.null(meta)){
+    meta(res) <- meta
+  } else if (!input_contains_dt) {
+    res <- as.data.frame(res)
   }
+
+  return(res)
 }
 
 
 
 
 #' @export
-#' @rdname rmash
+#' @rdname cmash
 cmash <- function(
   ...,
   rem_ext = NULL,
   id_vars = NULL,
-  suffixes = NULL
+  suffixes = NULL,
+  meta = NULL
 ){
   dots <- list(...)
 
@@ -429,7 +430,7 @@ cmash <- function(
       )
 
   } else {
-    res <-  dots %>%
+    res <- dots %>%
       mash_table_list(
         mash_method = 'col',
         id_vars = id_vars,
@@ -442,16 +443,13 @@ cmash <- function(
     unlist() %>%
     any()
 
-  if(input_contains_dt){
-    assert_that(identical(
-      class(res),
-      c('data.table', 'data.frame')
-    ))
-    return(res)
-
-  } else {
-    return(as.data.frame(res))
+  if (!is.null(meta)){
+    meta(res) <- meta
+  } else if (!input_contains_dt) {
+    res <- as.data.frame(res)
   }
+
+  return(res)
 }
 
 
