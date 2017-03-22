@@ -13,7 +13,8 @@
 #'
 #' @return a \code{Composite_table}
 #'
-#' @aliases Composite_table composite_table
+#' @rdname Composite_table
+#' @aliases comp_table composite_table
 #' @family Tatto tables
 #' @export
 comp_table <- function(
@@ -41,7 +42,7 @@ comp_table <- function(
 #' @param tables \code{comp_table_list} only: A named list of data.frames with
 #'   the same number of rows
 #'
-#' @rdname comp_table
+#' @rdname Composite_table
 #' @export
 comp_table_list <- function(
   tables,
