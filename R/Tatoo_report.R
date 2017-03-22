@@ -96,8 +96,6 @@ print.Tatoo_report <- function(dat, ...){
     lapply(make_table_heading) %>%
     sprintf('%s <%s> \n', names(dat) %||% '', .)
 
-  browser()
-
 
 
   print_several_tables(

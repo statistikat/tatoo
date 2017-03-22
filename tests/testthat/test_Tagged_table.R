@@ -18,9 +18,14 @@ test_that("make_tag_table_print_title works as expected", {
     longtitle = 'Table of Numbers'
   )
 
+  tmeta3 <- tt_meta(
+    subtitle = 'A table that contains numbers but maybe also letters'
+  )
+
   tres1  <- make_tag_table_print_title(tmeta)
   tres1b <- make_tag_table_print_title(tmeta, show_subtitle = FALSE)
   tres2  <- make_tag_table_print_title(tmeta2)
+  tres3  <- make_tag_table_print_title(tmeta3)
 
   expect_identical(
     tres1,
@@ -34,6 +39,11 @@ test_that("make_tag_table_print_title works as expected", {
   expect_identical(
     tres2,
     "t001: Table 1 - Table of Numbers"
+  )
+
+  expect_identical(
+    tres3,
+    tmeta3$subtitle
   )
 })
 
