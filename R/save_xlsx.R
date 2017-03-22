@@ -7,7 +7,7 @@
 #' @param overwrite logical. If \code{TRUE}, overwrite any existing file.
 #' @param ... passed onto \code{\link{write_worksheet}}
 #'
-#' @seealso write_worksheet as_workbook
+#' @family xlsx exporters
 #' @return TRUE on success
 #' @export
 save_xlsx <- function(

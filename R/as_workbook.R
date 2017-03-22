@@ -13,6 +13,7 @@
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param ... passed on to \code{\link{write_worksheet}}
 #'
+#' @family xlsx exporters
 #' @return an openxlsx \code{\link[openxlsx]{Workbook}} object
 #' @export
 #'
@@ -87,26 +88,25 @@ as_workbook.Tatoo_report <- function(dat, ...){
 
 #' Write data to an openxlsx Worksheet
 #'
-#' This function is similar to \code{\link[openxlsx]{writeData}} from the
-#' \code{openxlsx} package, but rather than just writing \code{data.frames},
-#' \code{write_worksheet} supports specialised methods for the various
-#' \code{\link{Tatoo_table}} subclasses.
+#' This function is similar to [openxlsx::writeData()] from the
+#' [openxlsx] package, but rather than just writing data.frames,
+#' `write_worksheet`` supports specialised methods for the various
+#'  [Tatoo_table] subclasses.
 #'
-#' @param dat A \code{\link{Tatoo_table}}.
-#' @param wb A \code{\link[openxlsx]{openxlsx}} Workbook object
+#' @param dat A [Tatoo_table].
+#' @param wb A [openxlsx] Workbook object
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
 #' @param append Logical. Whether or not to append to an exisiting worksheet or
 #'   create a new one
 #' @param start_row A scalar specifiying the starting row to write to.
 #' @param ... additional options that can be used override the styling
-#'   attributes of the \code{\link{Tatoo_table}} you want to export.
+#'   attributes of the [Tatoo_table] you want to export.
 #'
-#' @return an \code{openxlsx Workbook}
+#' @md
+#' @return an openxlsx \code{\link[openxlsx]{Workbook}} object
+#' @family xlsx exporters
 #'
 #' @export
-#'
-#' @example
-#'
 write_worksheet <- function(
   dat,
   wb,
