@@ -166,6 +166,11 @@ ct3 <- comp_table(
 
 ![Stacked Table](stacked_table.png)
 
+Stacked tables simply stack two tables above each other. The only meaningful
+usecase for this at the moment is to put several tables above each other
+on the same `.xlsx` sheet. A stack table can be consist of an arbitrary number
+of data.frames or Tatoo_tables -- except other Stacked_tables.
+
 ```{r}
 tst <- tatoo::stack_table(
   df1, 
@@ -201,12 +206,9 @@ tt1 <- tag_table(
 )
 
 print(tt1)
-
-
-
 ```
 
-Metdata cann also be assigned an modified via set function
+Metdata cann also be assigned an modified via set function.
 
 ```{r}
 meta(tst)  <- ex_meta
@@ -215,6 +217,19 @@ title(ct3) <- 'An example Composite table'
 print(ct3)
 print(tst)
 ```
+
+`Stacked_tables`, and the element tables they consist of, can also be tagged:
+
+```{r}
+title(tst) <- 'Stacked tables can be tagged'
+subtitle(tst) <- 'since they are just another subclass of Tatoo_table'
+
+title(tst[[1]]) <- 'So can each element table of a stack table'
+title(tst[[2]]) <- 'Which gives you a lot of freedom for composing excel sheets'
+
+
+```
+
 
 # Tatoo Report
 
