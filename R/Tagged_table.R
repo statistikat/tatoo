@@ -361,47 +361,51 @@ assign_tt_meta <- function(dat, assignment){
 
 #' @export
 make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
-  assert_that(is.flag(show_subtitle))
-  meta %assert_class% 'TT_meta'
+  # Preconditions
+    assert_that(is.flag(show_subtitle))
+    meta %assert_class% 'TT_meta'
 
-  table_id  <- meta$table_id
-  title     <- meta$title %||% ''
-  longtitle <- paste(meta$longtitle, collapse = '\n')
 
-  if(!is.null(meta$subtitle)){
-    subtitle <- paste(meta$subtitle, collapse = '\n')
-  } else {
-    subtitle <- NULL
-  }
+  # Process arguments
+    sel <- lapply(meta, is.null) %>%
+      unlist() %>%
+      magrittr::not()
 
-  res <- ''
+    titles <- meta[sel]
 
-  if(!is.null(table_id)){
-    res <- table_id
-  }
-
-  if(!is.null(title)){
-    if(nchar(res) > 0){
-      res <- sprintf('%s: %s', table_id, title)
-    } else {
-      res <- title
+    if(titles$title %identical% titles$longtitle){
+      titles$longtitle <- NULL
     }
-  }
 
-  if(nchar(longtitle) > 0 && !identical(longtitle, title)){
-    if(nchar(res) > 0){
-      res <- sprintf('%s - %s', res, longtitle)
-    } else {
-      res <- longtitle
+    if(!show_subtitle){
+      titles$subtitle <- NULL
     }
-  }
 
-  if(show_subtitle && !is.null(subtitle)){
-    res <- paste0(
-      res, '\n', subtitle
-    )
+
+  # Logic
+    titles <- lapply(titles, paste, collapse = '\n')
+
+    main_title <- paste(titles$table_id, titles$title, sep = ': ') %>%
+      paste(titles$longtitle, sep = ' - ')
+
+
+    if(length(main_title) > 0 && !is.null(titles$subtitle)){
+      res <- paste(main_title, titles$subtitle, sep = '\n')
+
+    } else if (length(main_title) > 0) {
+      res <- main_title
+
+    } else if (!is.null(titles$subtitle)) {
+
+      res <- titles$subtitle
+    } else {
+      res <- ""
+
+    }
+
+
+  # Postconditions
     assert_that(length(res) %identical% 1L)
-  }
 
   return(res)
 }
