@@ -385,22 +385,33 @@ make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
   # Logic
     titles <- lapply(titles, paste, collapse = '\n')
 
-    main_title <- paste(titles$table_id, titles$title, sep = ': ') %>%
-      paste(titles$longtitle, sep = ' - ')
+    if(!is.null(titles$title) && !is.null(titles$longtitle)){
+      res <- paste(titles$title, titles$longtitle, sep = ' - ')
+
+    } else if (!is.null(titles$title)){
+      res <- titles$title
+
+    } else if (!is.null(titles$longtitle)){
+      res <- titles$longtitle
+
+    } else {
+      res <- NULL
+    }
 
 
-    if(length(main_title) > 0 && !is.null(titles$subtitle)){
-      res <- paste(main_title, titles$subtitle, sep = '\n')
+    if(!is.null(res) && !is.null(titles$table_id)){
+      res <- paste(titles$table_id, res, sep = ': ')
+    }
 
-    } else if (length(main_title) > 0) {
-      res <- main_title
+
+    if(!is.null(res) && !is.null(titles$subtitle)){
+      res <- paste(res, titles$subtitle, sep = '\n')
 
     } else if (!is.null(titles$subtitle)) {
-
       res <- titles$subtitle
-    } else {
-      res <- ""
 
+    } else if (is.null(res)) {
+      res <- ""
     }
 
 
