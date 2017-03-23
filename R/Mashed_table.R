@@ -215,6 +215,7 @@ as_mashed_table <- function(dat, ...){
 
 
 
+
 #' Printing Mashed Tables
 #'
 #' @param dat a \code{Mashed_table}
@@ -231,25 +232,7 @@ print.Mashed_table <- function(dat, ...){
 
 
   if(print_multi_headings){
-    id_vars   <- attr(dat, 'id_vars')
-    col_names <- names(dat[[1]])[! names(dat[[1]]) %in% id_vars]
-
-    n_idv  <- length(id_vars)
-    n_tbls <- length(dat)
-    n_cols <- ncol(dat[[1]]) - n_idv
-
-    if(n_idv > 0){
-      multinames        <- cumsum(c(n_idv, rep(n_tbls, n_cols)))
-      names(multinames) <- c('', col_names)
-    } else {
-      multinames        <- cumsum(c(rep(n_tbls, n_cols)))
-      names(multinames) <- names(dat[[1]])
-    }
-
-    pdat <- data.table::as.data.table(dat)
-    names(pdat) <- c(id_vars, rep(names(dat), n_cols))
-    multinames(pdat) <- multinames
-
+    pdat <- as_Composite_table(dat)
     lines <- capture.output(print(pdat, ...))
   } else {
     lines <- capture.output(print(
@@ -593,7 +576,8 @@ mash_rows <- function(dat, insert_blank_row = FALSE){
 mash_cols <- function(
   dat,
   id_vars = NULL,
-  suffixes = names(dat)
+  suffixes = names(dat),
+  sep = '.'
 ){
   # Preconditions
     dat %assert_class% 'Mashed_table'
@@ -616,9 +600,17 @@ mash_cols <- function(
 
   for(i in seq_along(dl)){
     new_names <- names(dl[[i]])
+    suffix    <- suffixes[[i]]
+
+    if (!(is.null(suffix) || (suffix %identical% ''))){
+      suffix <- paste0(sep, suffix)
+    } else {
+      suffix <- ''
+    }
+
     new_names[!new_names %in% id_vars] <- paste0(
       new_names[!new_names %in% id_vars],
-      suffixes[[i]]
+      suffix
     )
     data.table::setnames(dl[[i]], new_names)
   }
@@ -626,6 +618,7 @@ mash_cols <- function(
 
   # Flatten
   if (is.null(id_vars)){
+    names(dl) <- NULL
     res <- do.call(cbind, dl)
   } else {
     merger <- function(x, y)  {

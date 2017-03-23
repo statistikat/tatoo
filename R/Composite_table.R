@@ -161,6 +161,40 @@ Composite_table <- function(
 }
 
 
+as_Composite_table <- function(dat, id_vars){
+  UseMethod('as_Composite_table')
+}
+
+
+
+as_Composite_table.Mashed_table <- function(
+  dat,
+  id_vars = attr(dat, 'id_vars')
+){
+  assert_that(length(names(dat)) %identical% length(dat))
+  assert_that(is.null(id_vars) || all(id_vars %in% names(dat[[1]])))
+
+  col_names <- names(dat[[1]])[! names(dat[[1]]) %in% id_vars]
+  n_idv  <- length(id_vars)
+  n_tbls <- length(dat)
+  n_cols <- ncol(dat[[1]]) - n_idv
+
+  if(n_idv > 0){
+    multinames        <- cumsum(c(n_idv, rep(n_tbls, n_cols)))
+    names(multinames) <- c('', col_names)
+  } else {
+    multinames        <- cumsum(c(rep(n_tbls, n_cols)))
+    names(multinames) <- names(dat[[1]])
+  }
+
+  res <- data.table::as.data.table(dat, mash_method = 'col', id_vars = id_vars)
+  names(res) <- c(id_vars, rep(names(dat), n_cols))
+  multinames(res) <- multinames
+
+  return(res)
+}
+
+
 
 
 # Methods -----------------------------------------------------------------
@@ -279,6 +313,8 @@ as.data.table.Composite_table <- function(
     multinames <- attr(res, 'multinames')
     name_idx <- 1
 
+
+    # paste together colname
     for(i in seq_along(res)){
       names(res)[[i]] <- composite_name(
         names(multinames[name_idx]),
@@ -313,6 +349,13 @@ as.data.frame.Composite_table <- function(
 }
 
 
+#  Shortcut functions -----------------------------------------------------
+
+comp <- function(...){
+
+}
+
+
 # Setters -----------------------------------------------------------------
 
 #' Set the multinames attribute of a Composite_table
@@ -340,6 +383,8 @@ as.data.frame.Composite_table <- function(
 
 # Utils -------------------------------------------------------------------
 
+compose_tables <- function(...) {}
+
 composite_name <- function(x, y, sep){
   if(x == ''){
     return(y)
@@ -347,6 +392,10 @@ composite_name <- function(x, y, sep){
     paste(x, y, sep = sep)
   }
 }
+
+
+
+
 
 
 
