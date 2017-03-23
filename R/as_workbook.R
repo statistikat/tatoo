@@ -335,54 +335,58 @@ write_worksheet.Mashed_table <- function(
 
 
   # Process arguments
-  sep_height <- as.integer(sep_height)
-  wb <- wb$copy()
+    sep_height <- as.integer(sep_height)
+    wb <- wb$copy()
 
-  if(!append){
-    openxlsx::addWorksheet(wb, sheet)
-  }
+    if(!append){
+      openxlsx::addWorksheet(wb, sheet)
+    }
 
-  res <- as.data.table(
-    dat,
-    mash_method = mash_method,
-    id_vars = id_vars,
-    insert_blank_row = insert_blank_row
-  )
-
-  # Write data
-  openxlsx::writeData(
-    wb,
-    sheet = sheet,
-    res,
-    startRow = start_row
-  )
-
-
-  # Modify row heights
-  row_off          <- start_row - 1
-  sep_height_start <- length(dat) + 2  # +2 because of header
-
-
-  if(mash_method %identical% 'row' && nrow(res) > length(dat)){
-    if(insert_blank_row){
-      sel_rows <- seq(
-        sep_height_start + row_off, nrow(res) + row_off,
-        by = (length(dat) + 1)
-      )
+    if(mash_method %identical% 'col'){
+      res <- as_Composite_table(dat)
     } else {
-      sel_rows <- seq(
-        sep_height_start + row_off, nrow(res) + row_off,
-        by = length(dat)
+      res <- as.data.table(
+        dat,
+        mash_method = mash_method,
+        insert_blank_row = insert_blank_row
       )
     }
 
-    openxlsx::setRowHeights(
-      wb,
+    assert_that(!is_Mashed_table(res))  # prevent infinite loop
+
+  # Write data
+    wb <- write_worksheet(
+      res,
+      wb = wb,
       sheet = sheet,
-      rows = sel_rows,
-      heights = rep(sep_height, length(sel_rows))
+      append = TRUE,
+      start_row = start_row
     )
-  }
+
+  # Modify row heights
+    row_off          <- start_row - 1
+    sep_height_start <- length(dat) + 2  # +2 because of header
+
+    if(mash_method %identical% 'row' && nrow(res) > length(dat)){
+      if(insert_blank_row){
+        sel_rows <- seq(
+          sep_height_start + row_off, nrow(res) + row_off,
+          by = (length(dat) + 1)
+        )
+      } else {
+        sel_rows <- seq(
+          sep_height_start + row_off, nrow(res) + row_off,
+          by = length(dat)
+        )
+      }
+
+      openxlsx::setRowHeights(
+        wb,
+        sheet = sheet,
+        rows = sel_rows,
+        heights = rep(sep_height, length(sel_rows))
+      )
+    }
 
   return(wb)
 }
