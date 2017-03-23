@@ -2,7 +2,7 @@ Package: tatoo
 Type: Package
 Title: Provide tools for outputing formatted table in excel (and in the future
     latex)
-Version: 0.0.5
+Version: 1.0.0
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description: 
