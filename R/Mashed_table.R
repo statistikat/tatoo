@@ -25,8 +25,6 @@
 #' @param insert_blank_row Only if mashing rows: logical. Whether to insert
 #'   blank rows between mash-groups. *Warning: this converts all columns to
 #'   character.* Use with care.
-#' @param suffixes Only if mashing columns: a character vector of
-#'   the same length as `dat`. Suffixes to append to each column
 #' @param sep_height Only has an effect when exporting to `xlsx`. if
 #'   `insert_blank_row == TRUE`, hight of the inserted row, else height of the
 #'   top row of each mash-group.
@@ -52,17 +50,16 @@ mash_table <- function(
   mash_method = 'row',
   id_vars = NULL,
   insert_blank_row = FALSE,
-  suffixes = FALSE,
   sep_height = 24,
   meta = NULL,
   rem_ext = NULL
 ){
+
   mash_table_list(
     list(...),
     mash_method = mash_method,
     id_vars = id_vars,
     insert_blank_row = insert_blank_row,
-    suffixes = suffixes,
     sep_height = sep_height,
     meta = meta,
     rem_ext = rem_ext
@@ -79,7 +76,6 @@ mash_table_list <- function(
   mash_method = 'row',
   id_vars = NULL,
   insert_blank_row = FALSE,
-  suffixes = NULL,
   sep_height = 24,
   meta = NULL,
   rem_ext = NULL
@@ -120,6 +116,7 @@ mash_table_list <- function(
   })
 
 
+
   # Post conditions
   for (el in res) {
     assert_that(names(el) %identical% names(tables[[1]]))
@@ -134,7 +131,6 @@ mash_table_list <- function(
     mash_method = mash_method,
     id_vars = id_vars,
     insert_blank_row = insert_blank_row,
-    suffixes = suffixes,
     sep_height = sep_height
   )
 
@@ -153,7 +149,6 @@ Mashed_table <- function(
   mash_method = 'row',
   id_vars = NULL,
   insert_blank_row = FALSE,
-  suffixes = NULL,
   sep_height = 24
 ){
   assert_that(is.list(dat))
@@ -229,10 +224,40 @@ as_mashed_table <- function(dat, ...){
 #'
 #' @export
 print.Mashed_table <- function(dat, ...){
-  lines <- capture.output(print(
-    as.data.table(dat, insert_blank_row = FALSE),
-    ...
-  ))
+
+  print_multi_headings <-
+    attr(dat, 'mash_method') %identical% 'col' &&
+    length(names(dat)) %identical% length(dat)
+
+
+  if(print_multi_headings){
+    id_vars   <- attr(dat, 'id_vars')
+    col_names <- names(dat[[1]])[! names(dat[[1]]) %in% id_vars]
+
+    n_idv  <- length(id_vars)
+    n_tbls <- length(dat)
+    n_cols <- ncol(dat[[1]]) - n_idv
+
+    if(n_idv > 0){
+      multinames        <- cumsum(c(n_idv, rep(n_tbls, n_cols)))
+      names(multinames) <- c('', col_names)
+    } else {
+      multinames        <- cumsum(c(rep(n_tbls, n_cols)))
+      names(multinames) <- names(dat[[1]])
+    }
+
+    pdat <- data.table::as.data.table(dat)
+    names(pdat) <- c(id_vars, rep(names(dat), n_cols))
+    multinames(pdat) <- multinames
+
+    lines <- capture.output(print(pdat, ...))
+  } else {
+    lines <- capture.output(print(
+      as.data.table(dat, insert_blank_row = FALSE),
+      ...
+    ))
+  }
+
 
   for(i in seq_along(lines)){
     cat(lines[[i]], '\n')
@@ -253,6 +278,7 @@ print.Mashed_table <- function(dat, ...){
     }
   }
 
+
   invisible(dat)
 }
 
@@ -271,7 +297,7 @@ as.data.table.Mashed_table <- function(
   mash_method = attr(dat, 'mash_method'),
   insert_blank_row = attr(dat, 'insert_blank_row'),
   id_vars = attr(dat, 'id_vars'),
-  suffixes = attr(dat, 'suffixes')
+  suffixes = names(dat)
 ){
   assert_that(purrr::is_scalar_character(mash_method))
   assert_that(is.flag(insert_blank_row))
@@ -280,7 +306,7 @@ as.data.table.Mashed_table <- function(
   assert_that(is.null(suffixes) || length(suffixes) %identical% length(dat))
 
   if(mash_method %in% c('c', 'col', 'column', 'columns')){
-    res <- mash_cols(dat, id_vars = id_vars, suffixes = suffixes)
+    res <- mash_cols(dat, id_vars = id_vars)
   } else if(mash_method %in% c('r', 'row', 'rows')) {
     res <- mash_rows(dat, insert_blank_row = insert_blank_row)
   } else{
@@ -300,7 +326,7 @@ as.data.frame.Mashed_table <- function(
   mash_method = attr(dat, 'mash_method'),
   insert_blank_row = attr(dat, 'insert_blank_row'),
   id_vars = attr(dat, 'id_vars'),
-  suffixes = attr(dat, 'suffixes')
+  suffixes = names(dat)
 ){
   as.data.frame(as.data.table.Mashed_table(dat))
 }
@@ -412,7 +438,7 @@ cmash <- function(
   ...,
   rem_ext = NULL,
   id_vars = NULL,
-  suffixes = NULL,
+  suffixes = names(list(...)),
   meta = NULL
 ){
   dots <- list(...)
@@ -424,10 +450,7 @@ cmash <- function(
 
   if(input_is_Mashed_table){
     res <- dots[[1]] %>%
-      as.data.table(
-        mash_method = 'col',
-        suffixes = suffixes
-      )
+      as.data.table(mash_method = 'col', suffixes = suffixes)
 
   } else {
     res <- dots %>%
@@ -506,24 +529,6 @@ cmash <- function(
   return(res)
 }
 
-#' @rdname Mashed_table
-#' @export
-`suffixes<-` <- function(dat, value){
-  dat %assert_class% 'Mashed_table'
-  assert_that(is.character(value))
-  assert_that(identical(
-    length(dat),
-    length(value)
-  ))
-
-  res <- data.table::copy(dat)
-
-  data.table::setattr(res, 'suffixes', value)
-  return(res)
-}
-
-
-
 
 
 # Utils -------------------------------------------------------------------
@@ -591,17 +596,17 @@ mash_cols <- function(
   suffixes = names(dat)
 ){
   # Preconditions
-  dat %assert_class% 'Mashed_table'
-  assert_that(
-    is.null(id_vars) ||
+    dat %assert_class% 'Mashed_table'
+    assert_that(
+      is.null(id_vars) ||
       is.character(id_vars)
-  )
+    )
 
-  if (is.null(names(dat)) && is.null(suffixes)) {
-    suffixes <- rep('', length(dat))
-  } else {
-    assert_that(length(suffixes) %identical% length(dat))
-  }
+    if (is.null(suffixes)) {
+      suffixes <- rep('', length(dat))
+    } else {
+      assert_that(length(suffixes) %identical% length(dat))
+    }
 
 
   # Prepare inputs

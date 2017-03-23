@@ -260,3 +260,46 @@ test_that('rmash and cmash behave as expected', {
     )
 })
 
+
+test_that('mash table print method', {
+
+  st1 <- mash_table(
+    mean = tdat1,
+    sd = tdat2,
+    rem_ext = '_xt',
+    mash_method = 'col'
+  )
+
+  st2 <- mash_table(
+    mean = tdat1,
+    sd = tdat1,
+    rem_ext = '_xt',
+    mash_method = 'col',
+    id_vars = 'numbers'
+  )
+
+  st3 <- mash_table(
+    mean = tdat1,
+    sd = tdat1,
+    blubb = tdat1,
+    rem_ext = '_xt',
+    mash_method = 'col',
+    id_vars = 'numbers'
+  )
+
+  st4 <- mash_table(
+    mean = tdat1,
+    sd = tdat1,
+    blubb = tdat1,
+    rem_ext = '_xt',
+    mash_method = 'col',
+    id_vars = c('numbers', 'animals')
+  )
+
+  expect_output(print(st1))
+  expect_output(print(st2))
+  expect_output(print(st3))
+  expect_output(print(st4))
+
+})
+
