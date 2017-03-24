@@ -342,12 +342,15 @@ write_worksheet.Mashed_table <- function(
       openxlsx::addWorksheet(wb, sheet)
     }
 
-    if(mash_method %identical% 'col'){
+    if(mash_method %identical% 'col' &&
+       length(names(dat)) %identical% length(dat)
+    ){
       res <- as_Composite_table(dat)
     } else {
       res <- as.data.table(
         dat,
         mash_method = mash_method,
+        id_vars = id_vars,
         insert_blank_row = insert_blank_row
       )
     }
