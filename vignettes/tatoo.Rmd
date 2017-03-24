@@ -45,7 +45,7 @@ df2 <- iris %>%
 
 # Tagged tables
 
-![Tagged table](tagged_table.png)
+![a table with added captions](tagged_table.png)
 
 `tag_table()` allows you to attach metadata to a `data.frame` or `Tatoo_table`.
 This allows for captioning for printing and .xlsx export.
@@ -88,7 +88,11 @@ print(df1)
 
 # Mashed tables
 
-![](mashed_table.png)
+![](mashed_table_row.png) ![](mashed_table_col.png)
+
+<center>Tables combined with alternating rows or columns</center>
+
+
 
 Combine two `data.frames` in such a way that you and up with alternating rows
 or columns. Internally, a `Mashed_table` is just a list of two or more tables,
@@ -116,14 +120,16 @@ methods.
 mashed_table_row <- mash_table(
   df1, df2, 
   mash_method = 'row', 
-  insert_blank_row = TRUE
+  insert_blank_row = FALSE,
+  meta = tt_meta(title = 'A row-mashed table')
 )
 print(mashed_table_row)
 
 mashed_table_col <- mash_table(
-  df1, df2, 
+  mean = df1, sd = df2, 
   mash_method = 'col', 
-  id_vars = 'Species'
+  id_vars = 'Species',
+  meta = tt_meta(title = 'A col-mashed table')
 )
 
 print(mashed_table_col)
@@ -172,7 +178,7 @@ cmash(df1, df2, id_vars = 'Species') %>%
 
 # Composite tables
 
-![Composite Table](composite_table.png)
+![a table with multi-column headings](composite_table.png)
 
 `comp_table()` works like `cbind()`, but separate super-headings are preserved 
 for each table. Names for each table can be provided directly, or alternatively 
@@ -182,26 +188,35 @@ the `comp_table_list()` constructor can be used as above with mash_table.
 composite_table <- comp_table(mean = df1, sd = df2)
 composite_table <- comp_table_list(list(mean = df1, sd = df2))
 
+
 title(composite_table) <- 'A composite table'
 subtitle(composite_table) <- 
   'Two or more tables put side by side, with multi-column-headings'
+
+print(composite_table)
+
 ```
 
 When creating a Composite table, the `id_vars` argument can be used to combine 
 the tables via merge, rather than via cbind.
 
 ```{r}
-comp_table(
+composite_table <- comp_table(
   mean = df1,   
   sd = df2,
-  id_vars = 'Species'
+  id_vars = 'Species',
+  meta = tt_meta(
+    title = 'A composite table',
+    subtitle = 'Two or more tables put side by side, with multi-column-headings'
+  )
 )
+
 ```
 
 
 # Stacked tables
 
-![Stacked Table](stacked_table.png)
+![several tables on one excel sheet](stacked_table.png)
 
 Stacked tables simply stack two tables above each other. The only meaningful
 usecase for this at the moment is to put several tables above each other
@@ -220,6 +235,8 @@ print(stacked_table)
 
 
 # Tatoo Report
+
+![one excel sheet per table](tatoo_report.png)
 
 A tatoo report is a list of an arbitrary number of Tatoo tables. When exported
 to xlsx, a sepparate worksheet will be created for each element table.
