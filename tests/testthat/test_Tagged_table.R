@@ -66,7 +66,6 @@ test_that("make_tag_table_print_title works as expected", {
   ## manual tests
   # tf <- file.path(tempdir(), 'pub.xlsx')
   # save_xlsx(tres, tf, overwrite = TRUE)
-  # hammr::excel(tf)
 })
 
 
@@ -76,14 +75,22 @@ df1 <- iris %>%
   dplyr::summarise(
     length = mean(Sepal.Length),
     width  = mean(Sepal.Width)) %>%
-  hammr::df_round(2)
+  dplyr::mutate_if(
+    round,
+    digits = 2,
+    .predicate = is.numeric
+  )
 
 df2 <- iris %>%
   dplyr::group_by(Species) %>%
   dplyr::summarise(
     length = sd(Sepal.Length),
     width  = sd(Sepal.Width)) %>%
-  hammr::df_round(2)
+  dplyr::mutate_if(
+    round,
+    digits = 2,
+    .predicate = is.numeric
+  )
 
 tmeta <- tt_meta(
   table_id = 't001',

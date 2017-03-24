@@ -101,7 +101,7 @@ test_that('mash_table: stacking tables by col works', {
   expect_silent(res3 <- mash_cols(st1))
   expect_silent(res4 <- mash_cols(
     st1,
-    suffixes = c('.x', '.y')
+    suffixes = c('x', 'y')
   ))
 
 
@@ -113,8 +113,8 @@ test_that('mash_table: stacking tables by col works', {
 
   expect_identical(
     names(res2),
-    c("id_1", "id_2", "numbersfoo", "numbersbar", "animalsfoo", "animalsbar",
-      "factorsfoo", "factorsbar", "intsfoo", "intsbar")
+    c("id_1", "id_2", "numbers.foo", "numbers.bar", "animals.foo", "animals.bar",
+      "factors.foo", "factors.bar", "ints.foo", "ints.bar")
   )
 
   expect_identical(

@@ -39,7 +39,7 @@ compile_report_list <- function(dat){
 tatoo_report <- function(dat){
   res <- data.table::copy(dat)
   class(res) <- union('Tatoo_report', class(res))
-  hammr::assert_valid(res)
+  assert_valid(res)
   return(res)
 }
 
@@ -60,7 +60,7 @@ is_valid.Tatoo_report <- function(dat){
   res <- list()
 
   is_valid_elclass <- function(x) {
-    hammr::is_any_class(x, c('Tatoo_table', 'data.frame'))
+    is_any_class(x, c('Tatoo_table', 'data.frame'))
   }
 
   res$class <- is.list(dat)

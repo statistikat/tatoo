@@ -58,7 +58,7 @@ comp_table_list <- function(
   }
 
   if(!length(names(tables)) %identical% length(tables)){
-    stop(hammr::str_nobreak(
+    stop(str_nobreak(
       'names(tables) must be specified, otherwise comp_table
       would just be a wrapper for cbind.'))
   }
@@ -138,7 +138,7 @@ Composite_table <- function(
 ){
   assert_that(is.data.frame(dat))
   assert_that(is.numeric(multinames))
-  assert_that(all(hammr::looks_like_integer(multinames)))
+  assert_that(all(looks_like_integer(multinames)))
 
   multinames <- structure(
     as.integer(multinames),

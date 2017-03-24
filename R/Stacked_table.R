@@ -96,9 +96,9 @@ Stacked_table <- function(
 ){
   assert_that(is.list(dat))
   valid_classes <- c('Tatoo_table', 'data.table')
-  assert_that(all(unlist(lapply(dat, hammr::is_any_class, valid_classes))))
+  assert_that(all(unlist(lapply(dat, is_any_class, valid_classes))))
   assert_that(purrr::is_scalar_numeric(spacing))
-  assert_that(hammr::looks_like_integer(spacing))
+  assert_that(looks_like_integer(spacing))
 
   res <- data.table::copy(dat) %>%
     tatoo_table()
@@ -166,7 +166,7 @@ print.Stacked_table <- function(dat, ...){
 #' @export
 `spacing<-` <- function(dat, value){
   dat %assert_class% 'Stacked_table'
-  assert_that(hammr::looks_like_integer(value))
+  assert_that(looks_like_integer(value))
 
   value <- as.integer(value)
   res <- data.table::copy(dat)
@@ -180,7 +180,7 @@ print.Stacked_table <- function(dat, ...){
 
 # Utils -------------------------------------------------------------------
 ensure_valid_stack_table_classes <- function(x){
-  if(hammr::is_any_class(
+  if(is_any_class(
     x,
     c('Tagged_table', 'Composite_table', 'Mashed_table', 'data.table'))
   ){

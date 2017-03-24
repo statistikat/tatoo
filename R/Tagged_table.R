@@ -86,7 +86,7 @@ Tagged_table <- function(
   dat,
   meta
 ){
-  assert_that(hammr::is_any_class(
+  assert_that(is_any_class(
     dat,
     c('Tatoo_table', 'data.table')
   ))
@@ -231,7 +231,7 @@ is_valid.TT_meta <- function(dat){
     lapply(res, function(x) assertthat::is.scalar(x) || is.null(x))
   ))
 
-  hammr::all_with_warning(res)
+  all_with_warning(res)
 }
 
 

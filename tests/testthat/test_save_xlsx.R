@@ -63,7 +63,6 @@ test_that('save_xlsx mash_table', {
   of <- file.path(outdir, 'mash_table.xlsx')
   save_xlsx(tres, of, overwrite = TRUE)
   # openxlsx::openXL(of)
-  # hammr::excel(of2)
 })
 
 
@@ -115,7 +114,6 @@ test_that("xlsx output for comp_tables works", {
   of <- file.path(outdir, 'comp_table.xlsx')
   save_xlsx(tres, of, overwrite = TRUE)
   # openxlsx::openXL(of)
-  # hammr::excel(of2)
 })
 
 
@@ -192,7 +190,6 @@ test_that("xlsx output for stack_tables works", {
   save_xlsx(tres, of, TRUE)
 
   # openxlsx::openXL(of)
-  # hammr::excel(of)
 })
 
 

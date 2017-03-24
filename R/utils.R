@@ -43,7 +43,7 @@ sanitize_excel_sheet_names <- function(x, replace = '_'){
   }
 
   assert_that(is.character(res))
-  assert_that(hammr::all_unique(res, silent = TRUE))
+  assert_that(all_unique(res, silent = TRUE))
   return(res)
 }
 

@@ -491,7 +491,7 @@ cmash <- function(
 #' @export
 `sep_height<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
-  assert_that(hammr::looks_like_integer(value))
+  assert_that(looks_like_integer(value))
 
   value <- as.integer(value)
   res <- data.table::copy(dat)
@@ -521,7 +521,7 @@ mash_rows <- function(dat, insert_blank_row = FALSE){
   assert_that(is.flag(insert_blank_row))
 
 
-  dd <- lapply(dat, hammr::df_typecast_all, from = 'factor', to = 'character')
+  dd <- lapply(dat, df_typecast_all, from = 'factor', to = 'character')
 
   # flatten
   if(insert_blank_row){

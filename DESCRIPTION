@@ -2,14 +2,13 @@ Package: tatoo
 Type: Package
 Title: Provide tools for outputing formatted table in excel (and in the future
     latex)
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description: 
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
-    hammr,
     assertthat,
     magrittr,
     data.table,

@@ -3,7 +3,6 @@
 #' @section Foo functions:
 #' The foo functions ...
 #'
-#' @import hammr
 #'
 #' @import assertthat
 #' @importFrom magrittr %>%
