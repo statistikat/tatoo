@@ -6,3 +6,5 @@ man
 .Rd
 inst/doc
 .directory
+*.xlsx
+Thumbs.db
