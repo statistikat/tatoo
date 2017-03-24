@@ -177,7 +177,16 @@ write_worksheet.Tagged_table <- function(
   # Construct header
   header <- list()
 
-  header$title <- sprintf('%s: %s', meta$table_id, meta$title)
+  if (!is.null(meta$table_id) && !is.null(meta$title)){
+    header$title <- paste(meta$table_id, meta$title, sep = ': ')
+
+  } else if (!is.null(meta$title)){
+    header$title <- meta$title
+
+  } else {
+    header$title <- NULL
+  }
+
 
   if(!identical(meta$longtitle, meta$title)){
     header$longtitle <- meta$longtitle
@@ -345,7 +354,7 @@ write_worksheet.Mashed_table <- function(
     if(mash_method %identical% 'col' &&
        length(names(dat)) %identical% length(dat)
     ){
-      res <- as_Composite_table(dat)
+      res <- as_Composite_table(dat, meta = NULL)
     } else {
       res <- as.data.table(
         dat,

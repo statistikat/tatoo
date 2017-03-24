@@ -161,7 +161,7 @@ Composite_table <- function(
 }
 
 
-as_Composite_table <- function(dat, id_vars){
+as_Composite_table <- function(dat, id_vars, meta){
   UseMethod('as_Composite_table')
 }
 
@@ -169,7 +169,8 @@ as_Composite_table <- function(dat, id_vars){
 
 as_Composite_table.Mashed_table <- function(
   dat,
-  id_vars = attr(dat, 'id_vars')
+  id_vars = attr(dat, 'id_vars'),
+  meta = attr(dat, 'meta')
 ){
   assert_that(length(names(dat)) %identical% length(dat))
   assert_that(is.null(id_vars) || all(id_vars %in% names(dat[[1]])))
@@ -190,6 +191,7 @@ as_Composite_table.Mashed_table <- function(
   res <- data.table::as.data.table(dat, mash_method = 'col', id_vars = id_vars)
   names(res) <- c(id_vars, rep(names(dat), n_cols))
   multinames(res) <- multinames
+  meta(res) <- meta
 
   return(res)
 }

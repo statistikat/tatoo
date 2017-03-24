@@ -232,7 +232,7 @@ print.Mashed_table <- function(dat, ...){
 
 
   if(print_multi_headings){
-    pdat <- as_Composite_table(dat)
+    pdat <- as_Composite_table(dat, meta = NULL)
     lines <- capture.output(print(pdat, ...))
   } else {
     lines <- capture.output(print(
