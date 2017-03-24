@@ -113,8 +113,20 @@ Those attributes honored by the print and (more significantly) the as_workbook
 methods.
 
 ```{r}
-mash_table(df1, df2, mash_method = 'row', insert_blank_row = TRUE)
-mash_table(df1, df2, mash_method = 'col', id_vars = 'Species')
+mashed_table_row <- mash_table(
+  df1, df2, 
+  mash_method = 'row', 
+  insert_blank_row = TRUE
+)
+print(mashed_table_row)
+
+mashed_table_col <- mash_table(
+  df1, df2, 
+  mash_method = 'col', 
+  id_vars = 'Species'
+)
+
+print(mashed_table_col)
 ```
 
 The display parameters are just saved as attributes, and can be modified
@@ -215,7 +227,8 @@ to xlsx, a sepparate worksheet will be created for each element table.
 ```{r}
 tatoo_report <- compile_report(
   tagged = tagged_table, 
-  mashed = mashed_table, 
+  mashed_row = mashed_table_row,
+  mashed_col = mashed_table_col, 
   composite = composite_table, 
   stacked = stacked_table
 )
