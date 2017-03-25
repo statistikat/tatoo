@@ -2,7 +2,9 @@
 title: "Tatoo package vignette"
 author: "Stefan Fleck"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Tatoo}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,15 +20,17 @@ library(tatoo)
 
 Tatoo ("Table Tools") provides three straight-forward helper to combine multiple
 `data.frames` to tables that are otherwise awkward to create in base-r, and a
-way to add metadata (id, title, ...) to a table. 
+way to add metadata (id, title, ...) to a table. In addition, the Tatto_report
+class is provided as a convenient helper to write several Tatoo tables to a 
+workbook, one table per worksheet.
 
-Tatoo tables can directly be saved to .xlsx files, or convert to `Workbook` 
-objects with `as_workbook()` so that you can process them further using the 
-awesome `openxlsx` package. While tatoo implements convenient print methods so 
-that you can preview the tables you created in the console, most of the
-functionality provided by this package only makes real sense for .xlsx export.
+Tatoo tables and reports can directly be saved to .xlsx files, or convert to
+`Workbook` objects with `as_workbook()` so that you can process them further
+using the `openxlsx` package. While tatoo implements convenient print
+methods so that you can preview the tables you created in the console, most of
+the functionality provided by this package only makes real sense for .xlsx
+export.
 
-# Setup example data
 ```{r}
 df1 <- data.frame(
   Species = c("setosa", "versicolor", "virginica"),
@@ -250,5 +254,19 @@ tatoo_report <- compile_report(
 
 print(tatoo_report)
 
+
+```
+
+# Excel export
+
+For further processing with `openxlsx`.
+```{r}
+wb <- as_workbook(tatoo_report)  
+```
+
+For direct .xlsx ouput
+```{r}
 save_xlsx(tatoo_report, 'report_example.xlsx', overwrite = TRUE)
 ```
+
+
