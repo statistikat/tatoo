@@ -20,6 +20,18 @@
 #'
 #' @examples
 #'
+#' df_mean <- data.frame(
+#'   Species = c("setosa", "versicolor", "virginica"),
+#'   length = c(5.01, 5.94, 6.59),
+#'   width = c(3.43, 2.77, 2.97)
+#' )
+#'
+#' df_sd <- data.frame(
+#'   Species = c("setosa", "versicolor", "virginica"),
+#'   length = c(0.35, 0.52, 0.64),
+#'   width = c(0.38, 0.31, 0.32)
+#' )
+#'
 #' comp_table(mean = df_mean, sd = df_sd)
 #'
 #' # ...........mean............     ............sd.............
