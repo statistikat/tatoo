@@ -1,11 +1,15 @@
 Package: tatoo
 Type: Package
-Title: Provide tools for outputing formatted table in excel (and in the future
-    latex)
-Version: 1.0.1
+Title: Table tools: tools for combining data frames and exporting them to xlsx
+Version: 1.0.2
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description: 
+  Tatoo ("Table Tools") provides three straight-forward helper to combine multiple
+  data.frames to tables that are otherwise awkward to create in base-r, and a
+  way to add metadata (id, title, ...) to a table. In addition, the Tatto_report
+  class is provided as a convenient helper to write several Tatoo tables to a 
+  workbook, one table per worksheet.
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
@@ -19,7 +23,6 @@ Imports:
     stringi
 Suggests:
     testthat,
-    taboo,
     knitr,
     rmarkdown
 RoxygenNote: 6.0.1
