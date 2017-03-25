@@ -1,15 +1,14 @@
-#' Save a Tatoo object directly to an xlsx file
+#' `save_xlsx` is a shortcut to save a Tatoo_table direclty to local .xlsx
+#' file.
 #'
-#' Convenience function to direclty save a tatoo object to an xlsx file.
-#'
-#' @param dat A \code{\link{Tatoo_table}} or \code{\link{Tatoo_report}}
 #' @param outfile path/name of the output file
 #' @param overwrite logical. If \code{TRUE}, overwrite any existing file.
-#' @param ... passed onto \code{\link{write_worksheet}}
 #'
-#' @family xlsx exporters
+#' @md
 #' @return TRUE on success
 #' @export
+#' @rdname as_workbook
+#'
 save_xlsx <- function(
   dat,
   outfile,
@@ -34,5 +33,5 @@ save_xlsx.default <- function(
 ){
   wb <- as_workbook(dat, ...)
   openxlsx::saveWorkbook(wb, outfile, overwrite)
-  TRUE
+  invisible(wb)
 }

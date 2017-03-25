@@ -4,18 +4,40 @@
 
 #' Convert a Tatto table object to an Excel workbook
 #'
-#' This function converts \code{\link{Tatoo_table}} obects directly to
-#' \code{openxlsx} \code{Workbook} objects. For information about additional
-#' parameters please refer to the documentation of
-#' \code{\link{write_worksheet}}, for which \code{as_workbook} is just a wraper.
+#' This function converts Tatoo_table obects directly to [openxlsx] Workbook
+#' objects. For information about additional parameters please refer to the
+#' documentation of `write_worksheet()`, for which `as_workbook()`
+#' is just a wraper. Additional possible function arguments way vary depending
+#' on depending which Tatoo_table you want to export.
 #'
-#' @param dat Usually a \code{Tatoo_table} or \code{Tatoo_report}.
+#' @param dat a [Tatoo_table] or [Tatoo_report]
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param ... passed on to \code{\link{write_worksheet}}
+#' @param ... passed on to [write_worksheet()]
 #'
+#' @md
 #' @family xlsx exporters
-#' @return an openxlsx \code{\link[openxlsx]{Workbook}} object
+#' @return an openxlsx [openxlsx] Workbook object (invisibly for `save.xlsx`)
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' dat <- data.frame(
+#'   Species = c("setosa", "versicolor", "virginica"),
+#'   length = c(5.01, 5.94, 6.59),
+#'   width = c(3.43, 2.77, 2.97)
+#' )
+#'
+#' # Assign metadata to convert dat to a Tagged_table
+#'
+#' title(dat) <- 'Iris excerpt'
+#' footer(dat) <-  'An example based on the iris dataset'
+#'
+#'
+#' # Convert to Workbook or save als xlsx
+#'
+#' wb <- as_workbook(dat)
+#' save_xlsx(dat, 'iris.xlsx', overwrite = TRUE)
+#' }
 #'
 as_workbook <- function(
   dat,
