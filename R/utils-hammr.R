@@ -9,13 +9,6 @@
 
 #' Test if all elements of a vector are unique
 #'
-#'
-#' @return TRUE/FALSE
-#' @examples
-#'
-#' all_unique(c(1,2,3))
-#' all_unique(c(1,1,1))
-#'
 all_unique <- function(x, empty_value = FALSE, silent = FALSE){
   assert_that(length(empty_value) <= 1)
 
@@ -111,13 +104,6 @@ assert_valid_error  <- function(obj) {
 #'
 #' @return is_class returns TRUE/FALSE, assert_class returns TRUE or fails with
 #'         an error message.
-
-#' @rdname is_class
-#'
-#' @examples
-#'
-#' x = data.frame()
-#' is.class(x, 'data.frame')
 is_class <- function(dat, class){
   class %in% class(dat)
 }
@@ -153,13 +139,6 @@ assert_class <- function(dat, class){
 #' @param choices  the class to be checked for
 #'
 #' @return True if any of the object classes are the desired class
-
-#'
-#' @examples
-#'
-#' x = data.frame()
-#' class(x) <- c('data.frame', 'test')
-#' is_class(x, 'test')
 #'
 is_any_class <- function(dat, choices){
   any(choices %in% class(dat))
@@ -186,7 +165,7 @@ on_failure(is_any_class) <- function(call, env){
 #' @param method if \code{all}, ensure that all columns named in \code{classes} are present in \code{dat},
 #'         if \code{any}, ensure that any of the  columns named in \code{classes} are present in \code{dat},
 #'         if \code{identical}, ensure that the names of dat and classes are identical
-
+#'
 is_col_classes <- function(dat, classes, method = 'identical'){
   classes %assert_class% 'list'
   assert_that(length(classes) > 0)
@@ -337,20 +316,7 @@ df_round <- function(dat, digits = 0){
 #' @param to target column type
 #'
 #' @return a data frame with all columns of class from converted to class to
-#' @import bit64
 #'
-#' @examples
-#'
-#' df <- data.frame(a = factor(c('b', 'a', 'd')),
-#'                  b = factor(c(1,2,3)))
-#'
-#' str(df)
-#'
-#' x <- typecast_all(df, 'factor', 'character')
-#' y <- typecast_all(df, 'factor', 'numeric')
-#'
-#' str(x)
-#' str(y)
 #'
 df_typecast_all <- function(dat, from = 'factor', to = 'character'){
   dat   <- as.data.frame(dat)
@@ -395,3 +361,21 @@ looks_like_integer <- function(x, na_value = FALSE, scalar = FALSE){
 
 
 
+#' Remove linebreaks and multiple spaces from string
+#'
+#' @param x a character vector.
+#'
+#' @return a character vector without linebreaks
+str_nobreak <- function(x){
+  y <- gsub("\r?\n|\r", " ", x)
+  gsub('[ ]{2,}', ' ', y)
+}
+
+
+
+condition <- function(subclass, message, call = sys.call(-1), ...) {
+  structure(
+    class = c(subclass, "condition"),
+    list(message = message, call = call, ...)
+  )
+}

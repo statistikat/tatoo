@@ -10,9 +10,6 @@
 #' Mash table provides a framework to mash those two data.frames together into
 #' one data.frame with alternating rows or columns.
 #'
-#' If your goal is to present formated tables as latex or xlsx, you  should aslo
-#' look into `\link{df_format}`, `\link{df_round}` and `\link{df_signif}`.
-#'
 #' @param ... `mash_table()` only: `data.frame`s with the same row and column
 #'   count. Elements of `(...)` can be named, but the name must differ from
 #'   the argument names of this function.
@@ -266,8 +263,8 @@ is_Mashed_table <- function(dat, ...){
 
 
 #' @export
-as_mashed_table <- function(dat, ...){
-  UseMethod('as_mashed_table')
+as_Mashed_table <- function(dat, ...){
+  UseMethod('as_Mashed_table')
 }
 
 

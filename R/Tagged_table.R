@@ -359,7 +359,6 @@ assign_tt_meta <- function(dat, assignment){
 
 
 
-#' @export
 make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
   # Preconditions
     assert_that(is.flag(show_subtitle))

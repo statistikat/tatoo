@@ -61,7 +61,7 @@ test_that('save_xlsx mash_table', {
   ))
 
   of <- file.path(outdir, 'mash_table.xlsx')
-  save_xlsx(tres, of, overwrite = TRUE)
+  # save_xlsx(tres, of, overwrite = TRUE)
   # openxlsx::openXL(of)
 })
 
@@ -187,7 +187,7 @@ test_that("xlsx output for stack_tables works", {
   )
 
   of <- file.path(outdir, 'stack_table.xlsx')
-  save_xlsx(tres, of, TRUE)
+  # save_xlsx(tres, of, TRUE)
 
   # openxlsx::openXL(of)
 })
