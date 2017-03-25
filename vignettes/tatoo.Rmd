@@ -28,27 +28,17 @@ functionality provided by this package only makes real sense for .xlsx export.
 
 # Setup example data
 ```{r}
-df1 <- iris %>% 
-  dplyr::group_by(Species) %>% 
-  dplyr::summarise(
-    length = mean(Sepal.Length),
-    width  = mean(Sepal.Width)) %>% 
-  dplyr::mutate_if(
-    round, 
-    digits = 2, 
-    .predicate = is.numeric
-  )
+df1 <- data.frame(
+  Species = c("setosa", "versicolor", "virginica"),
+  length = c(5.01, 5.94, 6.59),
+  width = c(3.43, 2.77, 2.97)
+)
 
-df2 <- iris %>% 
-  dplyr::group_by(Species) %>% 
-  dplyr::summarise(
-    length = sd(Sepal.Length),
-    width  = sd(Sepal.Width))%>% 
-  dplyr::mutate_if(
-    round, 
-    digits = 2, 
-    .predicate = is.numeric
-  )
+df2 <- data.frame(
+  Species = c("setosa", "versicolor", "virginica"),
+  length = c(0.35, 0.52, 0.64),
+  width = c(0.38, 0.31, 0.32)
+)
 ```
 
 # Tagged tables
