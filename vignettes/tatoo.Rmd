@@ -203,16 +203,7 @@ When creating a Composite table, the `id_vars` argument can be used to combine
 the tables via merge, rather than via cbind.
 
 ```{r}
-composite_table <- comp_table(
-  mean = df1,   
-  sd = df2,
-  id_vars = 'Species',
-  meta = tt_meta(
-    title = 'A composite table',
-    subtitle = 'Two or more tables put side by side, with multi-column-headings'
-  )
-)
-
+comp_table(mean = df1, sd = df2, id_vars = 'Species')
 ```
 
 
