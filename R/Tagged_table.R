@@ -212,7 +212,7 @@ print.Tagged_table <- function(x, ...){
 
   if(!is.null(meta$footer)){
     footer <- paste(meta$footer, collapse = '\n')
-    cat('\n', footer, '\n')
+    cat('\n', footer, '\n', sep = '')
   }
 
   invisible(x)
