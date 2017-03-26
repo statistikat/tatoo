@@ -1,7 +1,7 @@
 Package: tatoo
 Type: Package
 Title: Table tools: tools for combining data frames and exporting them to xlsx
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description: 
