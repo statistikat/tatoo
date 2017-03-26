@@ -299,9 +299,9 @@ print.Mashed_table <- function(x, ...){
 
   if(print_multi_headings){
     pdat <- as_Composite_table(x, meta = NULL)
-    lines <- capture.output(print(pdat, ...))
+    lines <- utils::capture.output(print(pdat, ...))
   } else {
-    lines <- capture.output(print(
+    lines <- utils::capture.output(print(
       as.data.table(x, insert_blank_row = FALSE),
       ...
     ))

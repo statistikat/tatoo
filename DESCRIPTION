@@ -20,7 +20,8 @@ Imports:
     dtplyr,
     openxlsx (>= 4.0.0),
     purrr,
-    stringi
+    stringi,
+    utils
 Suggests:
     testthat,
     knitr,
