@@ -336,12 +336,17 @@ print.Mashed_table <- function(x, ...){
 
 #' Convert a Mashed Table to a data.table or data.frame
 #'
-#' @param dat a \code{Mashed_table}
+#' @param dat a [Mashed_table]
 #' @inheritParams mash_table
+#' @inheritParams base::as.data.frame
+#' @param suffixes a character vector of length 2 specifying the suffixes to be
+#'   used for making unique the names of columns.
+#' @param ... passed on to `as.data.frame.data.table()`
 #'
 #' @method as.data.table Mashed_table
 #'
-#' @return a \code{data.table} or \code{data.frame}
+#' @md
+#' @return a [data.table] or \code{data.frame}
 #' @export
 as.data.table.Mashed_table <- function(
   dat,
@@ -374,13 +379,21 @@ as.data.table.Mashed_table <- function(
 #' @method as.data.frame Mashed_table
 #' @export
 as.data.frame.Mashed_table <- function(
-  dat,
-  mash_method = attr(dat, 'mash_method'),
-  insert_blank_row = attr(dat, 'insert_blank_row'),
-  id_vars = attr(dat, 'id_vars'),
-  suffixes = names(dat)
+  x,
+  row.names = NULL,
+  optional = FALSE,
+  mash_method = attr(x, 'mash_method'),
+  insert_blank_row = attr(x, 'insert_blank_row'),
+  id_vars = attr(x, 'id_vars'),
+  suffixes = names(x),
+  ...
 ){
-  as.data.frame(as.data.table.Mashed_table(dat))
+  as.data.frame(
+    as.data.table.Mashed_table(x),
+    row.names = row.names,
+    optional = optional,
+    ...
+  )
 }
 
 

@@ -399,18 +399,27 @@ as.data.table.Composite_table <- function(
 
 #' @rdname as.data.table.Composite_table
 #'
+#' @inheritParams base::as.data.frame
 #' @method as.data.frame Composite_table
 #' @export
 as.data.frame.Composite_table <- function(
   x,
+  row.names = NULL,
+  optional = FALSE,
   multinames = TRUE,
   sep = '.',
   ...
 ){
-  as.data.frame(as.data.table.Composite_table(
-    x = x,
-    multinames = multinames,
-    sep = sep))
+  as.data.frame(
+    as.data.table.Composite_table(
+      x = x,
+      multinames = multinames,
+      sep = sep
+    ),
+    row.names = row.names,
+    optional = optional,
+    ...
+  )
 }
 
 
