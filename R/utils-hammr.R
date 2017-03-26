@@ -9,8 +9,6 @@
 
 
 
-#' Test if all elements of a vector are unique
-#'
 all_unique <- function(x, empty_value = FALSE, silent = FALSE){
   assert_that(length(empty_value) <= 1)
 
@@ -50,14 +48,6 @@ all_unique <- function(x, empty_value = FALSE, silent = FALSE){
 
 # assert valid ------------------------------------------------------------
 
-#' Check if an object is valid
-#'
-#' requires that is_valid.class is defined somewhere
-#'
-#' @param x an R object
-#'
-#' @return logical; whether this object meets pre-defined validity conditions.
-#' @rdname is_valid
 is_valid <- function(x, ...) {
   UseMethod("is_valid")
   print('test')
@@ -66,7 +56,6 @@ is_valid <- function(x, ...) {
 
 
 
-#' @rdname is_valid
 assert_valid <- function(dat, ...){
   v <- is_valid(dat)
 

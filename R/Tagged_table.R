@@ -108,6 +108,7 @@ Tagged_table <- function(
 
 
 
+
 # Ctors - TT_meta (Tagged Table Metadata) ---------------------------------
 
 #' Tagged Table metadata
@@ -335,9 +336,14 @@ meta <- function(dat){
 
 # Utils -------------------------------------------------------------------
 
-#' Assign tt_metadata elements
+#' Assign tt_meta elements
 #'
 #' Internal function used by the metdata set functions
+#'
+#' @param dat a [Tatoo_table] or data.frame
+#' @param assignment A named list of length one, for example
+#'   `list(longtitle = value)`
+#'
 assign_tt_meta <- function(dat, assignment){
   assert_that(purrr::is_scalar_list(assignment))
   assert_that(identical(
