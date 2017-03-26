@@ -20,6 +20,7 @@
 #' @md
 #' @rdname Stacked_table
 #' @aliases Stacked_table stacked_table stack_table
+#' @seealso Attribute setter: [spacing<-]
 #' @family Tatto tables
 #' @export
 #'
@@ -125,9 +126,13 @@ is_valid.Stacked_table <- function(dat){
 
 # Methods -----------------------------------------------------------------
 
-#' @rdname Stacked_table
+
+#' Check if object is a Stacked_table
+#'
+#' @param dat any R object
+#'
 #' @export
-is_Stacked_table <- function(dat, ...){
+is_Stacked_table <- function(dat){
   inherits(dat, 'Stacked_table')
 }
 
@@ -159,11 +164,19 @@ print.Stacked_table <- function(x, ...){
 
 # Setters -----------------------------------------------------------------
 
-#' @rdname Stacked_table
+#' Set the spacing of a Stacked_table
+#'
+#' Set the of lineskips between the tables when exporting to xlsx
+#'
+#' @param dat a Stacked_table
+#' @param value a scalar integer
+#'
+#' @md
+#' @seealso [Stacked_table]
 #' @export
 `spacing<-` <- function(dat, value){
   dat %assert_class% 'Stacked_table'
-  assert_that(looks_like_integer(value))
+  assert_that(looks_like_integer(value) && is.scalar(value))
 
   value <- as.integer(value)
   res <- data.table::copy(dat)

@@ -17,6 +17,7 @@
 #' @rdname Composite_table
 #' @aliases comp_table composite_table Composite_table
 #' @family Tatto tables
+#' @seealso Attribute setter: [multinames<-]
 #' @export
 #'
 #' @examples
@@ -421,6 +422,9 @@ as.data.frame.Composite_table <- function(
 #'
 #' @param dat a Composite_table or data.frame
 #' @param value a named character vector (see example)
+#'
+#' @md
+#' @seealso [Composite_table]
 #'
 #' @export
 `multinames<-` <- function(dat, value){

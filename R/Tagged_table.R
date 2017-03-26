@@ -23,7 +23,8 @@
 #' @md
 #' @aliases Tagged_table tagged_table tag_table
 #' @family Tatto tables
-#' @seealso [tt_meta] [meta()]
+#' @seealso Attribute setters: [meta<-]
+#' @seealso Tagged Table Metadata: [tt_meta]
 #' @rdname Tagged_table
 #' @export
 #'
@@ -107,16 +108,6 @@ Tagged_table <- function(
 
 
 
-
-#' @rdname Tagged_table
-#' @export
-is_Tagged_table <- function(x){
-  inherits(x, "Tagged_table") && is_valid(x)
-}
-
-
-
-
 # Ctors - TT_meta (Tagged Table Metadata) ---------------------------------
 
 #' Tagged Table metadata
@@ -188,9 +179,12 @@ tt_meta <- function(
 
 # Methods -----------------------------------------------------------------
 
-#' @rdname Tagged_table
+#' Check if object is a Tagged_table
+#'
+#' @param dat any R object
+#'
 #' @export
-is_Tagged_table <- function(dat, ...){
+is_Tagged_table <- function(dat){
   inherits(dat, 'Tagged_table')
 }
 
@@ -241,10 +235,10 @@ is_valid.TT_meta <- function(dat){
 
 #' Printing Tagged Table Metdata
 #'
-#' @param dat A \code{TT_meta} object
+#' @param x A \code{TT_meta} object
 #' @param ... ignored
 #'
-#' @return \code{dat} (invisibly)
+#' @return \code{x} (invisibly)
 #'
 #' @export
 #'
@@ -269,7 +263,7 @@ print.TT_meta <- function(x, ...){
 
 # Setters -----------------------------------------------------------------
 
-#' Tagged Table Metadata Setters
+#' Set Tagged Table metadata
 #'
 #' Convenience functions to modify Tagged_table metadata. If `dat` is not a
 #' Tagged_table already, it will be converted to one.
@@ -279,7 +273,7 @@ print.TT_meta <- function(x, ...){
 #'
 #' @seealso [Tagged_table], [tt_meta]
 #' @md
-#' @rdname meta
+#' @rdname tagged_set
 #' @export
 `meta<-` <- function(dat, value){
   if(is.null(value)){
@@ -294,41 +288,42 @@ print.TT_meta <- function(x, ...){
   return(res)
 }
 
-#' @rdname meta
+
+#' @rdname tagged_set
 #' @export
 meta <- function(dat){
   attr(dat, 'meta')
 }
 
-#' @rdname meta
+#' @rdname tagged_set
 #' @export
 `table_id<-` <- function(dat, value){
   ass <- list(table_id = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname meta
+#' @rdname tagged_set
 #' @export
 `title<-` <- function(dat, value){
   ass <- list(title = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname meta
+#' @rdname tagged_set
 #' @export
 `longtitle<-` <- function(dat, value){
   ass <- list(longtitle = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname meta
+#' @rdname tagged_set
 #' @export
 `subtitle<-` <- function(dat, value){
   ass <- list(subtitle = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname meta
+#' @rdname tagged_set
 #' @export
 `footer<-` <- function(dat, value){
   ass <- list(footer = value)

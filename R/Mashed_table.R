@@ -41,6 +41,7 @@
 #' @rdname Mashed_table
 #' @aliases Mashed_table mashed_table mash_table
 #' @family Tatto tables
+#' @seealso Attribute setters: [mash_method<-]
 #' @export
 #'
 #' @examples
@@ -531,7 +532,16 @@ cmash <- function(
 
 # Setters -----------------------------------------------------------------
 
-#' @rdname Mashed_table
+
+#' Set mash attributes of a Mashed Table
+#'
+#' @param dat a Mashed_table
+#' @param value a value that is legal for the individual attribute, as
+#'   described in [Mashed_table]
+#'
+#' @rdname mashed_set
+#' @seealso [Mashed_table]
+#' @md
 #' @export
 `mash_method<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
@@ -543,7 +553,7 @@ cmash <- function(
   return(res)
 }
 
-#' @rdname Mashed_table
+#' @rdname mashed_set
 #' @export
 `insert_blank_row<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
@@ -555,7 +565,7 @@ cmash <- function(
   return(res)
 }
 
-#' @rdname Mashed_table
+#' @rdname mashed_set
 #' @export
 `sep_height<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
@@ -568,7 +578,7 @@ cmash <- function(
   return(res)
 }
 
-#' @rdname Mashed_table
+#' @rdname mashed_set
 #' @export
 `id_vars<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
