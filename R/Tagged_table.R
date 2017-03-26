@@ -247,8 +247,9 @@ print.TT_meta <- function(x, ...){
   name_width   <- max(unlist(lapply(names(x), nchar))) + 1
   print_string <- paste0('%', name_width, 's: %s\n')
   padded_newline <- rep(' ', name_width + 2) %>%
-    paste(collapse = '') %>%
-    paste0('\n', .)
+    paste(collapse = '')
+
+  padded_newline <- paste0('\n', padded_newline)
 
   for(i in seq_along(x)){
     cat(sprintf(

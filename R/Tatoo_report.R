@@ -92,9 +92,8 @@ print.Tatoo_report <- function(x, ...){
     }
   }
 
-  classes <- x %>%
-    lapply(make_table_heading) %>%
-    sprintf('%s <%s> \n', names(x) %||% '', .)
+  classes <- lapply(x, make_table_heading)
+  classes <- sprintf('%s <%s> \n', names(x) %||% '', classes)
 
 
   print_several_tables(
