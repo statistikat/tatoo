@@ -2,7 +2,9 @@
 # That package is not yet production ready, and will be added as a dependency
 # once it is.
 
-`%identical%` <- identical
+
+#awkward, but necessary to preven R CMD check warning
+`%identical%` <- function(x, y) identical(x, y)
 
 
 

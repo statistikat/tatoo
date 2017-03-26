@@ -124,8 +124,12 @@ as_workbook.Tatoo_report <- function(dat, ...){
 #' @param ... additional options that can be used override the styling
 #'   attributes of the [Tatoo_table] you want to export.
 #'
+#' @inheritParams comp_table
+#' @inheritParams mash_table
+#' @inheritParams stack_table
+#'
 #' @md
-#' @return an openxlsx \code{\link[openxlsx]{Workbook}} object
+#' @return an [openxlsx] Workbook object
 #' @family xlsx exporters
 #'
 #' @export

@@ -3,20 +3,17 @@
 #' Stack tables
 #'
 #' Stack tables on top of each other. This can be used to print several tables
-#' on one Excel sheet with `as_workbook` or `save_xlsx`.
+#' on one Excel sheet with [as_workbook()] or [save_xlsx()].
 #'
-#' @param ... `stack_table()` only: Any number of objects of the following
-#'   classes: `\link{Tagged_table}`, `\link{Mashed_table}`,
-#'   `\link{Composite_table}`, or anything that can be coerced to a `data.frame`
-#'   with `as.data.frame`
-#'
+#' @param ... `stack_table()` only: Any number other [Tatoo_table], or anything
+#'   that can be coerced to a data.frame.
 #' @param tables `stack_table_list()` only: Same as `(...)` for `stack_table`,
 #'   just that a list can be supplied instead of individual arguments.
 #' @param meta a `\link{tt_meta}` object (optional)
-#' @param spacing Number of lineskips between the tables when exporting
-#'   stacked_tables
+#' @param spacing Number of lineskips between the tables when exporting to
+#'   xlsx
 #'
-#' @return a `Stacked_table`: a `list` of `Tatoo_table`s with additonal
+#' @return a Stacked_table: a list of Tatoo_tables with additonal
 #'   `spacing` attribute that controls the default spacing between the tables
 #'   when it is exported.
 #'
@@ -139,22 +136,22 @@ is_Stacked_table <- function(dat, ...){
 
 #' Printing Stacked Tables
 #'
-#' @param dat A \code{Stacked_table}
+#' @param x A \code{Stacked_table}
 #' @param ... passed on to \code{\link{print}}
 #'
-#' @return \code{dat} (invisibly)
+#' @return \code{x} (invisibly)
 #'
 #' @export
-print.Stacked_table <- function(dat, ...){
+print.Stacked_table <- function(x, ...){
   print_several_tables(
-    dat,
+    x,
     indent = ' `  ',
     sep1 = '`',
     sep2 = '_',
     ...
   )
 
-  invisible(dat)
+  invisible(x)
 }
 
 

@@ -8,3 +8,5 @@ inst/doc
 .directory
 *.xlsx
 Thumbs.db
+rsconnect
+

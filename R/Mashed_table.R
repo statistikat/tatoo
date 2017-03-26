@@ -252,7 +252,27 @@ is_valid.Mashed_table <- function(dat){
 
 
 
-#' @rdname Mashed_table
+#' Coerce to Mashed Table
+#'
+#' @param dat any R object
+#' @inheritParams mash_table
+#'
+#' @return
+#' `as_Mashed_table()` returns a Mashed_table
+#'
+#' `is_Mashed_table()` returns `TRUE` if its argument is a Mashed_table
+#' and `FALSE` otherwise.
+#'
+#' @md
+#' @export
+as_Mashed_table <- function(dat, ...){
+  UseMethod('as_mashed_table')
+}
+
+
+
+
+#' @rdname as_Mashed_table
 #' @export
 is_Mashed_table <- function(dat, ...){
   inherits(dat, 'Mashed_table')
@@ -261,37 +281,27 @@ is_Mashed_table <- function(dat, ...){
 
 
 
-
-#' @export
-as_mashed_table <- function(dat, ...){
-  UseMethod('as_mashed_table')
-}
-
-
-
-
-
 #' Printing Mashed Tables
 #'
-#' @param dat a \code{Mashed_table}
+#' @param x a \code{Mashed_table}
 #' @param ... passed on to \code{\link{print}}
 #'
-#' @return \code{dat} (invisibly)
+#' @return \code{x} (invisibly)
 #'
 #' @export
-print.Mashed_table <- function(dat, ...){
+print.Mashed_table <- function(x, ...){
 
   print_multi_headings <-
-    attr(dat, 'mash_method') %identical% 'col' &&
-    length(names(dat)) %identical% length(dat)
+    attr(x, 'mash_method') %identical% 'col' &&
+    length(names(x)) %identical% length(x)
 
 
   if(print_multi_headings){
-    pdat <- as_Composite_table(dat, meta = NULL)
+    pdat <- as_Composite_table(x, meta = NULL)
     lines <- capture.output(print(pdat, ...))
   } else {
     lines <- capture.output(print(
-      as.data.table(dat, insert_blank_row = FALSE),
+      as.data.table(x, insert_blank_row = FALSE),
       ...
     ))
   }
@@ -300,12 +310,12 @@ print.Mashed_table <- function(dat, ...){
   for(i in seq_along(lines)){
     cat(lines[[i]], '\n')
 
-    if(attr(dat, 'insert_blank_row') &&
-       attr(dat, 'mash_method') %identical% 'row'
+    if(attr(x, 'insert_blank_row') &&
+       attr(x, 'mash_method') %identical% 'row'
     ){
       insert_blank <-
-         i > length(dat) &&
-        (i-1) %% length(dat) == 0 &&
+         i > length(x) &&
+        (i-1) %% length(x) == 0 &&
         !identical(i, length(lines))
 
       assert_that(is.flag(insert_blank))
@@ -317,7 +327,7 @@ print.Mashed_table <- function(dat, ...){
   }
 
 
-  invisible(dat)
+  invisible(x)
 }
 
 
@@ -327,6 +337,8 @@ print.Mashed_table <- function(dat, ...){
 #'
 #' @param dat a \code{Mashed_table}
 #' @inheritParams mash_table
+#'
+#' @method as.data.table Mashed_table
 #'
 #' @return a \code{data.table} or \code{data.frame}
 #' @export
@@ -358,6 +370,7 @@ as.data.table.Mashed_table <- function(
 
 
 #' @rdname as.data.table.Mashed_table
+#' @method as.data.frame Mashed_table
 #' @export
 as.data.frame.Mashed_table <- function(
   dat,

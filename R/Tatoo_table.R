@@ -2,15 +2,15 @@
 #'
 #' `Tatto_table` is the superclass of all the `*_table` classes made available
 #' by this package. Each `Tatoo_table` provides a different way of combining
-#' several tables (`data.frames`) into a single table. Those tables can then
+#' several tables (data.frames) into a single table. Those tables can then
 #' be exported via [as_workbook()]/[save_xlsx()]. In the future, support for
 #' latex and html export is also planned.
 #'
 #' Currenlty, the following subclasses exists:
-#' * \code{\link{Tagged_table}}
-#' * \code{\link{Composite_table}}
-#' * \code{\link{Mashed_table}}
-#' * \code{\link{Stacked_table}}
+#' * [Tagged_table]
+#' * [Composite_table]
+#' * [Mashed_table]
+#' * [Stacked_table]
 #'
 #' The `tatoo_table()` function is just a constructor used internally and you
 #' will not need to use it except if your planning on extending this package

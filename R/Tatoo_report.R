@@ -76,29 +76,29 @@ is_valid.Tatoo_report <- function(dat){
 
 #' Printing Tatoo Reports
 #'
-#' @param dat A \code{Tatoo_report}
+#' @param x A \code{Tatoo_report}
 #' @param ... passed on to \code{\link{print}}
 #'
-#' @return \code{dat} (invisibly)
+#' @return \code{x} (invisibly)
 #'
 #' @export
-print.Tatoo_report <- function(dat, ...){
+print.Tatoo_report <- function(x, ...){
 
-  make_table_heading <- function(x) {
-    if ('Tagged_table' %in% class(x)){
-      paste(class(x)[1:2], collapse = '> <')
+  make_table_heading <- function(y) {
+    if ('Tagged_table' %in% class(y)){
+      paste(class(y)[1:2], collapse = '> <')
     } else {
-      class(x)[[1]]
+      class(y)[[1]]
     }
   }
 
-  classes <- dat %>%
+  classes <- x %>%
     lapply(make_table_heading) %>%
-    sprintf('%s <%s> \n', names(dat) %||% '', .)
+    sprintf('%s <%s> \n', names(x) %||% '', .)
 
 
   print_several_tables(
-    dat,
+    x,
     indent = "::  ",
     sep1 = 0,
     sep2 = 2,
@@ -106,5 +106,5 @@ print.Tatoo_report <- function(dat, ...){
     ...
   )
 
-  invisible(dat)
+  invisible(x)
 }
