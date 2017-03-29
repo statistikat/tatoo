@@ -13,8 +13,9 @@
 #' a `Tagged_table` to one.
 #'
 #' @param dat A `Tatto_table` object or anything that can be coerced to a
-#' `\link{data.table}` with `as.data.table`
-#' @param meta a `[tt_meta]` object
+#' `\link{data.table}` with `as.data.table()`
+#' @param meta a [tt_meta] object. Metdata can also be set and modified
+#'   using setters (see [meta()])
 #'
 #' @return a `Tagged_table`: a `Tatoo_table` with an additional `meta`
 #'   attribute
@@ -22,7 +23,8 @@
 #' @md
 #' @aliases Tagged_table tagged_table tag_table
 #' @family Tatto tables
-#' @seealso [tt_meta]
+#' @seealso Attribute setters: [meta<-]
+#' @seealso Tagged Table Metadata: [tt_meta]
 #' @rdname Tagged_table
 #' @export
 #'
@@ -107,34 +109,26 @@ Tagged_table <- function(
 
 
 
-#' @rdname Tagged_table
-#' @export
-is_Tagged_table <- function(x){
-  inherits(x, "Tagged_table") && is_valid(x)
-}
-
-
-
-
 # Ctors - TT_meta (Tagged Table Metadata) ---------------------------------
 
 #' Tagged Table metadata
 #'
-#' Create a \code{TT_meta} (tagged table metadata) object. In the future,
+#' Create a `TT_meta` (tagged table metadata) object. In the future,
 #' different styling will be supported for title, longtitle and subtitle to
 #' make the distinction more meaningfull.
 #'
-#' @param table_id A scalar (will be coerced to \code{character})
-#' @param title A scalar (will be coerced to \code{character})
-#' @param longtitle A vector. If \code{length > 1} the title will be displayed
+#' @param table_id A scalar (will be coerced to `character`)
+#' @param title A scalar (will be coerced to `character`)
+#' @param longtitle A vector. If `length > 1` the title will be displayed
 #'   in several rows
-#' @param subtitle A vector. If \code{length > 1} the title will be displayed
+#' @param subtitle A vector. If `length > 1` the title will be displayed
 #'   in several rows
-#' @param footer A vector. If \code{length > 1} the title will be displayed
+#' @param footer A vector. If `length > 1` the title will be displayed
 #'   in several rows
 #'
-#' @return a \code{TT_meta} object.
-#' @seealso tag_table
+#' @md
+#' @return a TT_meta object.
+#' @seealso [Tagged_table]
 #' @aliases TT_meta
 #' @rdname tt_meta
 #'
@@ -186,9 +180,12 @@ tt_meta <- function(
 
 # Methods -----------------------------------------------------------------
 
-#' @rdname Tagged_table
+#' Check if object is a Tagged_table
+#'
+#' @param dat any R object
+#'
 #' @export
-is_Tagged_table <- function(dat, ...){
+is_Tagged_table <- function(dat){
   inherits(dat, 'Tagged_table')
 }
 
@@ -197,14 +194,14 @@ is_Tagged_table <- function(dat, ...){
 
 #' Printing Tagged Tables
 #'
-#' @param dat A \code{Tagged_table}
+#' @param x a \code{Tagged_table}
 #' @param ... passed on to \code{\link{print}}
 #'
-#' @return \code{dat} (invisibly)
+#' @return \code{x} (invisibly)
 #'
 #' @export
-print.Tagged_table <- function(dat, ...){
-  dd    <- data.table::copy(dat)
+print.Tagged_table <- function(x, ...){
+  dd    <- data.table::copy(x)
   meta  <- attr(dd, 'meta')
 
   if(!is.null(meta)){
@@ -215,10 +212,10 @@ print.Tagged_table <- function(dat, ...){
 
   if(!is.null(meta$footer)){
     footer <- paste(meta$footer, collapse = '\n')
-    cat('\n', footer, '\n')
+    cat('\n', footer, '\n', sep = '')
   }
 
-  invisible(dat)
+  invisible(x)
 }
 
 
@@ -239,27 +236,28 @@ is_valid.TT_meta <- function(dat){
 
 #' Printing Tagged Table Metdata
 #'
-#' @param dat A \code{TT_meta} object
+#' @param x A \code{TT_meta} object
 #' @param ... ignored
 #'
-#' @return \code{dat} (invisibly)
+#' @return \code{x} (invisibly)
 #'
 #' @export
 #'
-print.TT_meta <- function(dat, ...){
-  name_width   <- max(unlist(lapply(names(dat), nchar))) + 1
+print.TT_meta <- function(x, ...){
+  name_width   <- max(unlist(lapply(names(x), nchar))) + 1
   print_string <- paste0('%', name_width, 's: %s\n')
   padded_newline <- rep(' ', name_width + 2) %>%
-    paste(collapse = '') %>%
-    paste0('\n', .)
+    paste(collapse = '')
 
-  for(i in seq_along(dat)){
+  padded_newline <- paste0('\n', padded_newline)
+
+  for(i in seq_along(x)){
     cat(sprintf(
       print_string,
-      names(dat)[[i]], paste(dat[[i]], collapse = padded_newline)
+      names(x)[[i]], paste(x[[i]], collapse = padded_newline)
     ))
   }
-  invisible(dat)
+  invisible(x)
 }
 
 
@@ -267,7 +265,17 @@ print.TT_meta <- function(dat, ...){
 
 # Setters -----------------------------------------------------------------
 
-#' @rdname Tagged_table
+#' Set Tagged Table metadata
+#'
+#' Convenience functions to modify Tagged_table metadata. If `dat` is not a
+#' Tagged_table already, it will be converted to one.
+#'
+#' @param dat a [Tagged_table] or any object that can be converted to one
+#' @param value value to assign.
+#'
+#' @seealso [Tagged_table], [tt_meta]
+#' @md
+#' @rdname tagged_set
 #' @export
 `meta<-` <- function(dat, value){
   if(is.null(value)){
@@ -282,40 +290,42 @@ print.TT_meta <- function(dat, ...){
   return(res)
 }
 
+
+#' @rdname tagged_set
 #' @export
 meta <- function(dat){
   attr(dat, 'meta')
 }
 
-#' @rdname Tagged_table
+#' @rdname tagged_set
 #' @export
 `table_id<-` <- function(dat, value){
   ass <- list(table_id = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname Tagged_table
+#' @rdname tagged_set
 #' @export
 `title<-` <- function(dat, value){
   ass <- list(title = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname Tagged_table
+#' @rdname tagged_set
 #' @export
 `longtitle<-` <- function(dat, value){
   ass <- list(longtitle = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname Tagged_table
+#' @rdname tagged_set
 #' @export
 `subtitle<-` <- function(dat, value){
   ass <- list(subtitle = value)
   assign_tt_meta(dat, ass)
 }
 
-#' @rdname Tagged_table
+#' @rdname tagged_set
 #' @export
 `footer<-` <- function(dat, value){
   ass <- list(footer = value)
@@ -327,9 +337,14 @@ meta <- function(dat){
 
 # Utils -------------------------------------------------------------------
 
-#' Assign tt_metadata elements
+#' Assign tt_meta elements
 #'
 #' Internal function used by the metdata set functions
+#'
+#' @param dat a [Tatoo_table] or data.frame
+#' @param assignment A named list of length one, for example
+#'   `list(longtitle = value)`
+#'
 assign_tt_meta <- function(dat, assignment){
   assert_that(purrr::is_scalar_list(assignment))
   assert_that(identical(
@@ -359,7 +374,6 @@ assign_tt_meta <- function(dat, assignment){
 
 
 
-#' @export
 make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
   # Preconditions
     assert_that(is.flag(show_subtitle))

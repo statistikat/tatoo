@@ -2,21 +2,55 @@
 
 #' Compose Tables
 #'
-#' @param ... \code{comp_table} only: individual `data.frames`. A name can be
-#'   provided for each `data.frame`, otherwise the object names are used
-#'   (see examples).
-#' @param id_vars If \code{id_vars} is specified, the tables will be combined
-#'   using \code{\link{merge}} on the columns specified in id_vars, otherwise
-#'   the tables will be combined with \code{\link{cbind}}.
-#' @param meta a \code{\link{TT_meta}} object. If speciefied, the resulting
-#'   \code{comp_table} will be wrapped in a \code{\link{tag_table}}.
+#' @param ... `comp_table` only: individual data.frames. A name can be
+#'   provided for each data.frame that will be used by [print] and
+#'   [as_workbook()] to create multi-table headings.
+#' @param id_vars If id_vars is specified, the tables will be combined
+#'   using [merge()] on the columns specified in id_vars, otherwise
+#'   the tables will be combined with [cbind()].
+#' @param meta a [TT_meta] object. If speciefied, the resulting
+#'   Composite_table will be wrapped in a [Tagged_table].
 #'
-#' @return a \code{Composite_table}
+#' @return a Composite_table
 #'
+#' @md
 #' @rdname Composite_table
-#' @aliases comp_table composite_table
+#' @aliases comp_table composite_table Composite_table
 #' @family Tatto tables
+#' @seealso Attribute setter: [multinames<-]
 #' @export
+#'
+#' @examples
+#'
+#' df_mean <- data.frame(
+#'   Species = c("setosa", "versicolor", "virginica"),
+#'   length = c(5.01, 5.94, 6.59),
+#'   width = c(3.43, 2.77, 2.97)
+#' )
+#'
+#' df_sd <- data.frame(
+#'   Species = c("setosa", "versicolor", "virginica"),
+#'   length = c(0.35, 0.52, 0.64),
+#'   width = c(0.38, 0.31, 0.32)
+#' )
+#'
+#' comp_table(mean = df_mean, sd = df_sd)
+#'
+#' # ...........mean............     ............sd.............
+#' # 1    Species   length   width        Species   length   width
+#' # 2     setosa     5.01    3.43         setosa     0.35    0.38
+#' # 3 versicolor     5.94    2.77     versicolor     0.52    0.31
+#' # 4  virginica     6.59    2.97      virginica     0.64    0.32
+#'
+#'
+#' comp_table(mean = df_mean, sd = df_sd, id_vars = 'Species')
+#'
+#' # ..........     .....mean.....     ......sd......
+#' # 1    Species     length   width     length   width
+#' # 2     setosa       5.01    3.43       0.35    0.38
+#' # 3 versicolor       5.94    2.77       0.52    0.31
+#' # 4  virginica       6.59    2.97       0.64    0.32
+#'
 comp_table <- function(
   ...,
   id_vars = NULL,
@@ -161,12 +195,29 @@ Composite_table <- function(
 }
 
 
+
+
+#' Coerce to Composite Table
+#'
+#' @param dat any R object
+#' @inheritParams comp_table
+#'
+#' @return
+#' `as_Composte_table()` returns a Composite_table
+#'
+#' `is_Composite_table()` returns `TRUE` if its argument is a Composite_table
+#' and `FALSE` otherwise.
+#'
+#' @md
+#' @export
 as_Composite_table <- function(dat, id_vars, meta){
   UseMethod('as_Composite_table')
 }
 
 
 
+
+#' @export
 as_Composite_table.Mashed_table <- function(
   dat,
   id_vars = attr(dat, 'id_vars'),
@@ -199,32 +250,36 @@ as_Composite_table.Mashed_table <- function(
 
 
 
-# Methods -----------------------------------------------------------------
-
-#' @rdname Composite_table
+#' @rdname as_Composite_table
 #' @export
 is_Composite_table <- function(dat, ...){
   inherits(dat, 'Composite_table')
 }
 
 
+
+# Methods -----------------------------------------------------------------
+
+
+
+
 #' Printing Composite Tables
 #'
-#' @param dat A \code{Tagged_table}
+#' @param x a \code{Tagged_table}
 #' @param right \code{logical}, indicating whether or not strings should be
 #'   right-aligned. The default is left-alignment (the opposite of the
 #'   standard \code{print.data.frame} method.
 #' @param ... passed on to \code{\link{print}}
 #'
-#' @return \code{dat} (invisibly)
+#' @return \code{x} (invisibly)
 #'
 #' @export
 print.Composite_table <- function(
-  dat,
+  x,
   right = FALSE,
   ...
 ){
-  assert_that(has_attr(dat, 'multinames'))
+  assert_that(has_attr(x, 'multinames'))
 
   # Pad columns
     prep_col <- function(x, colname){
@@ -239,15 +294,15 @@ print.Composite_table <- function(
       stringi::stri_pad_left(as.character(x), pad_width)
     }
 
-    dd <- vector('list', ncol(dat))
+    dd <- vector('list', ncol(x))
 
     for(i in seq_along(dd)){
-      dd[[i]] <- prep_col(dat[[i]], names(dat)[[i]])
+      dd[[i]] <- prep_col(x[[i]], names(x)[[i]])
     }
 
 
   # Merge columns that belong to the same title
-    multinames <- attr(dat, 'multinames')
+    multinames <- attr(x, 'multinames')
     res <- vector('list', length(multinames))
     names(res) <- names(multinames)
 
@@ -279,7 +334,7 @@ print.Composite_table <- function(
 
     print(res2, right = right, ...)
 
-    invisible(dat)
+    invisible(x)
 }
 
 
@@ -291,7 +346,7 @@ print.Composite_table <- function(
 #' as well as offering you the option to prepend the \code{multinames} before
 #' the column names
 #'
-#' @param dat a \code{Composite_table}
+#' @param x a \code{Composite_table}
 #' @param multinames logical. Whether to prepend multinames before the column
 #'   names
 #' @param sep sepparator between multinames and individual column names
@@ -299,19 +354,22 @@ print.Composite_table <- function(
 #'
 #' @return a \code{data.table} or \code{data.frame}
 #'
+#' @method as.data.table Composite_table
 #' @export
 as.data.table.Composite_table <- function(
-  dat,
+  x,
   multinames = TRUE,
   sep = '.',
   ...
 ){
   assert_that(is.flag(multinames))
   assert_that(purrr::is_scalar_character(sep))
+
   if(!multinames){
-    return(data.table:::as.data.table.data.table(dat))
+    data.table::setattr(x, 'class', c('data.table', 'data.frame'))
+    return(as.data.table(x))
   } else {
-    res <- data.table::copy(dat)
+    res <- data.table::copy(x)
     multinames <- attr(res, 'multinames')
     name_idx <- 1
 
@@ -329,7 +387,10 @@ as.data.table.Composite_table <- function(
       }
     }
 
-    return(data.table:::as.data.table.data.table(res))
+
+    data.table::setattr(res, 'class', c('data.table', 'data.frame'))
+
+    return(as.data.table(res))
   }
 }
 
@@ -337,25 +398,31 @@ as.data.table.Composite_table <- function(
 
 
 #' @rdname as.data.table.Composite_table
+#'
+#' @inheritParams base::as.data.frame
+#' @method as.data.frame Composite_table
 #' @export
 as.data.frame.Composite_table <- function(
-  dat,
+  x,
+  row.names = NULL,
+  optional = FALSE,
   multinames = TRUE,
   sep = '.',
   ...
 ){
-  as.data.frame(as.data.table.Composite_table(
-    dat = dat,
-    multinames = multinames,
-    sep = sep))
+  as.data.frame(
+    as.data.table.Composite_table(
+      x = x,
+      multinames = multinames,
+      sep = sep
+    ),
+    row.names = row.names,
+    optional = optional,
+    ...
+  )
 }
 
 
-#  Shortcut functions -----------------------------------------------------
-
-comp <- function(...){
-
-}
 
 
 # Setters -----------------------------------------------------------------
@@ -364,6 +431,9 @@ comp <- function(...){
 #'
 #' @param dat a Composite_table or data.frame
 #' @param value a named character vector (see example)
+#'
+#' @md
+#' @seealso [Composite_table]
 #'
 #' @export
 `multinames<-` <- function(dat, value){

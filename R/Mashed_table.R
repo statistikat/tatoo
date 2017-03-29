@@ -10,11 +10,9 @@
 #' Mash table provides a framework to mash those two data.frames together into
 #' one data.frame with alternating rows or columns.
 #'
-#' If your goal is to present formated tables as latex or xlsx, you  should aslo
-#' look into `\link{df_format}`, `\link{df_round}` and `\link{df_signif}`.
-#'
 #' @param ... `mash_table()` only: `data.frame`s with the same row and column
-#'   count.
+#'   count. Elements of `(...)` can be named, but the name must differ from
+#'   the argument names of this function.
 #' @param tables `mash_table_list()` only: a `list` of `data.frame`s as
 #'   described for `(...)`
 #' @param mash_method either `"row"` or `"col"`. should the tables be mashed by
@@ -43,7 +41,65 @@
 #' @rdname Mashed_table
 #' @aliases Mashed_table mashed_table mash_table
 #' @family Tatto tables
+#' @seealso Attribute setters: [mash_method<-]
 #' @export
+#'
+#' @examples
+#'
+#' df_mean <- data.frame(
+#'   Species = c("setosa", "versicolor", "virginica"),
+#'   length = c(5.01, 5.94, 6.59),
+#'   width = c(3.43, 2.77, 2.97)
+#' )
+#'
+#' df_sd <- data.frame(
+#'   Species = c("setosa", "versicolor", "virginica"),
+#'   length = c(0.35, 0.52, 0.64),
+#'   width = c(0.38, 0.31, 0.32)
+#' )
+#'
+#'
+#' # Mash by row
+#'
+#' mash_table(df_mean, df_sd)
+#'
+#' #       Species length width
+#' # 1:     setosa   5.01  3.43
+#' # 2:     setosa   0.35  0.38
+#' # 3: versicolor   5.94  2.77
+#' # 4: versicolor   0.52  0.31
+#' # 5:  virginica   6.59  2.97
+#' # 6:  virginica   0.64  0.32
+#'
+#'
+#' # Mash by column
+#'
+#' mash_table(
+#'   df_mean, df_sd,
+#'   mash_method = 'col',
+#'   id_vars = 'Species'
+#' )
+#'
+#' #       Species    Species length length width width
+#' # 1:     setosa     setosa   5.01   0.35  3.43  0.38
+#' # 2: versicolor versicolor   5.94   0.52  2.77  0.31
+#' # 3:  virginica  virginica   6.59   0.64  2.97  0.32
+#'
+#'
+#' # Use the id_vars argument to prevent undesired dpulicated columns,
+#' # and name the input data.frames to get multi-col headings.
+#'
+#' mash_table(
+#'   mean = df_mean, sd = df_sd,
+#'   mash_method = 'col',
+#'   id_vars = 'Species'
+#' )
+#'
+#' #    ..........     ..length...     ...width...
+#' # 1    Species     mean     sd     mean     sd
+#' # 2     setosa     5.01   0.35     3.43   0.38
+#' # 3 versicolor     5.94   0.52     2.77   0.31
+#' # 4  virginica     6.59   0.64     2.97   0.32
 #'
 mash_table <- function(
   ...,
@@ -197,7 +253,27 @@ is_valid.Mashed_table <- function(dat){
 
 
 
-#' @rdname Mashed_table
+#' Coerce to Mashed Table
+#'
+#' @param dat any R object
+#' @inheritParams mash_table
+#'
+#' @return
+#' `as_Mashed_table()` returns a Mashed_table
+#'
+#' `is_Mashed_table()` returns `TRUE` if its argument is a Mashed_table
+#' and `FALSE` otherwise.
+#'
+#' @md
+#' @export
+as_Mashed_table <- function(dat, ...){
+  UseMethod('as_mashed_table')
+}
+
+
+
+
+#' @rdname as_Mashed_table
 #' @export
 is_Mashed_table <- function(dat, ...){
   inherits(dat, 'Mashed_table')
@@ -206,37 +282,27 @@ is_Mashed_table <- function(dat, ...){
 
 
 
-
-#' @export
-as_mashed_table <- function(dat, ...){
-  UseMethod('as_mashed_table')
-}
-
-
-
-
-
 #' Printing Mashed Tables
 #'
-#' @param dat a \code{Mashed_table}
+#' @param x a \code{Mashed_table}
 #' @param ... passed on to \code{\link{print}}
 #'
-#' @return \code{dat} (invisibly)
+#' @return \code{x} (invisibly)
 #'
 #' @export
-print.Mashed_table <- function(dat, ...){
+print.Mashed_table <- function(x, ...){
 
   print_multi_headings <-
-    attr(dat, 'mash_method') %identical% 'col' &&
-    length(names(dat)) %identical% length(dat)
+    attr(x, 'mash_method') %identical% 'col' &&
+    length(names(x)) %identical% length(x)
 
 
   if(print_multi_headings){
-    pdat <- as_Composite_table(dat, meta = NULL)
-    lines <- capture.output(print(pdat, ...))
+    pdat <- as_Composite_table(x, meta = NULL)
+    lines <- utils::capture.output(print(pdat, ...))
   } else {
-    lines <- capture.output(print(
-      as.data.table(dat, insert_blank_row = FALSE),
+    lines <- utils::capture.output(print(
+      as.data.table(x, insert_blank_row = FALSE),
       ...
     ))
   }
@@ -245,12 +311,12 @@ print.Mashed_table <- function(dat, ...){
   for(i in seq_along(lines)){
     cat(lines[[i]], '\n')
 
-    if(attr(dat, 'insert_blank_row') &&
-       attr(dat, 'mash_method') %identical% 'row'
+    if(attr(x, 'insert_blank_row') &&
+       attr(x, 'mash_method') %identical% 'row'
     ){
       insert_blank <-
-         i > length(dat) &&
-        (i-1) %% length(dat) == 0 &&
+         i > length(x) &&
+        (i-1) %% length(x) == 0 &&
         !identical(i, length(lines))
 
       assert_that(is.flag(insert_blank))
@@ -262,7 +328,7 @@ print.Mashed_table <- function(dat, ...){
   }
 
 
-  invisible(dat)
+  invisible(x)
 }
 
 
@@ -270,10 +336,17 @@ print.Mashed_table <- function(dat, ...){
 
 #' Convert a Mashed Table to a data.table or data.frame
 #'
-#' @param dat a \code{Mashed_table}
+#' @param dat a [Mashed_table]
 #' @inheritParams mash_table
+#' @inheritParams base::as.data.frame
+#' @param suffixes a character vector of length 2 specifying the suffixes to be
+#'   used for making unique the names of columns.
+#' @param ... passed on to `as.data.frame.data.table()`
 #'
-#' @return a \code{data.table} or \code{data.frame}
+#' @method as.data.table Mashed_table
+#'
+#' @md
+#' @return a [data.table] or \code{data.frame}
 #' @export
 as.data.table.Mashed_table <- function(
   dat,
@@ -303,15 +376,24 @@ as.data.table.Mashed_table <- function(
 
 
 #' @rdname as.data.table.Mashed_table
+#' @method as.data.frame Mashed_table
 #' @export
 as.data.frame.Mashed_table <- function(
-  dat,
-  mash_method = attr(dat, 'mash_method'),
-  insert_blank_row = attr(dat, 'insert_blank_row'),
-  id_vars = attr(dat, 'id_vars'),
-  suffixes = names(dat)
+  x,
+  row.names = NULL,
+  optional = FALSE,
+  mash_method = attr(x, 'mash_method'),
+  insert_blank_row = attr(x, 'insert_blank_row'),
+  id_vars = attr(x, 'id_vars'),
+  suffixes = names(x),
+  ...
 ){
-  as.data.frame(as.data.table.Mashed_table(dat))
+  as.data.frame(
+    as.data.table.Mashed_table(x),
+    row.names = row.names,
+    optional = optional,
+    ...
+  )
 }
 
 
@@ -463,7 +545,16 @@ cmash <- function(
 
 # Setters -----------------------------------------------------------------
 
-#' @rdname Mashed_table
+
+#' Set mash attributes of a Mashed Table
+#'
+#' @param dat a Mashed_table
+#' @param value a value that is legal for the individual attribute, as
+#'   described in [Mashed_table]
+#'
+#' @rdname mashed_set
+#' @seealso [Mashed_table]
+#' @md
 #' @export
 `mash_method<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
@@ -475,7 +566,7 @@ cmash <- function(
   return(res)
 }
 
-#' @rdname Mashed_table
+#' @rdname mashed_set
 #' @export
 `insert_blank_row<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
@@ -487,7 +578,7 @@ cmash <- function(
   return(res)
 }
 
-#' @rdname Mashed_table
+#' @rdname mashed_set
 #' @export
 `sep_height<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
@@ -500,7 +591,7 @@ cmash <- function(
   return(res)
 }
 
-#' @rdname Mashed_table
+#' @rdname mashed_set
 #' @export
 `id_vars<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
@@ -562,7 +653,7 @@ mash_rows <- function(dat, insert_blank_row = FALSE){
   # Output
   res <- res[roworder]
 
-  ## Remove trailing blank line
+  # Remove trailing blank line
   if(insert_blank_row){
     res <- res[-nrow(res)]
   }

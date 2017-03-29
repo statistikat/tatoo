@@ -91,7 +91,7 @@ print_several_tables <- function(
   assert_that(is.null(headings) || identical(length(headings), length(dat)))
 
   tables_char <- dat %>%
-    lapply(function(x) capture.output(print(x, ...)))
+    lapply(function(x) utils::capture.output(print(x, ...)))
 
   # Get width for print output
   tables_width <- tables_char %>%

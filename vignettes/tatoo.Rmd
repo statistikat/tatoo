@@ -2,7 +2,9 @@
 title: "Tatoo package vignette"
 author: "Stefan Fleck"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Tatoo}
   %\VignetteEngine{knitr::rmarkdown}
@@ -18,37 +20,29 @@ library(tatoo)
 
 Tatoo ("Table Tools") provides three straight-forward helper to combine multiple
 `data.frames` to tables that are otherwise awkward to create in base-r, and a
-way to add metadata (id, title, ...) to a table. 
+way to add metadata (id, title, ...) to a table. In addition, the Tatto_report
+class is provided as a convenient helper to write several Tatoo tables to a 
+workbook, one table per worksheet.
 
-Tatoo tables can directly be saved to .xlsx files, or convert to `Workbook` 
-objects with `as_workbook()` so that you can process them further using the 
-awesome `openxlsx` package. While tatoo implements convenient print methods so 
-that you can preview the tables you created in the console, most of the
-functionality provided by this package only makes real sense for .xlsx export.
+Tatoo tables and reports can directly be saved to .xlsx files, or convert to
+`Workbook` objects with `as_workbook()` so that you can process them further
+using the `openxlsx` package. While tatoo implements convenient print
+methods so that you can preview the tables you created in the console, most of
+the functionality provided by this package only makes real sense for .xlsx
+export.
 
-# Setup example data
 ```{r}
-df1 <- iris %>% 
-  dplyr::group_by(Species) %>% 
-  dplyr::summarise(
-    length = mean(Sepal.Length),
-    width  = mean(Sepal.Width)) %>% 
-  dplyr::mutate_if(
-    round, 
-    digits = 2, 
-    .predicate = is.numeric
-  )
+df1 <- data.frame(
+  Species = c("setosa", "versicolor", "virginica"),
+  length = c(5.01, 5.94, 6.59),
+  width = c(3.43, 2.77, 2.97)
+)
 
-df2 <- iris %>% 
-  dplyr::group_by(Species) %>% 
-  dplyr::summarise(
-    length = sd(Sepal.Length),
-    width  = sd(Sepal.Width))%>% 
-  dplyr::mutate_if(
-    round, 
-    digits = 2, 
-    .predicate = is.numeric
-  )
+df2 <- data.frame(
+  Species = c("setosa", "versicolor", "virginica"),
+  length = c(0.35, 0.52, 0.64),
+  width = c(0.38, 0.31, 0.32)
+)
 ```
 
 # Tagged tables
@@ -111,7 +105,7 @@ and metadata on how to combine them.
 
 ```{r}
 mashed_table <- mash_table(df1, df2)
-mashed_table <- mash_table_list(list(df1, df2))
+mashed_table <- mash_table_list(list(df1, df2)) # same as above
 
 title(mashed_table) <- 'A mashed table'
 subtitle(mashed_table) <- 
@@ -124,6 +118,7 @@ Additional formatting parameters can be saved as attributes to a mash table.
 Those attributes honored by the print and (more significantly) the as_workbook 
 methods.
 
+A row-mashed table
 ```{r}
 mashed_table_row <- mash_table(
   df1, df2, 
@@ -132,7 +127,10 @@ mashed_table_row <- mash_table(
   meta = tt_meta(title = 'A row-mashed table')
 )
 print(mashed_table_row)
+```
 
+A col-mashed table
+```{r}
 mashed_table_col <- mash_table(
   mean = df1, sd = df2, 
   mash_method = 'col', 
@@ -142,6 +140,9 @@ mashed_table_col <- mash_table(
 
 print(mashed_table_col)
 ```
+
+
+
 
 The display parameters are just saved as attributes, and can be modified
 conveniently via set functions. Named mashed tables will have two layers of
@@ -158,29 +159,54 @@ print(mashed_table)
 All Tatoo table classes can be converted to openxlsx Workbooks via 
 `as_workbook()`. Examples for finished `.xlsx` files are beyond the scope
 of this vignette.
-
 ```{r message=FALSE}
 as_workbook(mashed_table)
 ```
 
 
-
-## rmash and cmash
-
+## convience functions
 `rmash()` and `cmash()` are convient shortcut functions if you just need to quickly
 mash together a `data.frame` (similar to `rbind()` and `cbind()`). Note that the
 result is a `data.table` and not a `data.frame`, so if you are not familiar with
 the `data.table` package you might want to manually convert the result to a
 `data.frame` to prevent headaches.
-```{r}
-rmash(mashed_table) # rmash can be used on a Mash_table
-rmash(df1, df2) # or on several data.frames
-rmash(df1, df2, insert_blank_row = TRUE)
 
+### rmash
+
+`rmash()` can be used on several data.frames or on an existing Mahed table.
+
+```{r eval = FALSE}
+rmash(df1, df2) 
+rmash(mashed_table)   
+```
+```{r echo = FALSE}
+rmash(df1, df2) 
+```
+
+
+`rmash()` also supports the `insert_blank_row` argument of `Mashed_table` for 
+consistency.
+
+```{r}
+rmash(df1, df2, insert_blank_row = TRUE)
+```
+
+### cmash
+
+The interface of `cmash()` is very similar to `rmash()`
+```{r eval = FALSE}
+cmash(df1,  df2)
 cmash(mashed_table)
-cmash(mean = df1, sd = df2)
-cmash(df1, df2, id_vars = 'Species') %>% 
-  as.data.frame()
+```
+```{r echo = FALSE}
+cmash(df1, df2) 
+```
+
+More polished output can be produced by naming the inputs and using the 
+`id_vars` argument.
+
+```{r}
+cmash(mean = df1, sd = df2, id_vars = 'Species')
 ```
 
 
@@ -194,7 +220,7 @@ the `comp_table_list()` constructor can be used as above with mash_table.
 
 ```{r}
 composite_table <- comp_table(mean = df1, sd = df2)
-composite_table <- comp_table_list(list(mean = df1, sd = df2))
+composite_table <- comp_table_list(list(mean = df1, sd = df2))  # same as above
 
 
 title(composite_table) <- 'A composite table'
@@ -209,16 +235,7 @@ When creating a Composite table, the `id_vars` argument can be used to combine
 the tables via merge, rather than via cbind.
 
 ```{r}
-composite_table <- comp_table(
-  mean = df1,   
-  sd = df2,
-  id_vars = 'Species',
-  meta = tt_meta(
-    title = 'A composite table',
-    subtitle = 'Two or more tables put side by side, with multi-column-headings'
-  )
-)
-
+comp_table(mean = df1, sd = df2, id_vars = 'Species')
 ```
 
 
@@ -232,7 +249,8 @@ on the same `.xlsx` sheet. A stack table can be consist of an arbitrary number
 of data.frames or Tatoo_tables -- except other Stacked_tables.
 
 ```{r}
-stacked_table <- tatoo::stack_table(df1, mashed_table, composite_table)
+stacked_table <- stack_table(df1, mashed_table, composite_table)
+stacked_table <- stack_table_list(list(df1, mashed_table, composite_table))  # same as above
 
 title(stacked_table) <- 'A stacked table'
 subtitle(stacked_table) <- 
@@ -260,5 +278,19 @@ tatoo_report <- compile_report(
 
 print(tatoo_report)
 
+
+```
+
+# Excel export
+
+For further processing with `openxlsx`.
+```{r}
+wb <- as_workbook(tatoo_report)  
+```
+
+For direct .xlsx ouput
+```{r}
 save_xlsx(tatoo_report, 'report_example.xlsx', overwrite = TRUE)
 ```
+
+

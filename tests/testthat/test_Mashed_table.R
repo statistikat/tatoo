@@ -160,7 +160,7 @@ test_that('mash_table: as.data.table and setters work', {
     )
 
     expect_identical(
-      length(capture.output(print(st1))),
+      length(utils::capture.output(print(st1))),
       11L
     )
 
@@ -181,7 +181,7 @@ test_that('mash_table: as.data.table and setters work', {
     )
 
     expect_identical(
-      length(capture.output(print(st1))),
+      length(utils::capture.output(print(st1))),
       15L
     )
 
@@ -201,7 +201,7 @@ test_that('mash_table: as.data.table and setters work', {
     )
 
     expect_identical(
-      length(capture.output(print(st1))),
+      length(utils::capture.output(print(st1))),
       6L
     )
 
