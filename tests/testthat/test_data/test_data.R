@@ -48,6 +48,18 @@ t_meta_verbose <- tt_meta(
   footer = c('that has a footer also', 'which goes over man lines')
 )
 
+t_meta_sub <- tt_meta(
+  subtitle = 'A table that contains numbers but maybe also letters'
+)
+
+
+
+# Tagged_table ------------------------------------------------------------
+
+t_tagged_1 <- tag_table(t_df1, t_meta_simple)
+t_tagged_2 <- tag_table(t_df1, t_meta_verbose)
+t_tagged_2 <- tag_table(t_df1, t_meta_sub)
+
 
 
 # Mashed Tables -----------------------------------------------------------

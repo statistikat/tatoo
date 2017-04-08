@@ -242,8 +242,9 @@ test_that('rmash and cmash behave as expected', {
 })
 
 
-test_that('mash table print method', {
 
+
+test_that('mash table print method produces output', {
   st1 <- mash_table(
     mean = t_df1,
     sd = t_df2,
@@ -281,6 +282,5 @@ test_that('mash table print method', {
   expect_output(print(st2))
   expect_output(print(st3))
   expect_output(print(st4))
-
 })
 
