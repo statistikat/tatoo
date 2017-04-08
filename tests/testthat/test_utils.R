@@ -13,7 +13,7 @@ test_that("sanitize_excel_sheet_names works as expected", {
 
 
 
-test_that("sanitize_excel_sheet_names works as expected", {
+test_that("getting final row of an openxlsx::workbook works", {
 
   data <- data.frame(
     x = c(1,2,3),
@@ -35,9 +35,3 @@ test_that("sanitize_excel_sheet_names works as expected", {
   openxlsx::writeData(wb, 'bar', data, startRow = 10)
   expect_identical(get_final_wb_row(wb, 'bar'), 13L)
 })
-
-
-get_final_wb_row <- function(wb, sheet){
-  i_sheet <- match(sheet, wb$sheet_names)
-  max(wb$worksheets[[i_sheet]]$sheet_data$rows)
-}
