@@ -152,3 +152,8 @@ t_report_stack <- compile_report(
   normal = t_stack_1,
   spacing = t_stack_2
 )
+
+
+t_report <- compile_report(
+  t_comp_1, t_comp_2, meta = t_mash_4, t_stack_2
+)
