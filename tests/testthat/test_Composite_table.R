@@ -1,46 +1,62 @@
 context("Composite_table")
-
 #* @testing comp_table
 #* @testing composite_table
 
 test_that("Composite_table works as expected", {
   #* @testing comp_table
   #* @testing comp_table_list
-  # Generate test data
-    tdat <- list()
-    for(i in seq_len(3)){
-      tdat[[i]] <- data.frame(
-        id = 1:6,
-        small = letters[i:(i+5)],
-        tall = LETTERS[i:(i+5)]
-      )
-    }
 
-  # Ursula wants to combine several tables to a Composite_table (side-by-side tables)
+  source(file.path(test_path(), 'test_data', 'test_data.R'))
 
-  ## table names must be specified (otherwise comp_table would just be a wrapper for
-  ## cbind)
-    expect_silent(tres <- comp_table(tdat[[1]], tdat[[2]], tdat[[3]]))
+
+  # Ursula wants to combine several tables to a Composite_table
+
+  ## If no table names are specified, the names are derived from the R objects.
+    expect_silent(tres <- comp_table(t_df1, t_df2, t_df3))
     expect_identical(
       names(attr(tres, 'multinames')),
-      c("tdat[[1]]", "tdat[[2]]", "tdat[[3]]")
+      c("t_df1", "t_df2", "t_df3")
     )
-    expect_error(tres <- comp_table_list(tdat))
 
-  ## If "tables" is a named list, table names are automatically set to element names
-    names(tdat) <- c('a', 'b', 'c')
-    expect_silent(tres <- comp_table_list(tdat))
-    expect_s3_class(tres, 'Composite_table')
+  ## Custom table names can be specifed by supplying named arguments...
+    expect_silent(tres <- comp_table(a = t_df1, b = t_df2, c = t_df3))
+    expect_identical(
+      names(attr(tres, 'multinames')),
+      c("a", "b", "c")
+    )
+
+  ## ... or by supplying a named list to the list constructor
+    expect_silent(tres <- comp_table_list(list(
+      a = t_df1, b = t_df2, c = t_df3))
+    )
+    expect_identical(
+      names(attr(tres, 'multinames')),
+      c("a", "b", "c")
+    )
+
+  ## Passing a list without names to comp_table_list will enumerate the tables
+    expect_silent(tres <- comp_table_list(list(
+      t_df1, t_df2, t_df3))
+    )
+    expect_identical(
+      names(attr(tres, 'multinames')),
+      c("tab 1", "tab 2", "tab 3")
+    )
+
 
   # Ursulas table have an ID column. She wants to merge them, instead of
   # cbinding them. This has the advantage of avoiding duplicate ID columns
   # and ensuring data integrity
     expect_silent(tres <- comp_table(
-      tab1 = tdat[[1]],
-      tab2 = tdat[[2]],
-      tab3 = tdat[[3]],
-      id_vars = 'id'
+      tab1 = t_df1,
+      tab2 = t_df1,
+      tab3 = t_df1,
+      id_vars = 'animals'
     ))
+    expect_identical(
+      ncol(tres),
+      ncol(t_df1) * 3L - 3L + 1L
+    )
 })
 
 
@@ -48,38 +64,27 @@ test_that("as.data.table.Composite_table works as expected", {
   #* @testing as.data.frame.Composite_table
   #* @testing as.data.table.Composite_table
 
-  tl <- list()
-  for(i in seq_len(3)){
-    tl[[i]] <- data.frame(
-      id = 1:6,
-      small = letters[i:(i+5)],
-      tall = LETTERS[i:(i+5)]
-    )
-  }
-
-  names(tl) <- c('tab1', 'tab2', 'tab3')
-
-  tdat1 <- comp_table_list(tl)
+  source(file.path(test_path(), 'test_data', 'test_data.R'))
 
   expect_identical(
-    names(as.data.table(tdat1, multinames = TRUE)),
+    names(data.table::as.data.table(t_comp_1, multinames = TRUE)),
     c("tab1.id", "tab1.small", "tab1.tall", "tab2.id", "tab2.small",
       "tab2.tall", "tab3.id", "tab3.small", "tab3.tall")
   )
 
   expect_identical(
-    names(as.data.table(tdat1, multinames = FALSE)),
-    names(tdat1)
-  )
-
-  tdat2 <- comp_table_list(
-    tl,
-    id_vars = 'id'
+    names(data.table::as.data.table(t_comp_1, multinames = FALSE)),
+    names(t_comp_1)
   )
 
   expect_identical(
-    names(as.data.table(tdat2)),
+    names(data.table::as.data.table(t_comp_2)),
     c("id", "tab1.small", "tab1.tall", "tab2.small", "tab2.tall",
       "tab3.small", "tab3.tall")
+  )
+
+  expect_identical(
+    names(data.table::as.data.table(t_comp_2, multinames = FALSE)),
+    names(t_comp_2)
   )
 })

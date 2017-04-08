@@ -78,29 +78,30 @@ t_mash_4 <- mash_table(
 
 # Composite Tables --------------------------------------------------------
 
-tdat <- list()
+tmp <- list()
 for(i in seq_len(3)){
-  tdat[[i]] <- data.frame(
+  tmp[[i]] <- data.frame(
     id = 1:6,
     small = letters[i:(i+5)],
     tall = LETTERS[i:(i+5)]
   )
 }
-names(tdat) <- c('tab1', 'tab2', 'tab3')
+names(tmp) <- c('tab1', 'tab2', 'tab3')
 
-t_comp_1 <- comp_table_list(tdat)
+t_comp_1 <- comp_table_list(tmp)
 
 t_comp_2 <- comp_table_list(
-  tdat,
+  tmp,
   id_vars = 'id'
 )
 
 t_comp_3 <- comp_table_list(
-  tdat,
+  tmp,
   id_vars = 'id',
   meta = t_meta_simple
 )
 
+rm(tmp)
 
 
 

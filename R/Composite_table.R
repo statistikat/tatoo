@@ -92,9 +92,7 @@ comp_table_list <- function(
   }
 
   if(!length(names(tables)) %identical% length(tables)){
-    stop(str_nobreak(
-      'names(tables) must be specified, otherwise comp_table
-      would just be a wrapper for cbind.'))
+    names(tables) <- paste('tab', seq_along(tables))
   }
 
   # Combine the tables
@@ -434,6 +432,7 @@ as.data.frame.Composite_table <- function(
 #'
 #' @md
 #' @seealso [Composite_table]
+#' @rdname multinames
 #'
 #' @export
 `multinames<-` <- function(dat, value){
@@ -450,6 +449,12 @@ as.data.frame.Composite_table <- function(
   return(res)
 }
 
+#' @rdname multinames
+#' @export
+multinames <- function(dat){
+  assert_that(inherits(dat, 'Composite_table'))
+  attr(dat, 'multinames')
+}
 
 
 
