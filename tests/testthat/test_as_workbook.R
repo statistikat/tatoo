@@ -14,7 +14,7 @@ test_that("as_workbook works as expected", {
   for(el in list(t_df1, t_mash_1, t_comp_1, t_stack_1))
   {
     # Check if workbook project is created without warnings or errors
-    expect_silent(tres <- as_workbook(el))
+    tres <- as_workbook(el)
     expect_is(tres, 'Workbook')
 
     # Check if workbook object contains the appropriate number of sheets

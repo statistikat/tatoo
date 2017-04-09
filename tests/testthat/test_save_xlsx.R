@@ -17,16 +17,16 @@ test_that('save_xlsx saves files to disc', {
     of <- file.path(tempdir(), 'test.xlsx')
 
   # Try saving a report containing mash tables
-    expect_silent(save_xlsx(t_report_mash, of, overwrite = TRUE))
+    save_xlsx(t_report_mash, of, overwrite = TRUE)
     expect_true(file.remove(of))
 
 
   # Try saving a report containing comp tables
-    expect_silent(save_xlsx(t_report_comp, of, overwrite = TRUE))
+    save_xlsx(t_report_comp, of, overwrite = TRUE)
     expect_true(file.remove(of))
 
 
   # Try saving a report containing stack tables
-    expect_silent(save_xlsx(t_report_stack, of, overwrite = TRUE))
+    save_xlsx(t_report_stack, of, overwrite = TRUE)
     expect_true(file.remove(of))
 })
