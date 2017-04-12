@@ -284,16 +284,23 @@ is_Mashed_table <- function(dat, ...){
 
 #' Printing Mashed Tables
 #'
-#' @param x a \code{Mashed_table}
-#' @param ... passed on to \code{\link{print}}
+#' @param x a Mashed_table
+#' @param ... passed on to [print()]
+#' @inheritParams mash_table
 #'
+#' @md
 #' @return \code{x} (invisibly)
 #'
 #' @export
-print.Mashed_table <- function(x, ...){
-
+print.Mashed_table <- function(
+  x,
+  mash_method = attr(x, 'mash_method'),
+  insert_blank_row = attr(x, 'insert_blank_row'),
+  id_vars = attr(x, 'id_vars'),
+  ...
+){
   print_multi_headings <-
-    attr(x, 'mash_method') %identical% 'col' &&
+    mash_method%identical% 'col' &&
     length(names(x)) %identical% length(x)
 
 
@@ -302,7 +309,11 @@ print.Mashed_table <- function(x, ...){
     lines <- utils::capture.output(print(pdat, ...))
   } else {
     lines <- utils::capture.output(print(
-      as.data.table(x, insert_blank_row = FALSE),
+      as.data.table(
+        x,
+        insert_blank_row = FALSE,
+        mash_method = mash_method,
+        id_vars = id_vars),
       ...
     ))
   }
@@ -311,9 +322,7 @@ print.Mashed_table <- function(x, ...){
   for(i in seq_along(lines)){
     cat(lines[[i]], '\n')
 
-    if(attr(x, 'insert_blank_row') &&
-       attr(x, 'mash_method') %identical% 'row'
-    ){
+    if(insert_blank_row && mash_method %identical% 'row'){
       insert_blank <-
          i > length(x) &&
         (i-1) %% length(x) == 0 &&
