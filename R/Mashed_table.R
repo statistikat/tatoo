@@ -267,7 +267,7 @@ is_valid.Mashed_table <- function(dat){
 #' @md
 #' @export
 as_Mashed_table <- function(dat, ...){
-  UseMethod('as_mashed_table')
+  UseMethod('as_Mashed_table')
 }
 
 
