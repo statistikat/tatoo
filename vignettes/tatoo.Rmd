@@ -141,9 +141,6 @@ mashed_table_col <- mash_table(
 print(mashed_table_col)
 ```
 
-
-
-
 The display parameters are just saved as attributes, and can be modified
 conveniently via set functions. Named mashed tables will have two layers of
 colnames in print and xlsx output.
@@ -156,6 +153,14 @@ names(mashed_table) <- c('mean', 'sd')
 print(mashed_table)
 ```
 
+You can also direclty override the display parameters saved in the Mashed_table
+object for printing and xlsx export
+
+```{r}
+print(mashed_table, mash_method = 'row', insert_blank_row = TRUE)
+```
+
+
 All Tatoo table classes can be converted to openxlsx Workbooks via 
 `as_workbook()`. Examples for finished `.xlsx` files are beyond the scope
 of this vignette.
@@ -164,7 +169,7 @@ as_workbook(mashed_table)
 ```
 
 
-## convience functions
+## Convience functions
 `rmash()` and `cmash()` are convient shortcut functions if you just need to quickly
 mash together a `data.frame` (similar to `rbind()` and `cbind()`). Note that the
 result is a `data.table` and not a `data.frame`, so if you are not familiar with

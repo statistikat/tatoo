@@ -3,135 +3,48 @@ context("Tagged_table")
 #* @testing tagged_table
 #* @testing tag_table
 
-test_that("make_tag_table_print_title works as expected", {
-  tmeta <- tt_meta(
-    table_id = 't001',
-    title = 'Table 1',
-    longtitle = 'Table of Numbers',
-    subtitle = 'A table that contains numbers but maybe also letters',
-    footer = 'a footer'
-  )
+test_that("Tagged_table constructors work", {
+  source(file.path(test_path(), 'test_data', 'test_data.R'))
 
-  tmeta2 <- tt_meta(
-    table_id = 't001',
-    title = 'Table 1',
-    longtitle = 'Table of Numbers'
-  )
-
-  tmeta3 <- tt_meta(
-    subtitle = 'A table that contains numbers but maybe also letters'
-  )
-
-  tres1  <- make_tag_table_print_title(tmeta)
-  tres1b <- make_tag_table_print_title(tmeta, show_subtitle = FALSE)
-  tres2  <- make_tag_table_print_title(tmeta2)
-  tres3  <- make_tag_table_print_title(tmeta3)
+  # Generating tagged table explicitley
+  expect_silent(tmeta <- tag_table(
+    t_df1, meta = t_meta_verbose))
 
   expect_identical(
-    tres1,
-    "t001: Table 1 - Table of Numbers\nA table that contains numbers but maybe also letters"
-  )
-
-  expect_identical(
-    tres1b, tres2
-  )
-
-  expect_identical(
-    tres2,
-    "t001: Table 1 - Table of Numbers"
-  )
-
-  expect_identical(
-    tres3,
-    tmeta3$subtitle
-  )
-})
-
-test_that("make_tag_table_print_title works as expected", {
-  tmeta <- tt_meta(
-    table_id = 't001',
-    title = 'Table 1',
-    longtitle = 'Table of Numbers',
-    subtitle = c('A table that contains numbers but maybe also letters', 'and can span several rows'),
-    footer = c('a footer', 'with many rows', '(c) someone')
-  )
-
-  tdat <- data.frame(
-    x = letters[1:5],
-    y = letters[10:14]
-  )
-
-  expect_silent(tres <- tag_table(tdat, tmeta))
-
-  ## manual tests
-  # tf <- file.path(tempdir(), 'pub.xlsx')
-  # save_xlsx(tres, tf, overwrite = TRUE)
-})
-
-
-test_that("Creating tag_table works as expected", {
-df1 <- iris %>%
-  dplyr::group_by(Species) %>%
-  dplyr::summarise(
-    length = mean(Sepal.Length),
-    width  = mean(Sepal.Width)) %>%
-  dplyr::mutate_if(
-    round,
-    digits = 2,
-    .predicate = is.numeric
-  )
-
-df2 <- iris %>%
-  dplyr::group_by(Species) %>%
-  dplyr::summarise(
-    length = sd(Sepal.Length),
-    width  = sd(Sepal.Width)) %>%
-  dplyr::mutate_if(
-    round,
-    digits = 2,
-    .predicate = is.numeric
-  )
-
-tmeta <- tt_meta(
-  table_id = 't001',
-  title = 'Table 1',
-  longtitle = 'Table of Numbers',
-  subtitle = c('A table that contains numbers but maybe also letters', 'and can span several rows'),
-  footer = c('a footer', 'with many rows', '(c) someone')
-)
-
-tres1 <- tag_table(df1, tmeta)
-
-# A meta table should be a data.table
-  expect_identical(
-    class(tres1),
+    class(tmeta),
     c("Tagged_table", "Tatoo_table", "data.table", "data.frame")
   )
 
-# Creating a meta-table from a meta table should replace the meta-attribute
-# without awkward stuff happening like a duplicate class attribute or such
-  newmeta <- tt_meta('t1', 'a table')
 
-  tres2 <- tag_table(tres1, meta = newmeta)
+  # Tagged table can also be created direclty when creating another Tatoo table
+  # by supplying the optional meta argument
+  expect_silent(tres <- mash_table(
+    t_df1, t_df1, meta = t_meta_simple)
+  )
   expect_identical(
-    class(tres2),
-    c("Tagged_table", "Tatoo_table", "data.table", "data.frame")
+    class(tres),
+    c("Tagged_table", "Mashed_table", "Tatoo_table", "list")
   )
 
+  expect_silent(tres <- comp_table(
+    t_df1, t_df2, meta = t_meta_simple)
+  )
   expect_identical(
-    attr(tres2, 'meta'),
-    newmeta
+    class(tres),
+    c("Tagged_table", "Composite_table", "Tatoo_table", "data.table", "data.frame")
   )
 
-  # Alternatively metadata can also be assigned like this:
-  tres3 <- tres1
-  meta(tres3) <- newmeta
-
+  expect_silent(tres <- stack_table(
+    t_df1, t_df2, meta = t_meta_simple)
+  )
   expect_identical(
-    tres3,
-    tres2
+    class(tres),
+    c("Tagged_table", "Stacked_table", "Tatoo_table", "list")
   )
 })
+
+
+
 
 
 
@@ -190,16 +103,41 @@ test_that("metadata replacement functions work", {
   )
 
   title(tres) <- NULL
-
   meta(tres) <- NULL
-
 
   expect_identical(
     class(tres),
     c('Tatoo_table', 'data.table', 'data.frame')
   )
+})
 
 
 
 
+test_that("make_tag_table_print_title works as expected", {
+
+  tres1  <- make_tag_table_print_title(t_meta_simple)
+  tres1b <- make_tag_table_print_title(t_meta_verbose, show_subtitle = FALSE)
+  tres2  <- make_tag_table_print_title(t_meta_verbose)
+  tres3  <- make_tag_table_print_title(t_meta_sub)
+
+  expect_identical(
+    tres1,
+    "tid: title - longitle\nsubtitle"
+  )
+
+  expect_identical(
+    tres1b,
+    "rp1: stack table 1 - stack table 1 is a stack of tables\nwith a very long title\nthat spans several rows"
+  )
+
+  expect_identical(
+    tres2,
+    "rp1: stack table 1 - stack table 1 is a stack of tables\nwith a very long title\nthat spans several rows\nwith a subtitle"
+  )
+
+  expect_identical(
+    tres3,
+    t_meta_sub$subtitle
+  )
 })
