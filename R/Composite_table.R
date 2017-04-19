@@ -428,11 +428,30 @@ as.data.frame.Composite_table <- function(
 #' Set the multinames attribute of a Composite_table
 #'
 #' @param dat a Composite_table or data.frame
-#' @param value a named character vector (see example)
+#' @param value a named vector of ascending integers. The name is the
+#'   multi-column heading, the integer value is the last colum that this
+#'   heading applies to
 #'
 #' @md
 #' @seealso [Composite_table]
 #' @rdname multinames
+#'
+#' @example
+#'
+#' #' df_mean <- data.frame(
+#'   Species = c("setosa", "versicolor", "virginica"),
+#'   length = c(5.01, 5.94, 6.59),
+#'   width = c(3.43, 2.77, 2.97)
+#' )
+#'
+#' multinames(df_mean) = c('species' = 1, measures = 3)
+#'
+#' # .species..     ...measures...
+#' # 1    Species     length   width
+#' # 2     setosa       5.01    3.43
+#' # 3 versicolor       5.94    2.77
+#' # 4  virginica       6.59    2.97
+#'
 #'
 #' @export
 `multinames<-` <- function(dat, value){
@@ -448,6 +467,9 @@ as.data.frame.Composite_table <- function(
 
   return(res)
 }
+
+
+
 
 #' @rdname multinames
 #' @export
