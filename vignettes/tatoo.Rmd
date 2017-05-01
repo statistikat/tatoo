@@ -18,10 +18,10 @@ library(tatoo)
 
 # Introduction
 
-Tatoo ("Table Tools") provides three straight-forward helper to combine multiple
-`data.frames` to tables that are otherwise awkward to create in base-r, and a
-way to add metadata (id, title, ...) to a table. In addition, the Tatto_report
-class is provided as a convenient helper to write several Tatoo tables to a 
+Tatoo ("Table Tools") provides three straight-forward helpers to combine multiple
+`data.frames` to tables that are otherwise awkward to create in base R, and a
+way to add metadata (id, title, ...) to a table. In addition, the `Tatto_report`
+class is provided as a convenient helper to write several such tables to a 
 workbook, one table per worksheet.
 
 Tatoo tables and reports can directly be saved to .xlsx files, or convert to

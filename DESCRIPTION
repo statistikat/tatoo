@@ -1,15 +1,15 @@
 Package: tatoo
 Type: Package
-Title: Table Tools: Tools for Combining Data Frames and Exporting Them to xlsx
+Title: Combine and Export Data Frames
 Version: 1.0.5
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description: 
-  Three straight-forward functions to combine multiple data.frames to tables 
-  that are otherwise awkward to create in base-r, and a
-  way to add metadata (id, title, ...) to a table. In addition, the Tatoo_report
-  class is provided as a convenient helper to write several Tatoo tables to a 
-  workbook, one table per worksheet.
+  Functions to combine data.frames in ways that require additional effort in 
+  base R, and to add metadata (id, title, ...) that can be used for printing and 
+  xlsx export. The 'Tatoo_report' class is provided as a 
+  convenient helper to write several such tables to a workbook, one table per 
+  worksheet.
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:

@@ -1,3 +1,7 @@
+## Resubmission
+
+* Rewrote description uppon request
+
 ## Test environments
 * ubuntu 16.10 (on travis-ci), R 3.4.0
 * win-builder (devel and release)
