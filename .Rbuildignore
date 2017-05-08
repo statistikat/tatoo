@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^.*rsconnect$
 ^.*legacy$
+^cran-comments\.md$

@@ -435,10 +435,11 @@ as.data.frame.Composite_table <- function(
 #' @md
 #' @seealso [Composite_table]
 #' @rdname multinames
+#' @export
 #'
-#' @example
+#' @examples
 #'
-#' #' df_mean <- data.frame(
+#' df_mean <- data.frame(
 #'   Species = c("setosa", "versicolor", "virginica"),
 #'   length = c(5.01, 5.94, 6.59),
 #'   width = c(3.43, 2.77, 2.97)
@@ -453,7 +454,6 @@ as.data.frame.Composite_table <- function(
 #' # 4  virginica       6.59    2.97
 #'
 #'
-#' @export
 `multinames<-` <- function(dat, value){
   assert_that(is.data.frame(dat))
   assert_that(max(value) == ncol(dat))
