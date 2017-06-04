@@ -8,7 +8,7 @@
 #' objects. For information about additional parameters please refer to the
 #' documentation of `write_worksheet()`, for which `as_workbook()`
 #' is just a wraper. Additional possible function arguments way vary depending
-#' on depending which Tatoo_table you want to export.
+#' on which Tatoo_table you want to export.
 #'
 #' @param dat a [Tatoo_table] or [Tatoo_report]
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.

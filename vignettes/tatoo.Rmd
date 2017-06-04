@@ -18,17 +18,17 @@ library(tatoo)
 
 # Introduction
 
-Tatoo ("Table Tools") provides three straight-forward helpers to combine multiple
-`data.frames` to tables that are otherwise awkward to create in base R, and a
-way to add metadata (id, title, ...) to a table. In addition, the `Tatto_report`
-class is provided as a convenient helper to write several such tables to a 
-workbook, one table per worksheet.
+Tatoo ("Table Tools") functions to combine data.frames in ways that require 
+additional effort in base R, and to add metadata (id, title, ...) that can be 
+used for printing and xlsx export. The Tatoo_report class is provided as a 
+convenient helper to write several such tables to a workbook, one table per 
+worksheet.
 
 Tatoo tables and reports can directly be saved to .xlsx files, or convert to
 `Workbook` objects with `as_workbook()` so that you can process them further
-using the `openxlsx` package. While tatoo implements convenient print
+using the *openxlsx* package. While tatoo implements convenient print
 methods so that you can preview the tables you created in the console, most of
-the functionality provided by this package only makes real sense for .xlsx
+the functionality provided by this package only makes real sense for xlsx
 export.
 
 ```{r}
@@ -49,8 +49,9 @@ df2 <- data.frame(
 
 ![a table with added captions](tagged_table.png)
 
-`tag_table()` allows you to attach metadata to a `data.frame` or `Tatoo_table`.
-This allows for captioning for printing and .xlsx export.
+`tag_table()` allows you to attach different levels of captioning to a 
+data.frame or Tatoo_table. Those captions are used for printing and
+.xlsx export.
 
 ```{r}
 # Create metadata object
@@ -96,12 +97,12 @@ print(df1)
 
 
 
-Combine two `data.frames` in such a way that you and up with alternating rows
-or columns. Internally, a `Mashed_table` is just a list of two or more tables,
+Combine two data.frames in such a way that you and up with alternating rows
+or columns. Internally, a Mashed_table is just a list of two or more tables,
 and metadata on how to combine them.
 
-`Mashed_tables` can be constructed from individual `data.frames` or a `list` of 
-`data.frames`
+Mashed_tables can be constructed from individual data.frames or a list of 
+data.frames
 
 ```{r}
 mashed_table <- mash_table(df1, df2)
@@ -115,7 +116,7 @@ print(mashed_table)
 ```
 
 Additional formatting parameters can be saved as attributes to a mash table. 
-Those attributes honored by the print and (more significantly) the as_workbook 
+Those attributes honored by the print and (more significantly) the `as_workbook()` 
 methods.
 
 A row-mashed table
@@ -162,7 +163,7 @@ print(mashed_table, mash_method = 'row', insert_blank_row = TRUE)
 
 
 All Tatoo table classes can be converted to openxlsx Workbooks via 
-`as_workbook()`. Examples for finished `.xlsx` files are beyond the scope
+`as_workbook()`. Examples for finished *.xlsx* files are beyond the scope
 of this vignette.
 ```{r message=FALSE}
 as_workbook(mashed_table)
@@ -171,10 +172,10 @@ as_workbook(mashed_table)
 
 ## Convience functions
 `rmash()` and `cmash()` are convient shortcut functions if you just need to quickly
-mash together a `data.frame` (similar to `rbind()` and `cbind()`). Note that the
-result is a `data.table` and not a `data.frame`, so if you are not familiar with
-the `data.table` package you might want to manually convert the result to a
-`data.frame` to prevent headaches.
+mash together a data.frame (similar to `rbind()` and `cbind()`). Note that the
+result is a data.table and not a data.frame, so if you are not familiar with
+the data.table package you might want to manually convert the result to a
+data.frame to prevent headaches.
 
 ### rmash
 
@@ -189,7 +190,7 @@ rmash(df1, df2)
 ```
 
 
-`rmash()` also supports the `insert_blank_row` argument of `Mashed_table` for 
+`rmash()` also supports the `insert_blank_row` argument of `Mashed_table()` for 
 consistency.
 
 ```{r}
@@ -250,7 +251,7 @@ comp_table(mean = df1, sd = df2, id_vars = 'Species')
 
 Stacked tables simply stack two tables above each other. The only meaningful
 usecase for this at the moment is to put several tables above each other
-on the same `.xlsx` sheet. A stack table can be consist of an arbitrary number
+on the same *.xlsx* sheet. A stack table can be consist of an arbitrary number
 of data.frames or Tatoo_tables -- except other Stacked_tables.
 
 ```{r}
@@ -288,12 +289,12 @@ print(tatoo_report)
 
 # Excel export
 
-For further processing with `openxlsx`.
+For further processing with *openxlsx*.
 ```{r}
 wb <- as_workbook(tatoo_report)  
 ```
 
-For direct .xlsx ouput
+For direct xlsx export
 ```{r}
 save_xlsx(tatoo_report, 'report_example.xlsx', overwrite = TRUE)
 ```
