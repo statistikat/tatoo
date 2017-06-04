@@ -2,11 +2,12 @@
 .Rhistory
 .RData
 .Ruserdata
-man
 .Rd
-inst/doc
 .directory
-*.xlsx
 Thumbs.db
+*.xlsx
+man
+inst/doc
 rsconnect
+testout
 

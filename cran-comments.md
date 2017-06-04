@@ -1,12 +1,14 @@
+## Release summary
+
+Maintenance release that removes dplyr dependency
+
 ## Test environments
-* ubuntu 17.04 (on travis-ci), R 3.4.0
+* ubuntu 17.04, R 3.4.0
 * win-builder (devel and release)
 
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
-
-* This is a new release.
 
 ## Reverse dependencies
 

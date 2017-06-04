@@ -3,3 +3,4 @@
 ^.*rsconnect$
 ^.*legacy$
 ^cran-comments\.md$
+^.*testout$
