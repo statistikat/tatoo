@@ -9,7 +9,7 @@
 
 
 
-all_unique <- function(x, empty_value = FALSE, silent = FALSE){
+all_are_distinct <- function(x, empty_value = FALSE, silent = FALSE){
   assert_that(length(empty_value) <= 1)
 
 
