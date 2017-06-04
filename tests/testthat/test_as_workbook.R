@@ -9,7 +9,7 @@ context("as_workbook")
 
 
 test_that("as_workbook works as expected", {
-  source(file.path(test_path(), 'test_data', 'test_data.R'))
+  source(file.path(test_path(), 'testdata', 'testdata.R'))
 
   for(el in list(t_df1, t_mash_1, t_comp_1, t_stack_1))
   {

@@ -5,7 +5,7 @@ context("Stacked_table")
 #* @testing stacked_table
 
 test_that("Stacked_table works as expected", {
-  source(file.path(test_path(), 'test_data', 'test_data.R'))
+  source(file.path(test_path(), 'testdata', 'testdata.R'))
 
   # Constructor works
     expect_silent(

@@ -6,8 +6,8 @@ context("Print methods")
 test_that("Tatoo_report print method", {
 #* @testing print.Tatoo_report
 
-  source(file.path('..', 'test_data', 'test_data.R'))
-  outfile <- file.path('..', 'test_out', 'test_print_methods.txt')
+  source(file.path('..', 'testdata', 'testdata.R'))
+  outfile <- file.path('..', 'testout', 'test_print_methods.txt')
 
   capture.output({
     cat('print(t_meta_simple)\n\n')

@@ -97,7 +97,9 @@ comp_table_list <- function(
 
   # Combine the tables
   if(is.null(id_vars)){
-    res          <- dplyr::bind_cols(tables)
+    res <- do.call(cbind, tables) %>%
+      stats::setNames(unlist(lapply(tables, names)))
+
   } else {
     id_vars_in_colnames <- tables %>%
       purrr::map(names) %>%

@@ -2,8 +2,8 @@ context('Saving xlsx files')
 
 test_that('save_xlsx saves files to disc for manual check', {
   # Setup
-    source(file.path('..', 'test_data', 'test_data.R'))
-    outdir <- file.path('..', 'test_out')
+    source(file.path('..', 'testdata', 'testdata.R'))
+    outdir <- file.path('..', 'testout')
 
   # Try saving a report containing mash tables
     of <- file.path(outdir, 'report_mash.xlsx')

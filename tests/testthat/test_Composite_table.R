@@ -6,7 +6,7 @@ test_that("Composite_table works as expected", {
   #* @testing comp_table
   #* @testing comp_table_list
 
-  source(file.path(test_path(), 'test_data', 'test_data.R'))
+  source(file.path(test_path(), 'testdata', 'testdata.R'))
 
 
   # Ursula wants to combine several tables to a Composite_table
@@ -60,11 +60,33 @@ test_that("Composite_table works as expected", {
 })
 
 
+
+
+test_that("Composite_table names get assigned correctly", {
+  tmp <- list()
+  for(i in seq_len(3)){
+    tmp[[i]] <- data.frame(
+      id = 1:6,
+      small = letters[i:(i+5)]
+    )
+  }
+  names(tmp) <- c('tab1', 'tab2', 'tab3')
+
+  t_comp_1 <- comp_table_list(tmp)
+
+  expect_identical(
+    names(t_comp_1),
+    c("id", "small", "id", "small", "id", "small")
+  )
+})
+
+
+
 test_that("as.data.table.Composite_table works as expected", {
   #* @testing as.data.frame.Composite_table
   #* @testing as.data.table.Composite_table
 
-  source(file.path(test_path(), 'test_data', 'test_data.R'))
+  source(file.path(test_path(), 'testdata', 'testdata.R'))
 
   expect_identical(
     names(data.table::as.data.table(t_comp_1, multinames = TRUE)),

@@ -13,7 +13,7 @@ context("save_xlsx")
 
 test_that('save_xlsx saves files to disc', {
   # Setup
-    source(file.path(test_path(), 'test_data', 'test_data.R'))
+    source(file.path(test_path(), 'testdata', 'testdata.R'))
     of <- file.path(tempdir(), 'test.xlsx')
 
   # Try saving a report containing mash tables

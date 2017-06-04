@@ -4,7 +4,7 @@ context("Tagged_table")
 #* @testing tag_table
 
 test_that("Tagged_table constructors work", {
-  source(file.path(test_path(), 'test_data', 'test_data.R'))
+  source(file.path(test_path(), 'testdata', 'testdata.R'))
 
   # Generating tagged table explicitley
   expect_silent(tmeta <- tag_table(

@@ -4,7 +4,7 @@ context('Mashed_table')
 #* @testing mash_table
 
 test_that('mash_table: stacking tables by row works', {
-  source(file.path(test_path(), 'test_data', 'test_data.R'))
+  source(file.path(test_path(), 'testdata', 'testdata.R'))
 
   #* @testing mash_table
   #* @testing mash_rows
@@ -51,7 +51,7 @@ test_that('mash_table: stacking tables by col works', {
   #* @testing mash_cols
   #* @testing as.data.table.Mashed_table
 
-  source(file.path(test_path(), 'test_data', 'test_data.R'))
+  source(file.path(test_path(), 'testdata', 'testdata.R'))
 
   # Creating stack tables
   expect_silent(st1 <- mash_table(t_df1, t_df2, rem_ext = '_xt'))
@@ -126,7 +126,7 @@ test_that('mash_table: as.data.table and setters work', {
   #* @testing as.data.table.Mashed_table
   #* @testing as.data.frame.Mashed_table
 
-  source(file.path(test_path(), 'test_data', 'test_data.R'))
+  source(file.path(test_path(), 'testdata', 'testdata.R'))
 
   expect_silent(st1 <- mash_table(t_df1, t_df2, rem_ext = '_xt'))
   st1[[1]]$id_1 <- LETTERS[1:5]
