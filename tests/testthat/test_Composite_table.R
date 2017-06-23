@@ -83,6 +83,47 @@ test_that("Composite_table names get assigned correctly", {
 
 
 
+
+test_that("as_multinames works", {
+  tdat = c('a', 'a', 'b', 'b', 'b')
+
+  expect_identical(
+    as_multinames(tdat),
+    structure(c(2L, 5L), .Names = c("a", "b"))
+  )
+
+})
+
+
+
+
+test_that("as.data.table.Composite_table works as expected", {
+  #* @testing as_Composite_table.data.table
+
+  tdat = data.table::data.table(
+    foo.a = 1:4,
+    foo.b = 4:7,
+    c   = 10:13,
+    bar.b.a = 1:4,
+    bar.b.b = 4:7
+  )
+
+  expect_silent(tres <- as_Composite_table(tdat))
+
+  expect_identical(
+    names(tres),
+    c("a", "b", "c", "a", "b")
+  )
+
+  expect_identical(
+    multinames(tres),
+    structure(c(2L, 3L, 5L), .Names = c("foo", "", "bar.b"))
+  )
+})
+
+
+
+
 test_that("as.data.table.Composite_table works as expected", {
   #* @testing as.data.frame.Composite_table
   #* @testing as.data.table.Composite_table
@@ -123,7 +164,7 @@ test_that("print does not fail on invalid composite tables without multinames", 
   attr(t_comp_1, 'multinames') <- NULL
 
   expect_warning(
-    print(t_comp_1),
+    expect_output(print(t_comp_1)),
     'is not a valid composite table'
   )
 })

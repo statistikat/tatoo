@@ -210,7 +210,7 @@ Composite_table <- function(
 #'
 #' @md
 #' @export
-as_Composite_table <- function(dat, id_vars, meta){
+as_Composite_table <- function(dat, ...){
   UseMethod('as_Composite_table')
 }
 
@@ -250,6 +250,62 @@ as_Composite_table.Mashed_table <- function(
 
 
 
+#' @param sep The last occurence of `sep` in each column name of `dat` will be
+#'   used to derive the mutlinames
+#' @param reverse if `FALSE` the part after the last occurence of `sep` will be
+#'   used as multiname, if `TRUE` the part before will be used.
+#'
+#' @export
+as_Composite_table.data.frame <- function(
+  dat,
+  sep = ".",
+  reverse = FALSE
+){
+  as_Composite_table(
+    as.data.table(dat),
+    sep = sep,
+    reverse = reverse
+  )
+}
+
+
+
+#' @export
+as_Composite_table.data.table <- function(
+  dat,
+  sep = ".",
+  reverse = FALSE
+){
+  assert_that(purrr::is_scalar_character(sep))
+  assert_that(is.flag(reverse))
+
+  # Process inputs
+    res <- data.table::copy(dat)
+
+
+  # Logic
+    splt_pos <- stringi::stri_locate_last_fixed(names(dat), sep)[, 1]
+    cnames <- stringi::stri_sub(names(dat), to = splt_pos - 1)
+    mnames <- stringi::stri_sub(names(dat), from = splt_pos + 1)
+
+    if(reverse){
+      tmp <- cnames
+      cnames <- mnames
+      mnames <- tmp
+    }
+
+    sel <- is.na(cnames)
+    cnames[sel] <- names(dat)[sel]
+    mnames <- hammr::na_replace(mnames, '')
+
+  res %>%
+    data.table::setnames(cnames) %>%
+    Composite_table(as_multinames(mnames))
+}
+
+
+
+
 #' @rdname as_Composite_table
 #' @export
 is_Composite_table <- function(dat, ...){
@@ -258,10 +314,8 @@ is_Composite_table <- function(dat, ...){
 
 
 
+
 # Methods -----------------------------------------------------------------
-
-
-
 
 #' Printing Composite Tables
 #'
@@ -340,6 +394,7 @@ print.Composite_table <- function(
 
     invisible(x)
 }
+
 
 
 
@@ -493,9 +548,28 @@ multinames <- function(dat){
 
 
 
+
+#' Create Composite Table multinames from character vector
+#'
+#' @param x a vector of column names, some of which are identical
+#'
+#' @return
+#' @export
+#'
+#' @examples
+as_multinames <- function(x){
+  setNames(cumsum(rle(x)[['lengths']]), rle(x)[['values']])
+}
+
+
+
+
 # Utils -------------------------------------------------------------------
 
 compose_tables <- function(...) {}
+
+
+
 
 composite_name <- function(x, y, sep){
   if(x == ''){
@@ -504,11 +578,3 @@ composite_name <- function(x, y, sep){
     paste(x, y, sep = sep)
   }
 }
-
-
-
-
-
-
-
-
