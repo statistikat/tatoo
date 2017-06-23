@@ -279,7 +279,11 @@ print.Composite_table <- function(
   right = FALSE,
   ...
 ){
-  assert_that(has_attr(x, 'multinames'))
+  if(!has_attr(x, 'multinames')){
+    warning('x is not a valid composite table: no multinames attribute found.', call. = FALSE)
+    print(as.data.table(x, multinames = FALSE))
+    return(invisible())
+  }
 
   # Pad columns
     prep_col <- function(x, colname){
@@ -362,34 +366,41 @@ as.data.table.Composite_table <- function(
   sep = '.',
   ...
 ){
-  assert_that(is.flag(multinames))
-  assert_that(purrr::is_scalar_character(sep))
-
-  if(!multinames){
-    data.table::setattr(x, 'class', c('data.table', 'data.frame'))
-    return(as.data.table(x))
-  } else {
-    res <- data.table::copy(x)
-    multinames <- attr(res, 'multinames')
-    name_idx <- 1
+  # Preconditions
+    assert_that(is.flag(multinames))
+    assert_that(purrr::is_scalar_character(sep))
 
 
-    # paste together colname
-    for(i in seq_along(res)){
-      names(res)[[i]] <- composite_name(
-        names(multinames[name_idx]),
-        names(res)[[i]],
-        sep = sep
-      )
+  # Process arguments
+    x <- data.table::copy(x)
 
-      if(i == multinames[name_idx]){
-        name_idx <- name_idx + 1
+
+  # Logic
+    if(!multinames){
+      data.table::setattr(x, 'class', c('data.table', 'data.frame'))
+      return(as.data.table(x))
+    } else {
+      res <- x
+      multinames <- attr(res, 'multinames')
+      name_idx <- 1
+
+
+      # paste together colname
+      for(i in seq_along(res)){
+        names(res)[[i]] <- composite_name(
+          names(multinames[name_idx]),
+          names(res)[[i]],
+          sep = sep
+        )
+
+        if(i == multinames[name_idx]){
+          name_idx <- name_idx + 1
+        }
       }
-    }
 
 
+  # Cleanup
     data.table::setattr(res, 'class', c('data.table', 'data.frame'))
-
     return(as.data.table(res))
   }
 }
