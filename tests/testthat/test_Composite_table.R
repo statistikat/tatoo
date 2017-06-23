@@ -82,6 +82,7 @@ test_that("Composite_table names get assigned correctly", {
 
 
 
+
 test_that("as.data.table.Composite_table works as expected", {
   #* @testing as.data.frame.Composite_table
   #* @testing as.data.table.Composite_table
@@ -110,3 +111,20 @@ test_that("as.data.table.Composite_table works as expected", {
     names(t_comp_2)
   )
 })
+
+
+
+
+test_that("print does not fail on invalid composite tables without multinames", {
+  #* @testing as.data.frame.Composite_table
+  #* @testing as.data.table.Composite_table
+
+  source(file.path(test_path(), 'testdata', 'testdata.R'))
+  attr(t_comp_1, 'multinames') <- NULL
+
+  expect_warning(
+    print(t_comp_1),
+    'is not a valid composite table'
+  )
+})
+
