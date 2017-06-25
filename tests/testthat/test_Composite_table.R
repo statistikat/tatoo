@@ -101,23 +101,23 @@ test_that("as.data.table.Composite_table works as expected", {
   #* @testing as_Composite_table.data.table
 
   tdat = data.table::data.table(
-    foo.a = 1:4,
-    foo.b = 4:7,
+    a.foo = 1:4,
+    b.foo = 4:7,
     c   = 10:13,
-    bar.b.a = 1:4,
-    bar.b.b = 4:7
+    b.a.bar = 1:4,
+    b.b.bar = 4:7
   )
 
   expect_silent(tres <- as_Composite_table(tdat))
 
   expect_identical(
     names(tres),
-    c("a", "b", "c", "a", "b")
+    c("a", "b", "c", "b.a", "b.b")
   )
 
   expect_identical(
     multinames(tres),
-    structure(c(2L, 3L, 5L), .Names = c("foo", "", "bar.b"))
+    structure(c(2L, 3L, 5L), .Names = c("foo", "", "bar"))
   )
 })
 
