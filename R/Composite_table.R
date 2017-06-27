@@ -484,7 +484,7 @@ as.data.table.Composite_table <- function(
 
 
   # Logic
-    if(!multinames){
+    if(!multinames || is.null(multinames(x))){
       data.table::setattr(x, 'class', c('data.table', 'data.frame'))
       return(as.data.table(x))
     } else {
