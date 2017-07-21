@@ -370,3 +370,46 @@ condition <- function(subclass, message, call = sys.call(-1), ...) {
     list(message = message, call = call, ...)
   )
 }
+
+
+
+
+#' Rearrange vector based on priorities
+#'
+#' Shoves elements of a character vector to the front or back.
+#' Throws a warning if any elements of `high` or `low` are not present in `x`.
+#'
+#' @param x a character vector
+#' @param high elements to be put to the front
+#' @param low elements to be put to the back
+#'
+#' @return a reordered vector
+#'
+#' @examples
+#'
+#' x <- c('d', 'e', 'z', 'y', 'n', 'b', 'c', 'a', 'x')
+#' vec_prioritise(x, c('a', 'b', 'c', 'applepie'), c('x', 'y', 'z'))
+#'
+vec_prioritise <- function(x, high = NULL, low = NULL){
+  low_not_x  <- low[!low %in% x]
+  high_not_x <- high[!high %in% x]
+
+  if(!all(low  %in% x)) {
+    warning(
+      'Not all "low" are present in "x": ',
+      paste(low_not_x, collapse = ' '))
+  }
+  if(!all(high %in% x)){
+    warning(
+      'Not all "high" are present in "x": ',
+      paste(high_not_x, collapse = ' '))
+  }
+
+  low      <- low[low %in% x]
+  high     <- high[high %in% x]
+  mid      <- x[!x %in% c(high, low)]
+  ordered  <- c(high, mid, low)
+
+  return(ordered)
+}
+

@@ -241,7 +241,7 @@ is_valid.Mashed_table <- function(dat){
     is_list          = is.list(dat),
     mash_method      = identical(attr(dat, 'mash_method'), 'row') ||
                        identical(attr(dat, 'mash_method'), 'col'),
-    id_vars               = is.null(attr(dat, 'id_vars')) ||
+    id_vars          = is.null(attr(dat, 'id_vars')) ||
                        is.character(attr(dat, 'id_vars')),
     insert_blank_row = is.flag(attr(dat, 'insert_blank_row')),
     sep_height       = rlang::is_scalar_integer(attr(dat, 'sep_height'))
@@ -490,7 +490,7 @@ rmash <- function(
       as.data.table()
   }
 
-  input_contains_dt <- lapply(dots, tt_or_dt) %>%
+  input_contains_dt <- lapply(dots, is_tt_or_dt) %>%
     unlist() %>%
     any()
 
@@ -536,7 +536,7 @@ cmash <- function(
   }
 
 
-  input_contains_dt <- lapply(dots, tt_or_dt) %>%
+  input_contains_dt <- lapply(dots, is_tt_or_dt) %>%
     unlist() %>%
     any()
 
@@ -553,7 +553,6 @@ cmash <- function(
 
 
 # Setters -----------------------------------------------------------------
-
 
 #' Set mash attributes of a Mashed Table
 #'
@@ -611,6 +610,7 @@ cmash <- function(
   data.table::setattr(res, 'id_vars', value)
   return(res)
 }
+
 
 
 
@@ -770,6 +770,6 @@ mash_cols <- function(
 
 
 
-tt_or_dt <- function(x) {
+is_tt_or_dt <- function(x) {
   data.table::is.data.table(x) || is_Tatoo_table(x)
 }

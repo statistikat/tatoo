@@ -484,7 +484,7 @@ as.data.table.Composite_table <- function(
 
 
   # Logic
-    if(!multinames){
+    if(!multinames || is.null(multinames(x))){
       data.table::setattr(x, 'class', c('data.table', 'data.frame'))
       return(as.data.table(x))
     } else {
@@ -608,7 +608,7 @@ composite_name <- function(x, y, sep){
   if(x == ''){
     return(y)
   } else {
-    paste(x, y, sep = sep)
+    paste(y, x, sep = sep)
   }
 }
 
@@ -643,4 +643,46 @@ composite_name <- function(x, y, sep){
 #'
 as_multinames <- function(x){
   stats::setNames(cumsum(rle(x)[['lengths']]), rle(x)[['values']])
+}
+
+
+
+
+#' Flip names and multinames of a Composite Table
+#'
+#' The column names of the resulting Composite_table will be sorted lexically
+#'
+#' @param dat A [Composite_table]
+#' @param id_vars a character vector of column names of `dat`. The selected
+#'   columns will not be sorted lexically but kept to the left. If the columns
+#'   have a multiname associated with them, they must be supplied in the format
+#'   multiname.column.
+#'
+#' @return a Composite_table
+#' @md
+#' @export
+#'
+flip_names <- function(dat, id_vars){
+  UseMethod('flip_names')
+}
+
+
+
+#' @export
+flip_names.Composite_table <- function(
+  dat,
+  id_vars = NULL
+){
+  dd <- data.table::as.data.table(dat)
+  assert_that(all_are_distinct(names(dd)))
+  assert_that(is.null(id_vars) || all(id_vars %in% names(dd)))
+
+  sorted_names <- sort(names(dd)) %>%
+    vec_prioritise(id_vars)
+
+  data.table::setcolorder(dd, sorted_names)
+  res <- as_Composite_table(dd, reverse = TRUE)
+  meta(res) <- meta(dat)
+
+  return(res)
 }

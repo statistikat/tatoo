@@ -1,6 +1,6 @@
 ## Release summary
 
-Maintenance release that removes dplyr dependency
+Maintenance release for compatibilty with new purrr version
 
 ## Test environments
 * ubuntu 17.04, R 3.4.0
