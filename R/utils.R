@@ -1,8 +1,8 @@
 # Utils -------------------------------------------------------------------
 
-#' Sanitze excel sheet names
+#' Sanitize excel sheet names
 #'
-#' Convert a vactor to valid excel sheet names by:
+#' Convert a vector to valid excel sheet names by:
 #' * trimming names down to 31 characters,
 #' * ensuring each element of the vector is unique,
 #' * and removing the illegal characters \code{ \ / * [ ] : ?}.
@@ -68,14 +68,14 @@ get_final_wb_row <- function(wb, sheet){
 #'
 #' @param dat A \code{list} of objects that can be printed, usually \code{data.frame}s
 #'   or \code{Tatoo_table}s
-#' @param indent a scalar character specifing the indent symbols (e.g. "  ")
-#' @param sep1 \code{character} or \code{numeric}. Seperator above the first and
+#' @param indent a scalar character specifying the indent symbols (e.g. "  ")
+#' @param sep1 \code{character} or \code{numeric}. Separator above the first and
 #'   below the last table.  If character a sep line is created using this
 #'   character (i.e. ------). If numeric, that many blank rows are inserted.
 #' @param sep2 \code{character} or \code{numeric}. Spacing between the tables.
 #'   Like \code{sep1}
 #' @param headings \code{character} vector of the same length as \code{dat},
-#'   specifiying headings to be inserted above each table.
+#'   specifying headings to be inserted above each table.
 #' @param ... passed on to \code{\link{print}}
 #'
 #' @return \code{dat} (invisibly)

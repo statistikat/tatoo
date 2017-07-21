@@ -33,14 +33,14 @@
 #'   that column names are identical except for a suffix, such as `length` and
 #'   `lenght.sd`. The `rem_ext` option can be used to remove such suffixes.
 #'
-#' @return a `Mashed_table`: a `list` of `data.table`s with additonal
+#' @return a `Mashed_table`: a `list` of `data.table`s with additional
 #'   `mash_method`, `insert_blank_row` and `sep_height` attributes, that
 #'   influence how the table looks when it is printed or exported.
 #'
 #' @md
 #' @rdname Mashed_table
 #' @aliases Mashed_table mashed_table mash_table
-#' @family Tatto tables
+#' @family Tatoo tables
 #' @seealso Attribute setters: [mash_method<-]
 #' @export
 #'
@@ -412,9 +412,9 @@ as.data.frame.Mashed_table <- function(
 
 #' Mash R objects by Rows or Columns
 #'
-#' `rmash` and `cmash` are convience function to mash `data.frames` together
+#' `rmash` and `cmash` are convenience function to mash `data.frames` together
 #' with a single command. They behave similar to [cbind()] and
-#' [rbind()], just that the result will have have alternating rows/colums.
+#' [rbind()], just that the result will have have alternating rows/columns.
 #'
 #' @param ... either several `data.frames`, `data.table`s or a single
 #'   [Mashed_table]. All `data.frames` must have the same number of columns.

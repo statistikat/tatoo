@@ -8,7 +8,7 @@
 #' @param id_vars If id_vars is specified, the tables will be combined
 #'   using [merge()] on the columns specified in id_vars, otherwise
 #'   the tables will be combined with [cbind()].
-#' @param meta a [TT_meta] object. If speciefied, the resulting
+#' @param meta a [TT_meta] object. If specified, the resulting
 #'   Composite_table will be wrapped in a [Tagged_table].
 #'
 #' @return a Composite_table
@@ -16,7 +16,7 @@
 #' @md
 #' @rdname Composite_table
 #' @aliases comp_table composite_table Composite_table
-#' @family Tatto tables
+#' @family Tatoo tables
 #' @seealso Attribute setter: [multinames<-]
 #' @export
 #'
@@ -273,12 +273,12 @@ as_Composite_table.Mashed_table <- function(
 
 
 
-#' `as_Composite_table.data.frame()` extracts the mutli-column names from the
-#'   column names of a `data.frame` based on a sepparator.
+#' `as_Composite_table.data.frame()` extracts the multi-column names from the
+#'   column names of a `data.frame` based on a separator.
 #'
-#' @param sep a scalar character. Sepparator in the column names of `dat` that
+#' @param sep a scalar character. Separator in the column names of `dat` that
 #'   separates the column name from the multi-column name.
-#' @param reverse logical. if `FALSE` the part after the last occurence of `sep`
+#' @param reverse logical. if `FALSE` the part after the last occurrence of `sep`
 #'   will be used as multiname, if `TRUE` the part before will be used.
 #'
 #' @export
@@ -461,7 +461,7 @@ print.Composite_table <- function(
 #' @param x a \code{Composite_table}
 #' @param multinames logical. Whether to prepend multinames before the column
 #'   names
-#' @param sep sepparator between multinames and individual column names
+#' @param sep separator between multinames and individual column names
 #' @param ... ignored
 #'
 #' @return a \code{data.table} or \code{data.frame}
@@ -550,7 +550,7 @@ as.data.frame.Composite_table <- function(
 #'
 #' @param dat a Composite_table or data.frame
 #' @param value a named vector of ascending integers. The name is the
-#'   multi-column heading, the integer value is the last colum that this
+#'   multi-column heading, the integer value is the last column that this
 #'   heading applies to
 #'
 #' @md

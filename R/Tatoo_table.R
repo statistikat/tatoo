@@ -6,7 +6,7 @@
 #' be exported via [as_workbook()]/[save_xlsx()]. In the future, support for
 #' latex and html export is also planned.
 #'
-#' Currenlty, the following subclasses exists:
+#' Currently, the following subclasses exists:
 #' * [Tagged_table]
 #' * [Composite_table]
 #' * [Mashed_table]
@@ -17,7 +17,7 @@
 #' with your own code.
 #'
 #' @param dat an object of any of the classes listed in the description
-#' @family Tatto tables
+#' @family Tatoo tables
 #' @aliases Tatoo_table
 #' @md
 tatoo_table <- function(

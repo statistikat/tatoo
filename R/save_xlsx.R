@@ -1,4 +1,4 @@
-#' `save_xlsx` is a shortcut to save a Tatoo_table direclty to local .xlsx
+#' `save_xlsx` is a shortcut to save a Tatoo_table directly to local .xlsx
 #' file.
 #'
 #' @param outfile path/name of the output file

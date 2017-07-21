@@ -16,7 +16,7 @@ test_that("Tagged_table constructors work", {
   )
 
 
-  # Tagged table can also be created direclty when creating another Tatoo table
+  # Tagged table can also be created directly when creating another Tatoo table
   # by supplying the optional meta argument
   expect_silent(tres <- mash_table(
     t_df1, t_df1, meta = t_meta_simple)

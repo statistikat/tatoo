@@ -13,7 +13,7 @@
 #' @param spacing Number of lineskips between the tables when exporting to
 #'   xlsx
 #'
-#' @return a Stacked_table: a list of Tatoo_tables with additonal
+#' @return a Stacked_table: a list of Tatoo_tables with additional
 #'   `spacing` attribute that controls the default spacing between the tables
 #'   when it is exported.
 #'
@@ -21,7 +21,7 @@
 #' @rdname Stacked_table
 #' @aliases Stacked_table stacked_table stack_table
 #' @seealso Attribute setter: [spacing<-]
-#' @family Tatto tables
+#' @family Tatoo tables
 #' @export
 #'
 #' @examples

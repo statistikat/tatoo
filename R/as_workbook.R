@@ -2,12 +2,12 @@
 
 # as_workbook -------------------------------------------------------------
 
-#' Convert a Tatto table object to an Excel workbook
+#' Convert a Tatoo table object to an Excel workbook
 #'
-#' This function converts Tatoo_table obects directly to [openxlsx] Workbook
+#' This function converts Tatoo_table objects directly to [openxlsx] Workbook
 #' objects. For information about additional parameters please refer to the
 #' documentation of `write_worksheet()`, for which `as_workbook()`
-#' is just a wraper. Additional possible function arguments way vary depending
+#' is just a wrapper. Additional possible function arguments way vary depending
 #' on which Tatoo_table you want to export.
 #'
 #' @param dat a [Tatoo_table] or [Tatoo_report]
@@ -112,15 +112,15 @@ as_workbook.Tatoo_report <- function(dat, ...){
 #'
 #' This function is similar to [openxlsx::writeData()] from the
 #' [openxlsx] package, but rather than just writing data.frames,
-#' `write_worksheet`` supports specialised methods for the various
+#' `write_worksheet`` supports specialized methods for the various
 #'  [Tatoo_table] subclasses.
 #'
 #' @param dat A [Tatoo_table].
 #' @param wb A [openxlsx] Workbook object
 #' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param append Logical. Whether or not to append to an exisiting worksheet or
+#' @param append Logical. Whether or not to append to an existing worksheet or
 #'   create a new one
-#' @param start_row A scalar specifiying the starting row to write to.
+#' @param start_row A scalar specifying the starting row to write to.
 #' @param ... additional options that can be used override the styling
 #'   attributes of the [Tatoo_table] you want to export.
 #'

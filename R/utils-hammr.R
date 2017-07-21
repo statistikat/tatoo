@@ -83,8 +83,8 @@ assert_valid_error  <- function(obj) {
 
 #' Check if object is of a certain class
 #'
-#' These functions are desinged to be used in combination with the assertthat
-#' pacakge
+#' These functions are designed to be used in combination with the assertthat
+#' package
 #'
 #' is_class returns TRUE/FALSE. It comes with a on_failure function and
 #' is designed to be used in conjunction with the assertthat package.
