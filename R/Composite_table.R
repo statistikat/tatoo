@@ -318,7 +318,7 @@ as_Composite_table.data.table <- function(
   reverse = FALSE,
   ...
 ){
-  assert_that(purrr::is_scalar_character(sep))
+  assert_that(rlang::is_scalar_character(sep))
   assert_that(is.flag(reverse))
 
   # Process inputs
@@ -476,7 +476,7 @@ as.data.table.Composite_table <- function(
 ){
   # Preconditions
     assert_that(is.flag(multinames))
-    assert_that(purrr::is_scalar_character(sep))
+    assert_that(rlang::is_scalar_character(sep))
 
 
   # Process arguments

@@ -24,8 +24,8 @@
 #'
 #'   # [1] "a very_ long  vector_ containi0" "a very_ long  vector_ containi1"
 sanitize_excel_sheet_names <- function(x, replace = '_'){
-  assert_that(purrr::is_vector(x))
-  assert_that(purrr::is_scalar_character(replace))
+  assert_that(rlang::is_vector(x))
+  assert_that(rlang::is_scalar_character(replace))
   x <- as.character(x)
 
   invalid_chars_regex <- "\\[|\\]|\\*|\\?|:|\\/|\\\\"
@@ -98,7 +98,7 @@ print_several_tables <- function(
     purrr::map(function(x) purrr::map_int(x, nchar)) %>%
     unlist() %>%
     max()
-  assert_that(purrr::is_scalar_integer(tables_width))
+  assert_that(rlang::is_scalar_integer(tables_width))
 
 
   # Define sepperators

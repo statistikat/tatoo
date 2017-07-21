@@ -95,8 +95,8 @@ Stacked_table <- function(
   assert_that(is.list(dat))
   valid_classes <- c('Tatoo_table', 'data.table')
   assert_that(all(unlist(lapply(dat, is_any_class, valid_classes))))
-  assert_that(purrr::is_scalar_numeric(spacing))
-  assert_that(looks_like_integer(spacing))
+  assert_that(is.scalar(spacing) && looks_like_integer(spacing))
+
 
   res <- data.table::copy(dat) %>%
     tatoo_table()
@@ -115,7 +115,7 @@ Stacked_table <- function(
 is_valid.Stacked_table <- function(dat){
   res <- list(
     is_list     <- is.list(dat),
-    has_spacing <- purrr::is_scalar_integer(attr(dat, 'spacing'))
+    has_spacing <- rlang::is_scalar_integer(attr(dat, 'spacing'))
   )
   all_with_warning(res)
 }

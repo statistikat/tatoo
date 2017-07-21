@@ -140,12 +140,12 @@ tt_meta <- function(
   subtitle = NULL,
   footer = NULL
 ){
-  assert_that(purrr::is_scalar_atomic(table_id) || is.null(table_id))
-  assert_that(purrr::is_scalar_atomic(title) || is.null(title))
+  assert_that(rlang::is_scalar_atomic(table_id) || is.null(table_id))
+  assert_that(rlang::is_scalar_atomic(title) || is.null(title))
 
-  assert_that(is.null(longtitle) ||purrr::is_atomic(longtitle))
-  assert_that(is.null(subtitle) || purrr::is_atomic(subtitle))
-  assert_that(is.null(footer) || purrr::is_atomic(footer))
+  assert_that(is.null(longtitle) || rlang::is_atomic(longtitle))
+  assert_that(is.null(subtitle)  || rlang::is_atomic(subtitle))
+  assert_that(is.null(footer)    || rlang::is_atomic(footer))
 
   if(all(
       is.null(table_id),
@@ -346,7 +346,7 @@ meta <- function(dat){
 #'   `list(longtitle = value)`
 #'
 assign_tt_meta <- function(dat, assignment){
-  assert_that(purrr::is_scalar_list(assignment))
+  assert_that(rlang::is_scalar_list(assignment))
   assert_that(identical(
     length(names(assignment)), 1L
   ))

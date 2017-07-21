@@ -152,7 +152,7 @@ mash_table_list <- function(
 
   assert_that(
     is.null(rem_ext) ||
-      purrr::is_scalar_character(rem_ext)
+      rlang::is_scalar_character(rem_ext)
   )
 
 
@@ -244,7 +244,7 @@ is_valid.Mashed_table <- function(dat){
     id_vars               = is.null(attr(dat, 'id_vars')) ||
                        is.character(attr(dat, 'id_vars')),
     insert_blank_row = is.flag(attr(dat, 'insert_blank_row')),
-    sep_height       = purrr::is_scalar_integer(attr(dat, 'sep_height'))
+    sep_height       = rlang::is_scalar_integer(attr(dat, 'sep_height'))
   )
 
   all_with_warning(res)
@@ -364,7 +364,7 @@ as.data.table.Mashed_table <- function(
   id_vars = attr(dat, 'id_vars'),
   suffixes = names(dat)
 ){
-  assert_that(purrr::is_scalar_character(mash_method))
+  assert_that(rlang::is_scalar_character(mash_method))
   assert_that(is.flag(insert_blank_row))
   assert_that(is.null(id_vars) || is.character(id_vars))
   assert_that(is.null(suffixes) || is.character(suffixes) )
@@ -471,7 +471,7 @@ rmash <- function(
   dots <- list(...)
 
   input_is_Mashed_table <-
-    purrr::is_scalar_list(dots)
+    rlang::is_scalar_list(dots)
     is_Mashed_table(dots)
 
   if(input_is_Mashed_table){
@@ -519,7 +519,7 @@ cmash <- function(
 
 
   input_is_Mashed_table <-
-    purrr::is_scalar_list(dots)
+    rlang::is_scalar_list(dots)
     is_Mashed_table(dots)
 
   if(input_is_Mashed_table){

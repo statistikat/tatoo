@@ -15,7 +15,7 @@ save_xlsx <- function(
   overwrite = FALSE,
   ...
 ){
-  assert_that(purrr::is_scalar_character(outfile))
+  assert_that(rlang::is_scalar_character(outfile))
   assert_that(is.flag(overwrite))
 
   UseMethod('save_xlsx')
