@@ -46,6 +46,7 @@ all_are_distinct <- function(x, empty_value = FALSE, silent = FALSE){
 
 
 
+
 # assert valid ------------------------------------------------------------
 
 is_valid <- function(x, ...) {
@@ -67,6 +68,8 @@ assert_valid <- function(dat, ...){
 }
 
 
+
+
 assert_valid_error  <- function(obj) {
   msg <- sprintf(
     'A validity check failed for object of class: %s.',
@@ -76,6 +79,7 @@ assert_valid_error  <- function(obj) {
   condition(c('assert_valid_error', 'error'),
             message = msg)
 }
+
 
 
 
@@ -100,6 +104,8 @@ is_class <- function(dat, class){
 }
 
 
+
+
 on_failure(is_class) <- function(call, env){
   #print(call)
   #class = eval(env$class)
@@ -114,6 +120,8 @@ on_failure(is_class) <- function(call, env){
 assert_class <- function(dat, class){
   assert_that(is_class(dat = dat, class = class))
 }
+
+
 
 
 #' @rdname is_class
@@ -134,6 +142,8 @@ assert_class <- function(dat, class){
 is_any_class <- function(dat, choices){
   any(choices %in% class(dat))
 }
+
+
 
 
 on_failure(is_any_class) <- function(call, env){
@@ -186,6 +196,8 @@ is_col_classes <- function(dat, classes, method = 'identical'){
 
   all_with_warning(res)
 }
+
+
 
 
 assertthat::on_failure(is_col_classes) <- function(call, env){
@@ -245,7 +257,14 @@ cfun <- function(x){
   return(res)
 }
 
+
+
+
 as.numeric2   <- function(x) as.numeric(as.character(x))
+
+
+
+
 as.integer2   <- function(x) as.integer(as.character(x))
 
 
@@ -278,7 +297,6 @@ all_with_warning <- function(dat){
     return(FALSE)
   }
 }
-
 
 
 
@@ -325,7 +343,6 @@ df_typecast_all <- function(dat, from = 'factor', to = 'character'){
 
 
 
-
 #' Check if a value looks like integer
 #'
 #' @param x ...
@@ -364,6 +381,7 @@ str_nobreak <- function(x){
 
 
 
+
 condition <- function(subclass, message, call = sys.call(-1), ...) {
   structure(
     class = c(subclass, "condition"),
@@ -384,11 +402,6 @@ condition <- function(subclass, message, call = sys.call(-1), ...) {
 #' @param low elements to be put to the back
 #'
 #' @return a reordered vector
-#'
-#' @examples
-#'
-#' x <- c('d', 'e', 'z', 'y', 'n', 'b', 'c', 'a', 'x')
-#' vec_prioritise(x, c('a', 'b', 'c', 'applepie'), c('x', 'y', 'z'))
 #'
 vec_prioritise <- function(x, high = NULL, low = NULL){
   low_not_x  <- low[!low %in% x]
@@ -412,4 +425,3 @@ vec_prioritise <- function(x, high = NULL, low = NULL){
 
   return(ordered)
 }
-
