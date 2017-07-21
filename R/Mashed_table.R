@@ -416,8 +416,8 @@ as.data.frame.Mashed_table <- function(
 #' with a single command. They behave similar to [cbind()] and
 #' [rbind()], just that the result will have have alternating rows/colums.
 #'
-#' @param ... either several \code{data.frames} or a single [Mashed_table].
-#'   All `data.frames` must have the same number of columns.
+#' @param ... either several `data.frames`, `data.table`s or a single
+#'   [Mashed_table]. All `data.frames` must have the same number of columns.
 #' @inheritParams mash_table
 #' @inheritParams as.data.table.Mashed_table
 #'
