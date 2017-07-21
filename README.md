@@ -36,4 +36,4 @@ stack_table(head = head(cars), tail = tail(cars))
 None of the examples are particularily hard to do in base R, but tatoo provides
 functions with a clean interface and nice print and export methods for the 
 created objects. Please refer to the package vignette (`vignette("tatoo")`)
-for more examples
+for more examples.
