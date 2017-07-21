@@ -1,12 +1,12 @@
 ---
-title: "Tatoo package vignette"
+title: "tatoo package vignette"
 author: "Stefan Fleck"
 date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Tatoo}
+  %\VignetteIndexEntry{tatoo}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,7 +18,7 @@ library(tatoo)
 
 # Introduction
 
-Tatoo ("Table Tools") functions to combine data.frames in ways that require 
+tatoo ("Table Tools") functions to combine data.frames in ways that require 
 additional effort in base R, and to add metadata (id, title, ...) that can be 
 used for printing and xlsx export. The Tatoo_report class is provided as a 
 convenient helper to write several such tables to a workbook, one table per 
