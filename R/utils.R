@@ -13,7 +13,6 @@
 #'
 #' @return a character vector of valid excel sheet names
 #' @export
-#' @md
 #'
 #' @examples
 #'
@@ -61,15 +60,16 @@ get_final_wb_row <- function(wb, sheet){
 
 
 
+
 #' Print several tables
 #'
-#' Internal function used by \code{print.Stacked_table} and
-#' \code{print.Tatoo_report}
+#' Internal function used by `print.Stacked_table()` and
+#' `print.Tatoo_report()`
 #'
-#' @param dat A \code{list} of objects that can be printed, usually \code{data.frame}s
-#'   or \code{Tatoo_table}s
-#' @param indent a scalar character specifying the indent symbols (e.g. "  ")
-#' @param sep1 \code{character} or \code{numeric}. Separator above the first and
+#' @param dat A list of objects that can be printed, usually data.frames
+#'   or Tatoo_tables
+#' @param indent a scalar character specifying the indent symbols (e.g. `"  "`)
+#' @param sep1 character or numeric. Separator above the first and
 #'   below the last table.  If character a sep line is created using this
 #'   character (i.e. ------). If numeric, that many blank rows are inserted.
 #' @param sep2 \code{character} or \code{numeric}. Spacing between the tables.
@@ -88,7 +88,11 @@ print_several_tables <- function(
   headings = NULL,
   ...
 ){
+  assert_that(rlang::is_scalar_character(indent))
+  assert_that(rlang::is_scalar_character(sep1) || rlang::is_scalar_integerish(sep1))
+  assert_that(rlang::is_scalar_character(sep2) || rlang::is_scalar_integerish(sep2))
   assert_that(is.null(headings) || identical(length(headings), length(dat)))
+
 
   tables_char <- dat %>%
     lapply(function(x) utils::capture.output(print(x, ...)))
@@ -108,7 +112,7 @@ print_several_tables <- function(
     } else if (is.numeric(x)){
       res <- paste0(paste0(rep('\n', x), collapse = ''))
     } else {
-      stop('Sep must be either character or an integer number (for number of blank lines to insert)')
+      stop("Sep must be either character or an integer number")
     }
     return(res)
   }
@@ -137,6 +141,9 @@ print_several_tables <- function(
 
   invisible(dat)
 }
+
+
+
 
 get_dot_names <- function(...){
   sapply(as.list(substitute(list(...)))[-1L], deparse)

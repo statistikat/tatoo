@@ -4,3 +4,4 @@
 ^.*legacy$
 ^cran-comments\.md$
 ^.*testout$
+^.*man-roxygen$

@@ -7,10 +7,10 @@
 #' latex and html export is also planned.
 #'
 #' Currently, the following subclasses exists:
-#' * [Tagged_table]
-#' * [Composite_table]
-#' * [Mashed_table]
-#' * [Stacked_table]
+#' * [`Tagged_table`]
+#' * [`Composite_table`]
+#' * [`Mashed_table`]
+#' * [`Stacked_table`]
 #'
 #' The `tatoo_table()` function is just a constructor used internally and you
 #' will not need to use it except if your planning on extending this package
@@ -19,7 +19,7 @@
 #' @param dat an object of any of the classes listed in the description
 #' @family Tatoo tables
 #' @aliases Tatoo_table
-#' @md
+#'
 tatoo_table <- function(
   dat
 ){
@@ -34,8 +34,14 @@ tatoo_table <- function(
 
 
 
-#' @rdname tatoo_table
+#' Test if objects is a Tatoo_table
+#'
+#' @template any_r
+#' @templateVar fun is_Tatoo_table
+#' @templateVar class Tatoo_table
+#' @template is_class
+#'
 #' @export
-is_Tatoo_table <- function(dat){
-  inherits(dat, 'Tatoo_table')
+is_Tatoo_table <- function(x){
+  inherits(x, 'Tatoo_table')
 }

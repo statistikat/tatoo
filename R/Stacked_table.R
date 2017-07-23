@@ -1,23 +1,22 @@
 # Constructors ------------------------------------------------------------
 
-#' Stack tables
+#' Stack Tables
 #'
 #' Stack tables on top of each other. This can be used to print several tables
 #' on one Excel sheet with [as_workbook()] or [save_xlsx()].
 #'
-#' @param ... `stack_table()` only: Any number other [Tatoo_table], or anything
-#'   that can be coerced to a data.frame.
+#' @param ... `stack_table()` only: Any number other [`Tatoo_table`] objects,
+#'   or anything that can be coerced to a `data.frame`.
 #' @param tables `stack_table_list()` only: Same as `(...)` for `stack_table`,
 #'   just that a list can be supplied instead of individual arguments.
-#' @param meta a `\link{tt_meta}` object (optional)
+#' @param meta a [`tt_meta`] object (optional)
 #' @param spacing Number of lineskips between the tables when exporting to
 #'   xlsx
 #'
-#' @return a Stacked_table: a list of Tatoo_tables with additional
+#' @return A Stacked_table: a list of `Tatoo_tables` with additional
 #'   `spacing` attribute that controls the default spacing between the tables
 #'   when it is exported.
 #'
-#' @md
 #' @rdname Stacked_table
 #' @aliases Stacked_table stacked_table stack_table
 #' @seealso Attribute setter: [spacing<-]
@@ -112,10 +111,10 @@ Stacked_table <- function(
 
 
 #' @export
-is_valid.Stacked_table <- function(dat){
+is_valid.Stacked_table <- function(x){
   res <- list(
-    is_list     <- is.list(dat),
-    has_spacing <- rlang::is_scalar_integer(attr(dat, 'spacing'))
+    is_list     <- is.list(x),
+    has_spacing <- rlang::is_scalar_integer(attr(x, 'spacing'))
   )
   all_with_warning(res)
 }
@@ -127,13 +126,17 @@ is_valid.Stacked_table <- function(dat){
 # Methods -----------------------------------------------------------------
 
 
-#' Check if object is a Stacked_table
+#' Test If Object is a Stacked_table
 #'
-#' @param dat any R object
+#' @templateVar fun is_Stacked_table()
+#' @templateVar class Stacked_table
+#' @template any_r
+#' @template is_class
+#'
 #'
 #' @export
-is_Stacked_table <- function(dat){
-  inherits(dat, 'Stacked_table')
+is_Stacked_table <- function(x){
+  inherits(x, 'Stacked_table')
 }
 
 
@@ -141,10 +144,10 @@ is_Stacked_table <- function(dat){
 
 #' Printing Stacked Tables
 #'
-#' @param x A \code{Stacked_table}
-#' @param ... passed on to \code{\link{print}}
+#' @param x A [`Stacked_table`]
+#' @param ... passed on to [print()]
 #'
-#' @return \code{x} (invisibly)
+#' @return `x` (invisibly)
 #'
 #' @export
 print.Stacked_table <- function(x, ...){
@@ -166,20 +169,19 @@ print.Stacked_table <- function(x, ...){
 
 #' Set the spacing of a Stacked_table
 #'
-#' Set the of lineskips between the tables when exporting to xlsx
+#' Set the number of lineskips between the tables when exporting to xlsx.
 #'
-#' @param dat a Stacked_table
+#' @param x a `Stacked_table`
 #' @param value a scalar integer
 #'
-#' @md
 #' @seealso [Stacked_table]
 #' @export
-`spacing<-` <- function(dat, value){
-  dat %assert_class% 'Stacked_table'
+`spacing<-` <- function(x, value){
+  x %assert_class% 'Stacked_table'
   assert_that(rlang::is_scalar_integerish(value) && is.scalar(value))
 
   value <- as.integer(value)
-  res <- data.table::copy(dat)
+  res <- data.table::copy(x)
 
   data.table::setattr(res, 'spacing', value)
   return(res)

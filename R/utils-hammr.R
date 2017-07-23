@@ -57,13 +57,13 @@ is_valid <- function(x, ...) {
 
 
 
-assert_valid <- function(dat, ...){
-  v <- is_valid(dat)
+assert_valid <- function(x, ...){
+  v <- is_valid(x)
 
   if(v){
     return(TRUE)
   } else {
-    stop(assert_valid_error(dat))
+    stop(assert_valid_error(x))
   }
 }
 
@@ -99,6 +99,7 @@ assert_valid_error  <- function(obj) {
 #'
 #' @return is_class returns TRUE/FALSE, assert_class returns TRUE or fails with
 #'         an error message.
+#' @noMd
 is_class <- function(dat, class){
   class %in% class(dat)
 }
@@ -138,7 +139,7 @@ assert_class <- function(dat, class){
 #' @param choices  the class to be checked for
 #'
 #' @return True if any of the object classes are the desired class
-#'
+#' @noMd
 is_any_class <- function(dat, choices){
   any(choices %in% class(dat))
 }
@@ -166,7 +167,7 @@ on_failure(is_any_class) <- function(call, env){
 #' @param method if \code{all}, ensure that all columns named in \code{classes} are present in \code{dat},
 #'         if \code{any}, ensure that any of the  columns named in \code{classes} are present in \code{dat},
 #'         if \code{identical}, ensure that the names of dat and classes are identical
-#'
+#' @noMd
 is_col_classes <- function(dat, classes, method = 'identical'){
   classes %assert_class% 'list'
   assert_that(length(classes) > 0)
@@ -326,7 +327,7 @@ df_round <- function(dat, digits = 0){
 #'
 #' @return a data frame with all columns of class from converted to class to
 #'
-#'
+#' @noMd
 df_typecast_all <- function(dat, from = 'factor', to = 'character'){
   dat   <- as.data.frame(dat)
   tofun <- cfun(to)
@@ -348,6 +349,7 @@ df_typecast_all <- function(dat, from = 'factor', to = 'character'){
 #' @param x a character vector.
 #'
 #' @return a character vector without linebreaks
+#' @noMd
 str_nobreak <- function(x){
   y <- gsub("\r?\n|\r", " ", x)
   gsub('[ ]{2,}', ' ', y)
@@ -376,7 +378,7 @@ condition <- function(subclass, message, call = sys.call(-1), ...) {
 #' @param low elements to be put to the back
 #'
 #' @return a reordered vector
-#'
+#' @noMd
 vec_prioritise <- function(x, high = NULL, low = NULL){
   low_not_x  <- low[!low %in% x]
   high_not_x <- high[!high %in% x]
