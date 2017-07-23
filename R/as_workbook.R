@@ -365,7 +365,7 @@ write_worksheet.Mashed_table <- function(
   # Preconditions
     assert_that(mash_method %identical% 'col' || mash_method %identical% 'row')
     assert_that(is.flag(insert_blank_row))
-    assert_that(looks_like_integer(sep_height))
+    assert_that(rlang::is_scalar_integerish(sep_height))
     assert_that(is.null(id_vars) || is.character(id_vars))
 
 

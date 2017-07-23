@@ -213,7 +213,7 @@ Mashed_table <- function(
     identical(mash_method, 'col')
   )
   assert_that(is.number(sep_height))
-  assert_that(looks_like_integer(sep_height))
+  assert_that(rlang::is_scalar_integerish(sep_height))
 
   sep_height <- as.integer(sep_height)
 
@@ -590,7 +590,7 @@ cmash <- function(
 #' @export
 `sep_height<-` <- function(dat, value){
   dat %assert_class% 'Mashed_table'
-  assert_that(looks_like_integer(value))
+  assert_that(rlang::is_scalar_integerish(value))
 
   value <- as.integer(value)
   res <- data.table::copy(dat)

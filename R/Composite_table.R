@@ -174,7 +174,7 @@ Composite_table <- function(
 ){
   assert_that(is.data.frame(dat))
   assert_that(is.numeric(multinames))
-  assert_that(all(looks_like_integer(multinames)))
+  assert_that(all(rlang::is_scalar_integerish(multinames)))
 
   multinames <- structure(
     as.integer(multinames),
