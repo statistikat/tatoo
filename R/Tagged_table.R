@@ -1,30 +1,24 @@
 # Ctors - Tagged Table ----------------------------------------------------
 
-#' Tag tables
+#' Tag Tables
 #'
 #' Add metadata/captioning (like `table_id`, `title`, `footer`) to a
-#' `\link{Tatoo_table}` or `data.frame`. This metadata will be used by
-#' `print` methods and export functions such as `\link{as_workbook}`
-#' or `\link{save_xlsx}`.
-#'
-#' For convenience, functions to get and set the basic metadata elements
-#' such as `title` are also provided. Those can be used to either
-#' modify an existing `Tagged_table`, or convert an object that is not yet
-#' a `Tagged_table` to one.
+#' [`Tatoo_table`] or `data.frame`. This metadata will be used by
+#' [print()] methods and export functions such as [`as_workbook()`]
+#' or [`save_xlsx()`].
 #'
 #' @param dat A `Tatto_table` object or anything that can be coerced to a
-#' `\link{data.table}` with `as.data.table()`
-#' @param meta a [tt_meta] object. Metadata can also be set and modified
+#' [`data.table`].
+#' @param meta a [`tt_meta`] object. Metadata can also be set and modified
 #'   using setters (see [meta()])
 #'
 #' @return a `Tagged_table`: a `Tatoo_table` with an additional `meta`
 #'   attribute
 #'
-#' @md
 #' @aliases Tagged_table tagged_table tag_table
 #' @family Tatoo tables
-#' @seealso Attribute setters: [meta<-]
-#' @seealso Tagged Table Metadata: [tt_meta]
+#' @seealso Attribute setters: [meta<-()]
+#' @seealso Tagged Table Metadata: [tt_meta()]
 #' @rdname Tagged_table
 #' @export
 #'
@@ -111,7 +105,7 @@ Tagged_table <- function(
 
 # Ctors - TT_meta (Tagged Table Metadata) ---------------------------------
 
-#' Tagged Table metadata
+#' Tagged Table Metadata
 #'
 #' Create a `TT_meta` (tagged table metadata) object. In the future,
 #' different styling will be supported for title, longtitle and subtitle to
@@ -126,7 +120,6 @@ Tagged_table <- function(
 #' @param footer A vector. If `length > 1` the title will be displayed
 #'   in several rows
 #'
-#' @md
 #' @return a TT_meta object.
 #' @seealso [Tagged_table]
 #' @aliases TT_meta
@@ -180,13 +173,13 @@ tt_meta <- function(
 
 # Methods -----------------------------------------------------------------
 
-#' Check if object is a Tagged_table
+#' Test If Object is a Tagged_table
 #'
-#' @param dat any R object
+#' @template any_r
 #'
 #' @export
-is_Tagged_table <- function(dat){
-  inherits(dat, 'Tagged_table')
+is_Tagged_table <- function(x){
+  inherits(x, 'Tagged_table')
 }
 
 
@@ -194,10 +187,10 @@ is_Tagged_table <- function(dat){
 
 #' Printing Tagged Tables
 #'
-#' @param x a \code{Tagged_table}
-#' @param ... passed on to \code{\link{print}}
+#' @param x a [Tagged_table]
+#' @param ... passed on to [print()]
 #'
-#' @return \code{x} (invisibly)
+#' @return `x` (invisibly)
 #'
 #' @export
 print.Tagged_table <- function(x, ...){
@@ -236,10 +229,10 @@ is_valid.TT_meta <- function(dat){
 
 #' Printing Tagged Table Metadata
 #'
-#' @param x A \code{TT_meta} object
-#' @param ... ignored
+#' @param x A [`TT_meta`] object
+#' @param ... Ignored
 #'
-#' @return \code{x} (invisibly)
+#' @return `x` (invisibly)
 #'
 #' @export
 #'
@@ -267,24 +260,23 @@ print.TT_meta <- function(x, ...){
 
 #' Set Tagged Table metadata
 #'
-#' Convenience functions to modify Tagged_table metadata. If `dat` is not a
-#' Tagged_table already, it will be converted to one.
+#' Convenience functions to modify `Tagged_table` metadata. If `x` is not a
+#' `Tagged_table` already, it will be converted to one.
 #'
-#' @param dat a [Tagged_table] or any object that can be converted to one
+#' @param x a [`Tagged_table`] or any \R object that can be converted to one
 #' @param value value to assign.
 #'
 #' @seealso [Tagged_table], [tt_meta]
-#' @md
 #' @rdname tagged_set
 #' @export
-`meta<-` <- function(dat, value){
+`meta<-` <- function(x, value){
   if(is.null(value)){
-    res <- data.table::copy(dat)
+    res <- data.table::copy(x)
     class(res) <- class(res)[class(res) != 'Tagged_table']
     attr(res, 'meta', NULL)
 
   } else{
-    res <- tag_table(dat, value)
+    res <- tag_table(x, value)
   }
 
   return(res)
@@ -293,43 +285,43 @@ print.TT_meta <- function(x, ...){
 
 #' @rdname tagged_set
 #' @export
-meta <- function(dat){
-  attr(dat, 'meta')
+meta <- function(x){
+  attr(x, 'meta')
 }
 
 #' @rdname tagged_set
 #' @export
-`table_id<-` <- function(dat, value){
+`table_id<-` <- function(x, value){
   ass <- list(table_id = value)
-  assign_tt_meta(dat, ass)
+  assign_tt_meta(x, ass)
 }
 
 #' @rdname tagged_set
 #' @export
-`title<-` <- function(dat, value){
+`title<-` <- function(x, value){
   ass <- list(title = value)
-  assign_tt_meta(dat, ass)
+  assign_tt_meta(x, ass)
 }
 
 #' @rdname tagged_set
 #' @export
-`longtitle<-` <- function(dat, value){
+`longtitle<-` <- function(x, value){
   ass <- list(longtitle = value)
-  assign_tt_meta(dat, ass)
+  assign_tt_meta(x, ass)
 }
 
 #' @rdname tagged_set
 #' @export
-`subtitle<-` <- function(dat, value){
+`subtitle<-` <- function(x, value){
   ass <- list(subtitle = value)
-  assign_tt_meta(dat, ass)
+  assign_tt_meta(x, ass)
 }
 
 #' @rdname tagged_set
 #' @export
-`footer<-` <- function(dat, value){
+`footer<-` <- function(x, value){
   ass <- list(footer = value)
-  assign_tt_meta(dat, ass)
+  assign_tt_meta(x, ass)
 }
 
 
@@ -341,18 +333,18 @@ meta <- function(dat){
 #'
 #' Internal function used by the metadata set functions
 #'
-#' @param dat a [Tatoo_table] or data.frame
+#' @param x a [Tatoo_table] or data.frame
 #' @param assignment A named list of length one, for example
 #'   `list(longtitle = value)`
 #'
-assign_tt_meta <- function(dat, assignment){
+assign_tt_meta <- function(x, assignment){
   assert_that(rlang::is_scalar_list(assignment))
   assert_that(identical(
     length(names(assignment)), 1L
   ))
 
-  if(inherits(dat, 'Tagged_table')){
-    res <- data.table::copy(dat)
+  if(inherits(x, 'Tagged_table')){
+    res <- data.table::copy(x)
     ass <- assignment[[1]]
 
     if(is.null(ass)){
@@ -363,7 +355,7 @@ assign_tt_meta <- function(dat, assignment){
 
   } else{
     res <- tag_table(
-      dat,
+      x,
       meta = do.call(tt_meta, assignment)
     )
   }

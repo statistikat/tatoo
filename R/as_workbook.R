@@ -2,21 +2,19 @@
 
 # as_workbook -------------------------------------------------------------
 
-#' Convert a Tatoo table object to an Excel workbook
+#' Convert a Tatoo Table Object to an Excel Workbook
 #'
-#' This function converts Tatoo_table objects directly to [openxlsx] Workbook
-#' objects. For information about additional parameters please refer to the
-#' documentation of `write_worksheet()`, for which `as_workbook()`
-#' is just a wrapper. Additional possible function arguments way vary depending
-#' on which Tatoo_table you want to export.
+#' This function converts [`Tatoo_table`] or [`Tatoo_report`] objects directly
+#' to [openxlsx] `Workbook` objects. For information about additional parameters
+#' please refer to the documentation of [write_worksheet()], for which
+#' `as_workbook()` is just a wrapper. Additional possible function arguments way
+#' vary depending on which `Tatoo_table` you want to export.
 #'
-#' @param dat a [Tatoo_table] or [Tatoo_report]
-#' @param sheet The worksheet to write to. Can be the worksheet index or name.
-#' @param ... passed on to [write_worksheet()]
+#' @param x A `Tatoo_table` or `Tatoo_report`
+#' @param ... Additional arguments passed on to `write_worksheet()`
 #'
-#' @md
 #' @family xlsx exporters
-#' @return an openxlsx [openxlsx] Workbook object (invisibly for `save.xlsx`)
+#' @return an openxlsx openxlsx `Workbook` object (invisibly for `save_xlsx()`)
 #' @export
 #'
 #' @examples
@@ -40,13 +38,10 @@
 #' }
 #'
 as_workbook <- function(
-  dat,
-  sheet = 1L,
+  x,
   ...
 ){
   assert_that(requireNamespace("openxlsx"))
-  assert_that(is.scalar(sheet))
-
   UseMethod('as_workbook')
 }
 
@@ -54,15 +49,20 @@ as_workbook <- function(
 
 
 #' @rdname as_workbook
+#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#'
 #' @export
 as_workbook.default <- function(
-  dat,
+  x,
   sheet = 1L,
   ...
 ){
+  assert_that(is.scalar(sheet))
+  assert_that(is.character(sheet) || rlang::is_integerish(sheet))
+
   wb <- openxlsx::createWorkbook()
   wb <- write_worksheet(
-    dat = dat,
+    x = x,
     wb = wb,
     sheet = sheet,
     ...
@@ -73,24 +73,24 @@ as_workbook.default <- function(
 
 
 
-#' Converting a \code{Tatoo_report} will result in a \code{Workbook} with
+#' Converting a [`Tatoo_report`] will result in an openxlsx Workbook with
 #' several sheets. The sheet names will be generated from the names of
-#' \code{dat} (if \code{dat} has names).
+#' `x` if `x` has names.
 #'
 #' @rdname as_workbook
 #' @export
-as_workbook.Tatoo_report <- function(dat, ...){
+as_workbook.Tatoo_report <- function(x, ...){
   wb <- openxlsx::createWorkbook()
 
-  for(i in seq_along(dat)){
-    if(is.null(names(dat))){
+  for(i in seq_along(x)){
+    if(is.null(names(x))){
       sheet_name <- i
     } else {
-      sheet_name <- sanitize_excel_sheet_names(names(dat))[[i]]
+      sheet_name <- sanitize_excel_sheet_names(names(x))[[i]]
     }
 
     wb <- write_worksheet(
-      dat = dat[[i]],
+      x = x[[i]],
       wb = wb,
       sheet = sheet_name,
       append = FALSE,
@@ -106,35 +106,35 @@ as_workbook.Tatoo_report <- function(dat, ...){
 
 
 
+
 # write_worksheet ---------------------------------------------------------
 
-#' Write data to an openxlsx Worksheet
+#' Write Data to an openxlsx Worksheet
 #'
 #' This function is similar to [openxlsx::writeData()] from the
-#' [openxlsx] package, but rather than just writing data.frames,
-#' `write_worksheet`` supports specialized methods for the various
-#'  [Tatoo_table] subclasses.
+#' package, but rather than just writing `data.frames`,
+#' `write_worksheet()` supports specialized methods for the various
+#'  [`Tatoo_table`] subclasses.
 #'
-#' @param dat A [Tatoo_table].
-#' @param wb A [openxlsx] Workbook object
-#' @param sheet The worksheet to write to. Can be the worksheet index or name.
+#' @param x A `Tatoo_table`.
+#' @param wb An [openxlsx] `Workbook` object
 #' @param append Logical. Whether or not to append to an existing worksheet or
 #'   create a new one
-#' @param start_row A scalar specifying the starting row to write to.
-#' @param ... additional options that can be used override the styling
-#'   attributes of the [Tatoo_table] you want to export.
+#' @param start_row A scalar integer specifying the starting row to write to.
+#' @param ... Additional arguments passed on to methods for overriding the
+#'   styling attributes of the `Tatoo_tables` you want to export.
 #'
 #' @inheritParams comp_table
 #' @inheritParams mash_table
 #' @inheritParams stack_table
+#' @inheritParams as_workbook
 #'
-#' @md
 #' @return an [openxlsx] Workbook object
 #' @family xlsx exporters
 #'
 #' @export
 write_worksheet <- function(
-  dat,
+  x,
   wb,
   sheet,
   append = FALSE,
@@ -144,7 +144,7 @@ write_worksheet <- function(
   wb %assert_class% 'Workbook'
   assert_that(is.scalar(sheet))
   assert_that(is.flag(append))
-  assert_that(is.number(start_row))
+  assert_that(rlang::is_scalar_integerish(start_row))
   assert_that(requireNamespace("openxlsx"))
 
   UseMethod('write_worksheet')
@@ -152,9 +152,10 @@ write_worksheet <- function(
 
 
 
+
 #' @export
 write_worksheet.default <- function(
-  dat,
+  x,
   wb,
   sheet,
   append = FALSE,
@@ -168,7 +169,7 @@ write_worksheet.default <- function(
   openxlsx::writeData(
     wb = wb,
     sheet = sheet,
-    x = dat,
+    x = x,
     startRow = start_row)
 
   wb %assert_class% 'Workbook'
@@ -181,16 +182,16 @@ write_worksheet.default <- function(
 #' @export
 #' @rdname write_worksheet
 write_worksheet.Tagged_table <- function(
-  dat,
+  x,
   wb,
-  sheet = sanitize_excel_sheet_names(attr(dat, 'meta')$table_id),
+  sheet = sanitize_excel_sheet_names(attr(x, 'meta')$table_id),
   append = FALSE,
   start_row = 1L,
   ...
 ){
   wb %assert_class% 'Workbook'
-  assert_that(has_attr(dat, 'meta'))
-  meta <- attr(dat, 'meta')
+  assert_that(has_attr(x, 'meta'))
+  meta <- attr(x, 'meta')
 
   wb <- wb$copy()
 
@@ -239,10 +240,10 @@ write_worksheet.Tagged_table <- function(
   crow <- crow + length(header) + 1
   ## hacky, but NextMethod did not do what i wanted when ... were passed to
   ## this function
-  class(dat) <- class(dat)[!class(dat) == 'Tagged_table']
+  class(x) <- class(x)[!class(x) == 'Tagged_table']
 
   wb <- write_worksheet(
-    dat,
+    x,
     wb = wb,
     sheet = sheet,
     append = TRUE,
@@ -274,7 +275,7 @@ write_worksheet.Tagged_table <- function(
 #' @export
 #' @rdname write_worksheet
 write_worksheet.Composite_table <- function(
-  dat,
+  x,
   wb,
   sheet,
   append = FALSE,
@@ -282,7 +283,7 @@ write_worksheet.Composite_table <- function(
   ...
 ){
   # Pre-condtions
-  assert_that(has_attr(dat, 'multinames'))
+  assert_that(has_attr(x, 'multinames'))
 
   # Process arguments
   wb <- wb$copy()
@@ -291,11 +292,11 @@ write_worksheet.Composite_table <- function(
     openxlsx::addWorksheet(wb, sheet)
   }
   crow   <- start_row
-  multinames <- attr(dat, 'multinames')
+  multinames <- attr(x, 'multinames')
 
   assert_that(multinames %identical% sort(multinames))
 
-  title_row     <- vector(mode = 'list', length = ncol(dat))
+  title_row     <- vector(mode = 'list', length = ncol(x))
   title_counter <- 1
 
   for(i in seq_along(title_row)){
@@ -335,7 +336,7 @@ write_worksheet.Composite_table <- function(
     wb,
     sheet = sheet,
     startRow = crow,
-    as.data.frame(dat, multinames = FALSE),
+    as.data.frame(x, multinames = FALSE),
     colNames = TRUE
   )
 
@@ -345,21 +346,18 @@ write_worksheet.Composite_table <- function(
 
 
 
-
-
-
 #' @rdname write_worksheet
 #' @export
 write_worksheet.Mashed_table <- function(
-  dat,
+  x,
   wb,
   sheet,
   append = FALSE,
   start_row = 1L,
-  mash_method = attr(dat, 'mash_method'),
-  id_vars  = attr(dat, 'id_vars'),
-  insert_blank_row = attr(dat, 'insert_blank_row'),
-  sep_height = attr(dat, 'sep_height'),
+  mash_method = attr(x, 'mash_method'),
+  id_vars  = attr(x, 'id_vars'),
+  insert_blank_row = attr(x, 'insert_blank_row'),
+  sep_height = attr(x, 'sep_height'),
   ...
 ){
   # Preconditions
@@ -378,12 +376,12 @@ write_worksheet.Mashed_table <- function(
     }
 
     if(mash_method %identical% 'col' &&
-       length(names(dat)) %identical% length(dat)
+       length(names(x)) %identical% length(x)
     ){
-      res <- as_Composite_table(dat, meta = NULL)
+      res <- as_Composite_table(x, meta = NULL)
     } else {
       res <- as.data.table(
-        dat,
+        x,
         mash_method = mash_method,
         id_vars = id_vars,
         insert_blank_row = insert_blank_row
@@ -403,18 +401,18 @@ write_worksheet.Mashed_table <- function(
 
   # Modify row heights
     row_off          <- start_row - 1
-    sep_height_start <- length(dat) + 2  # +2 because of header
+    sep_height_start <- length(x) + 2  # +2 because of header
 
-    if(mash_method %identical% 'row' && nrow(res) > length(dat)){
+    if(mash_method %identical% 'row' && nrow(res) > length(x)){
       if(insert_blank_row){
         sel_rows <- seq(
           sep_height_start + row_off, nrow(res) + row_off,
-          by = (length(dat) + 1)
+          by = (length(x) + 1)
         )
       } else {
         sel_rows <- seq(
           sep_height_start + row_off, nrow(res) + row_off,
-          by = length(dat)
+          by = length(x)
         )
       }
 
@@ -435,18 +433,18 @@ write_worksheet.Mashed_table <- function(
 #' @rdname write_worksheet
 #' @export
 write_worksheet.Stacked_table <- function(
-  dat,
+  x,
   wb,
   sheet,
   append = FALSE,
   start_row = 1L,
-  spacing = attr(dat, 'spacing'),
+  spacing = attr(x, 'spacing'),
   ...
 ){
   crow    <- start_row
 
   wb <- write_worksheet(
-    dat[[1]],
+    x[[1]],
     wb = wb,
     sheet = sheet,
     start_row = crow,
@@ -455,12 +453,12 @@ write_worksheet.Stacked_table <- function(
   )
 
 
-  for(i in seq_along(dat)[-1]){
+  for(i in seq_along(x)[-1]){
     crow <- get_final_wb_row(wb, sheet)
     crow <- crow + 1 + spacing
 
     wb <- write_worksheet(
-      dat[[i]],
+      x[[i]],
       wb = wb,
       sheet = sheet,
       start_row = crow,
@@ -469,4 +467,46 @@ write_worksheet.Stacked_table <- function(
   }
 
   return(wb)
+}
+
+
+
+
+# save_xlsx ---------------------------------------------------------------
+
+#' `save_xlsx()` is a shortcut to save a `Tatoo_table` directly to local xlsx
+#' file.
+#'
+#' @template outfile
+#' @template overwrite
+#'
+#' @return `TRUE` on success
+#' @export
+#' @rdname as_workbook
+#'
+save_xlsx <- function(
+  x,
+  outfile,
+  overwrite = FALSE,
+  ...
+){
+  assert_that(rlang::is_scalar_character(outfile))
+  assert_that(is.flag(overwrite))
+
+  UseMethod('save_xlsx')
+}
+
+
+
+
+#' @export
+save_xlsx.default <- function(
+  x,
+  outfile,
+  overwrite = FALSE,
+  ...
+){
+  wb <- as_workbook(x, ...)
+  openxlsx::saveWorkbook(wb, outfile, overwrite)
+  invisible(wb)
 }

@@ -2,21 +2,17 @@
 
 #' Mash Tables
 #'
-#' Mash tables are designed to make it easy to put together multidimensional
-#' tables from two data.frames. An example where this might be useful is if you
-#' have a data.frame of numeric values, and a second data.frame of associated
-#' standard errors.
+#' `mash_tables()` makes it easy to put together multidimensional
+#' tables from `data.frames` with the same number of rows and columns. You
+#' can mash tables together with either alernating rows or columns.
 #'
-#' Mash table provides a framework to mash those two data.frames together into
-#' one data.frame with alternating rows or columns.
-#'
-#' @param ... `mash_table()` only: `data.frame`s with the same row and column
+#' @param ... `mash_table()` only: `data.frames` with the same row and column
 #'   count. Elements of `(...)` can be named, but the name must differ from
 #'   the argument names of this function.
-#' @param tables `mash_table_list()` only: a `list` of `data.frame`s as
+#' @param tables `mash_table_list()` only: a `list` of `data.frames` as
 #'   described for `(...)`
-#' @param mash_method either `"row"` or `"col"`. should the tables be mashed by
-#'   row or by column?
+#' @param mash_method either `"row"` or `"col"`. Should the tables be mashed
+#'   together with alternating rows or with alternating columns?
 #' @param id_vars Only if mashing columns: one ore more colnames of the tables
 #'   to be mashed. If supplied, columns of both input tables are combined with
 #'   [merge()], otherwise [cbind()] is used.
@@ -37,7 +33,6 @@
 #'   `mash_method`, `insert_blank_row` and `sep_height` attributes, that
 #'   influence how the table looks when it is printed or exported.
 #'
-#' @md
 #' @rdname Mashed_table
 #' @aliases Mashed_table mashed_table mash_table
 #' @family Tatoo tables
@@ -236,15 +231,15 @@ Mashed_table <- function(
 # Methods -----------------------------------------------------------------
 
 #' @export
-is_valid.Mashed_table <- function(dat){
+is_valid.Mashed_table <- function(x){
   res <- list(
-    is_list          = is.list(dat),
-    mash_method      = identical(attr(dat, 'mash_method'), 'row') ||
-                       identical(attr(dat, 'mash_method'), 'col'),
-    id_vars          = is.null(attr(dat, 'id_vars')) ||
-                       is.character(attr(dat, 'id_vars')),
-    insert_blank_row = is.flag(attr(dat, 'insert_blank_row')),
-    sep_height       = rlang::is_scalar_integer(attr(dat, 'sep_height'))
+    is_list          = is.list(x),
+    mash_method      = identical(attr(x, 'mash_method'), 'row') ||
+                       identical(attr(x, 'mash_method'), 'col'),
+    id_vars          = is.null(attr(x, 'id_vars')) ||
+                       is.character(attr(x, 'id_vars')),
+    insert_blank_row = is.flag(attr(x, 'insert_blank_row')),
+    sep_height       = rlang::is_scalar_integer(attr(x, 'sep_height'))
   )
 
   all_with_warning(res)
@@ -255,28 +250,26 @@ is_valid.Mashed_table <- function(dat){
 
 #' Coerce to Mashed Table
 #'
-#' @param dat any R object
+#' @template any_r
 #' @inheritParams mash_table
 #'
 #' @return
 #' `as_Mashed_table()` returns a Mashed_table
 #'
-#' `is_Mashed_table()` returns `TRUE` if its argument is a Mashed_table
-#' and `FALSE` otherwise.
-#'
-#' @md
 #' @export
-as_Mashed_table <- function(dat, ...){
+as_Mashed_table <- function(x, ...){
   UseMethod('as_Mashed_table')
 }
 
 
 
-
+#' @templateVar fun is_Mashed_table
+#' @templateVar class Mashed_table
+#' @template is_class
 #' @rdname as_Mashed_table
 #' @export
-is_Mashed_table <- function(dat, ...){
-  inherits(dat, 'Mashed_table')
+is_Mashed_table <- function(x, ...){
+  inherits(x, 'Mashed_table')
 }
 
 
@@ -288,7 +281,6 @@ is_Mashed_table <- function(dat, ...){
 #' @param ... passed on to [print()]
 #' @inheritParams mash_table
 #'
-#' @md
 #' @return \code{x} (invisibly)
 #'
 #' @export
@@ -345,7 +337,7 @@ print.Mashed_table <- function(
 
 #' Convert a Mashed Table to a data.table or data.frame
 #'
-#' @param dat a [Mashed_table]
+#' @param x a [Mashed_table]
 #' @inheritParams mash_table
 #' @inheritParams base::as.data.frame
 #' @param suffixes a character vector of length 2 specifying the suffixes to be
@@ -354,26 +346,25 @@ print.Mashed_table <- function(
 #'
 #' @method as.data.table Mashed_table
 #'
-#' @md
 #' @return a [data.table] or \code{data.frame}
 #' @export
 as.data.table.Mashed_table <- function(
-  dat,
-  mash_method = attr(dat, 'mash_method'),
-  insert_blank_row = attr(dat, 'insert_blank_row'),
-  id_vars = attr(dat, 'id_vars'),
-  suffixes = names(dat)
+  x,
+  mash_method = attr(x, 'mash_method'),
+  insert_blank_row = attr(x, 'insert_blank_row'),
+  id_vars = attr(x, 'id_vars'),
+  suffixes = names(x)
 ){
   assert_that(rlang::is_scalar_character(mash_method))
   assert_that(is.flag(insert_blank_row))
   assert_that(is.null(id_vars) || is.character(id_vars))
   assert_that(is.null(suffixes) || is.character(suffixes) )
-  assert_that(is.null(suffixes) || length(suffixes) %identical% length(dat))
+  assert_that(is.null(suffixes) || length(suffixes) %identical% length(x))
 
   if(mash_method %in% c('c', 'col', 'column', 'columns')){
-    res <- mash_cols(dat, id_vars = id_vars)
+    res <- mash_cols(x, id_vars = id_vars)
   } else if(mash_method %in% c('r', 'row', 'rows')) {
-    res <- mash_rows(dat, insert_blank_row = insert_blank_row)
+    res <- mash_rows(x, insert_blank_row = insert_blank_row)
   } else{
     stop('mash_method must be either "row" or "col".')
   }
@@ -412,7 +403,7 @@ as.data.frame.Mashed_table <- function(
 
 #' Mash R objects by Rows or Columns
 #'
-#' `rmash` and `cmash` are convenience function to mash `data.frames` together
+#' `rmash()` and `cmash()` are convenience function to mash `data.frames` together
 #' with a single command. They behave similar to [cbind()] and
 #' [rbind()], just that the result will have have alternating rows/columns.
 #'
@@ -427,7 +418,6 @@ as.data.frame.Mashed_table <- function(
 #'   or if `meta` is supplied;
 #'   else a `data.frame`.
 #'
-#' @md
 #' @rdname cmash
 #' @seealso [Mashed_table]
 #' @export
@@ -556,19 +546,18 @@ cmash <- function(
 
 #' Set mash attributes of a Mashed Table
 #'
-#' @param dat a Mashed_table
+#' @param x a `Mashed_table`
 #' @param value a value that is legal for the individual attribute, as
 #'   described in [Mashed_table]
 #'
 #' @rdname mashed_set
 #' @seealso [Mashed_table]
-#' @md
 #' @export
-`mash_method<-` <- function(dat, value){
-  dat %assert_class% 'Mashed_table'
+`mash_method<-` <- function(x, value){
+  x %assert_class% 'Mashed_table'
   assert_that(identical(value, 'row') || identical(value, 'col'))
 
-  res <- data.table::copy(dat)
+  res <- data.table::copy(x)
 
   data.table::setattr(res, 'mash_method', value)
   return(res)
@@ -576,11 +565,11 @@ cmash <- function(
 
 #' @rdname mashed_set
 #' @export
-`insert_blank_row<-` <- function(dat, value){
-  dat %assert_class% 'Mashed_table'
+`insert_blank_row<-` <- function(x, value){
+  x %assert_class% 'Mashed_table'
   assert_that(is.flag(value))
 
-  res <- data.table::copy(dat)
+  res <- data.table::copy(x)
 
   data.table::setattr(res, 'insert_blank_row', value)
   return(res)
@@ -588,12 +577,12 @@ cmash <- function(
 
 #' @rdname mashed_set
 #' @export
-`sep_height<-` <- function(dat, value){
-  dat %assert_class% 'Mashed_table'
+`sep_height<-` <- function(x, value){
+  x %assert_class% 'Mashed_table'
   assert_that(rlang::is_scalar_integerish(value))
 
   value <- as.integer(value)
-  res <- data.table::copy(dat)
+  res <- data.table::copy(x)
 
   data.table::setattr(res, 'sep_height', value)
   return(res)
@@ -601,11 +590,11 @@ cmash <- function(
 
 #' @rdname mashed_set
 #' @export
-`id_vars<-` <- function(dat, value){
-  dat %assert_class% 'Mashed_table'
+`id_vars<-` <- function(x, value){
+  x %assert_class% 'Mashed_table'
   assert_that(is.character(value))
 
-  res <- data.table::copy(dat)
+  res <- data.table::copy(x)
 
   data.table::setattr(res, 'id_vars', value)
   return(res)

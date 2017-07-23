@@ -17,7 +17,6 @@
 #'   above to excel workbooks.
 #'
 #'
-#' @md
 #' @import assertthat
 #' @importFrom magrittr %>%
 #' @importFrom purrr %||%

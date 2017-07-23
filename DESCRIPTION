@@ -1,7 +1,7 @@
 Package: tatoo
 Type: Package
 Title: Combine and Export Data Frames
-Version: 1.0.7
+Version: 1.0.8.9001
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description: 
@@ -26,5 +26,6 @@ Suggests:
     knitr,
     rmarkdown
 RoxygenNote: 6.0.1
+Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr
