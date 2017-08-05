@@ -1,7 +1,7 @@
 Package: tatoo
 Type: Package
 Title: Combine and Export Data Frames
-Version: 1.0.8.9001
+Version: 1.0.8.9002
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description: 
@@ -29,3 +29,5 @@ RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr
+BugReports: https://bitbucket.org/s_fleck/tatoo/issues?status=new&status=open
+Url: https://bitbucket.org/s_fleck/tatoo
