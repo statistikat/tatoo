@@ -123,17 +123,26 @@ test_that("make_tag_table_print_title works as expected", {
 
   expect_identical(
     tres1,
-    "tid: title - longitle\nsubtitle"
+    c("tid: title - longitle", "subtitle")
   )
 
   expect_identical(
     tres1b,
-    "rp1: stack table 1 - stack table 1 is a stack of tables\nwith a very long title\nthat spans several rows"
+    c(
+      "rp1: stack table 1 - stack table 1 is a stack of tables",
+      "with a very long title",
+      "that spans several rows"
+    )
   )
 
   expect_identical(
     tres2,
-    "rp1: stack table 1 - stack table 1 is a stack of tables\nwith a very long title\nthat spans several rows\nwith a subtitle"
+    c(
+      "rp1: stack table 1 - stack table 1 is a stack of tables",
+      "with a very long title",
+      "that spans several rows",
+      "with a subtitle"
+    )
   )
 
   expect_identical(
