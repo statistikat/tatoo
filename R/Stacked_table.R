@@ -122,7 +122,6 @@ is_valid.Stacked_table <- function(x){
 
 
 
-
 # Methods -----------------------------------------------------------------
 
 
@@ -151,15 +150,26 @@ is_Stacked_table <- function(x){
 #'
 #' @export
 print.Stacked_table <- function(x, ...){
-  print_several_tables(
+  as_lines_several_tables(
     x,
-    indent = ' `  ',
-    sep1 = '`',
-    sep2 = '_',
     ...
-  )
+  ) %>%
+    print_lines()
 
   invisible(x)
+}
+
+
+
+
+as_lines.Stacked_table <- function(x, ...){
+  as_lines_several_tables(
+    x,
+    indent = "`  ",
+    sep1 = "`",
+    sep2 = "_",
+    ...
+  )
 }
 
 

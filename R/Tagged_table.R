@@ -194,21 +194,37 @@ is_Tagged_table <- function(x){
 #'
 #' @export
 print.Tagged_table <- function(x, ...){
+  lapply(
+    as_lines(
+      x,
+      ...
+    ),
+    function(y) cat(y, "\n")
+  )
+
+  invisible(x)
+}
+
+
+
+
+as_lines.Tagged_table <- function(x, ...){
   dd    <- data.table::copy(x)
   meta  <- attr(dd, 'meta')
 
+  res <- character()
+
   if(!is.null(meta)){
-    cat(make_tag_table_print_title(meta), '\n\n')
+    res <- c(res, style_meta(make_tag_table_print_title(meta)))
   }
 
-  NextMethod(print, dd, ...)
+  res <- c(res, NextMethod(as_lines, dd, ...))
 
   if(!is.null(meta$footer)){
-    footer <- paste(meta$footer, collapse = '\n')
-    cat('\n', footer, '\n', sep = '')
+    res <- c(res, style_meta(meta$footer))
   }
 
-  invisible(x)
+  res
 }
 
 
@@ -245,15 +261,39 @@ print.TT_meta <- function(x, ...){
   padded_newline <- paste0('\n', padded_newline)
 
   for(i in seq_along(x)){
-    cat(sprintf(
+    sprintf(
       print_string,
       names(x)[[i]], paste(x[[i]], collapse = padded_newline)
-    ))
+    ) %>%
+      style_meta() %>%
+      cat()
   }
   invisible(x)
 }
 
 
+
+as_lines.TT_meta <- function(x){
+
+  name_width   <- max(unlist(lapply(names(x), nchar))) + 1
+  print_string <- paste0('%', name_width, 's: %s\n')
+  padded_newline <- rep(' ', name_width + 2) %>%
+    paste(collapse = '')
+
+  padded_newline <- paste0('\n', padded_newline)
+
+  for(i in seq_along(x)){
+    sprintf(
+      print_string,
+      names(x)[[i]], paste(x[[i]], collapse = padded_newline)
+    ) %>%
+      colt::clt_chr_accent() %>%
+      cat()
+  }
+  invisible(x)
+
+
+}
 
 
 # Setters -----------------------------------------------------------------
@@ -411,7 +451,7 @@ make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
 
 
     if(!is.null(res) && !is.null(titles$subtitle)){
-      res <- paste(res, titles$subtitle, sep = '\n')
+      res <- c(res, titles$subtitle)
 
     } else if (!is.null(titles$subtitle)) {
       res <- titles$subtitle
@@ -421,8 +461,5 @@ make_tag_table_print_title <- function(meta, show_subtitle = TRUE){
     }
 
 
-  # Postconditions
-    assert_that(length(res) %identical% 1L)
-
-  return(res)
+  unlist(strsplit(res, "\n", fixed = TRUE))
 }

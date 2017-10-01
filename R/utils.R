@@ -80,66 +80,65 @@ get_final_wb_row <- function(wb, sheet){
 #'
 #' @return \code{dat} (invisibly)
 #'
-print_several_tables <- function(
+as_lines_several_tables <- function(
   dat,
   indent,
   sep1,
   sep2,
+  colors = list(
+    indent = style_borders,
+    sep1 = style_borders,
+    sep2 = style_borders
+  ),
+
   headings = NULL,
   ...
 ){
-  assert_that(rlang::is_scalar_character(indent))
-  assert_that(rlang::is_scalar_character(sep1) || rlang::is_scalar_integerish(sep1))
-  assert_that(rlang::is_scalar_character(sep2) || rlang::is_scalar_integerish(sep2))
-  assert_that(is.null(headings) || identical(length(headings), length(dat)))
+  # Preconditions
+    assert_that(rlang::is_scalar_character(indent))
+    assert_that(
+      rlang::is_scalar_character(sep1) ||
+      rlang::is_scalar_integerish(sep1)
+    )
+    assert_that(
+      rlang::is_scalar_character(sep2) ||
+      rlang::is_scalar_integerish(sep2)
+    )
+    assert_that(is.null(headings) || identical(length(headings), length(dat)))
 
 
-  tables_char <- dat %>%
-    lapply(function(x) utils::capture.output(print(x, ...)))
-
-  # Get width for print output
-  tables_width <- tables_char %>%
-    purrr::map(function(x) purrr::map_int(x, nchar)) %>%
-    unlist() %>%
-    max()
-  assert_that(rlang::is_scalar_integer(tables_width))
+  # Process arguments
+    tables_char  <- purrr::map(dat, as_lines)
+    tables_width <- max(nchar(unlist(tables_char)))
+    indent <- colors$indent(indent)
+    sepline1 <- colors$sep1(make_sepline(sep1, width = tables_width, offset = nchar(indent)))  #nolint
+    sepline2 <- colors$sep2(make_sepline(sep2, width = tables_width))
 
 
-  # Define sepperators
-  make_sepline <- function(x, offset = 0){
-    if(is.character(x)){
-      res <- paste(rep(x, tables_width + offset), collapse = '')
-    } else if (is.numeric(x)){
-      res <- paste0(paste0(rep('\n', x), collapse = ''))
-    } else {
-      stop("Sep must be either character or an integer number")
-    }
-    return(res)
+  # Formatting
+  if(is.null(headings)){
+    res <- purrr::map(
+      tables_char,
+      function(.x) list(sepline2, paste0(indent, .x))
+    )
+  } else {
+    res <- purrr::map2(
+      headings, tables_char,
+      function(.x, .y) c(list(sepline2, .x, paste0(indent, .y)))
+    )
   }
 
-  sepline1 <- make_sepline(sep1, offset = nchar(indent))
-  sepline2 <- make_sepline(sep2)
+  res[[1]][[1]] <- NULL  # remove unwanted initial sepline
 
-  cat('', sepline1, '\n')
-  for(i in seq_along(tables_char)){
-    if(!is.null(headings)){
-      cat(headings[[i]])
-    }
-    lapply(tables_char[[i]], function(x) cat(indent, x, '\n'))
-    if(i < length(tables_char)){
-      if(is.numeric(sep2)){
-        cat(sepline2)
-      } else {
-        cat(indent, sepline2, '\n')
-      }
-    }
-  }
+  res <- unlist(res)
+  res <- c(sepline1, res)
 
   if(sep1 != 0 && sep1 != '') {
-    cat(indent, '\n', sepline1, '\n')
+    res <- c(res, indent, sepline1)
   }
 
-  invisible(dat)
+
+  res
 }
 
 
@@ -147,4 +146,24 @@ print_several_tables <- function(
 
 get_dot_names <- function(...){
   sapply(as.list(substitute(list(...)))[-1L], deparse)
+}
+
+
+
+
+print_lines <- function(x){
+  for (i in x) cat(i, "\n")
+}
+
+
+
+make_sepline <- function(x, width, offset = 0){
+  if(is.character(x)){
+    res <- paste(rep(x, width + offset), collapse = '')
+  } else if (is.numeric(x)){
+    res <- rep('', x)
+  } else {
+    stop("Sep must be either character or an integer number")
+  }
+  return(res)
 }

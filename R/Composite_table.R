@@ -357,6 +357,84 @@ is_Composite_table <- function(x, ...){
 
 # Methods -----------------------------------------------------------------
 
+as_lines.Composite_table <- function(x, right = FALSE, color = TRUE, ...){
+  mutlicol_spacing = "  "
+
+  if(!has_attr(x, 'multinames')){
+    warning(
+      'x is not a valid composite table: no multinames attribute found.',
+      call. = FALSE
+    )
+    print(as.data.table(x, multinames = FALSE))
+    return(invisible())
+  }
+
+  # Pad columns
+
+  prep_col <- function(x, colname){
+    i_nan <- is.nan(x)
+    i_na  <- is.na(x)
+    x <- as.character(x)
+    x[i_nan] <- 'NAN'
+    x[i_na]  <- 'NA'
+    x <- c(colname, x)
+
+    pad_width <- max(nchar(x))
+    stringi::stri_pad_left(as.character(x), pad_width)
+  }
+
+
+  dd <- vector('list', ncol(x))
+
+  for(i in seq_along(dd)){
+    dd[[i]] <- prep_col(x[[i]], names(x)[[i]])
+  }
+
+
+  # Merge columns that belong to the same title
+  multinames <- attr(x, 'multinames')
+  res <- vector('list', length(multinames))
+  names(res) <- names(multinames)
+
+  for(i in seq_along(multinames)){
+    res[[i]] <- multinames[(i - 1):i]
+
+    if(identical(i, 1L)){
+      sel_cols <- 1:multinames[[i]]
+    } else {
+      sel_cols <- (multinames[i - 1] + 1):multinames[i]
+    }
+
+    res[[i]] <- do.call(paste, c(dd[sel_cols], sep = mutlicol_spacing))
+  }
+
+  tmp <- list()
+
+  for(i in seq_along(res)){
+    title  <- stringi::stri_pad_both(
+      names(multinames)[[i]], max(nchar(res[[i]])),
+      '.'
+    )
+
+    column <- stringi::stri_pad_both(
+      res[[i]],
+      nchar(title)
+    )
+
+    tmp[[i]] <- c(title, column)
+  }
+
+  res2 <- as.data.frame(tmp, fix.empty.names = FALSE, optional = TRUE) %>%
+    as.matrix()
+
+  if(color){
+    res2[1, ] <- style_multicolname(res2[1, ])
+    res2[2, ] <- style_colname(res2[2, ])
+  }
+
+  apply(res2, 1 , paste, collapse = mutlicol_spacing)
+}
+
 #' Printing Composite Tables
 #'
 #' @param x a `Composite_table`
@@ -372,77 +450,8 @@ print.Composite_table <- function(
   right = FALSE,
   ...
 ){
-  if(!has_attr(x, 'multinames')){
-    warning(
-      'x is not a valid composite table: no multinames attribute found.',
-      call. = FALSE
-    )
-    print(as.data.table(x, multinames = FALSE))
-    return(invisible())
-  }
-
-  # Pad columns
-    prep_col <- function(x, colname){
-      i_nan <- is.nan(x)
-      i_na  <- is.na(x)
-      x <- as.character(x)
-      x[i_nan] <- 'NAN'
-      x[i_na]  <- 'NA'
-      x <- c(colname, x)
-
-      pad_width <- max(nchar(x))
-      stringi::stri_pad_left(as.character(x), pad_width)
-    }
-
-    dd <- vector('list', ncol(x))
-
-    for(i in seq_along(dd)){
-      dd[[i]] <- prep_col(x[[i]], names(x)[[i]])
-    }
-
-
-  # Merge columns that belong to the same title
-    multinames <- attr(x, 'multinames')
-    res <- vector('list', length(multinames))
-    names(res) <- names(multinames)
-
-    for(i in seq_along(multinames)){
-      res[[i]] <- multinames[(i - 1):i]
-
-      if(identical(i, 1L)){
-        sel_cols <- 1:multinames[[i]]
-      } else {
-        sel_cols <- (multinames[i - 1] + 1):multinames[i]
-      }
-
-      res[[i]] <- do.call(paste, c(dd[sel_cols], sep = "   "))
-    }
-
-    tmp <- list()
-
-    for(i in seq_along(res)){
-      title  <- stringi::stri_pad_both(
-        names(multinames)[[i]], max(nchar(res[[i]])),
-        '.'
-      )
-
-      column <- stringi::stri_pad_both(
-        res[[i]],
-        nchar(title)
-      )
-
-      sep    <- rep('  ', length(res[[i]]))
-
-      tmp[[i]] <- list(column, sep)
-      names(tmp[[i]]) <- c(title, '   ')
-    }
-
-    res2 <- unlist(tmp, recursive = FALSE)
-    res2 <- as.data.frame(res2, fix.empty.names = FALSE, optional = TRUE)
-
-    print(res2, right = right, ...)
-
-    invisible(x)
+  lapply(as_lines(x), function(y) cat(y, sep = "\n"))
+  invisible(x)
 }
 
 

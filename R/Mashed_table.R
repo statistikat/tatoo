@@ -275,6 +275,73 @@ is_Mashed_table <- function(x, ...){
 
 
 
+as_lines.Mashed_table <- function(
+  x,
+  mash_method = attr(x, 'mash_method'),
+  insert_blank_row = attr(x, 'insert_blank_row'),
+  id_vars = attr(x, 'id_vars'),
+  color = TRUE,
+  ...
+){
+  print_multi_headings <-
+    identical(mash_method, 'col') &&
+    identical(length(names(x)), length(x))
+
+
+  if(print_multi_headings){
+    pdat  <- as_Composite_table(x, meta = NULL)
+    lines <- as_lines(pdat, ...)
+  } else {
+    lines <- as_lines(
+      data.table::as.data.table(
+        x,
+        mash_method = mash_method,
+        insert_blank_row = FALSE,
+        id_vars = id_vars
+      )
+      ,
+      color = color
+    )
+  }
+
+
+  if(identical(mash_method, 'row')){
+    if (insert_blank_row) {
+      res <- vector("character", length(lines) + nrow(x[[1]]) - 1)
+
+      i <- j <- 1
+
+      while (i <= length(lines)){
+        if ((i - 2)  %% length(x) == 0 && i > 2) {
+          j <- j + 1
+        }
+
+        res[j] <- lines[i]
+
+        j <- j + 1
+        i <- i + 1
+      }
+    } else {
+      res <- lines
+      fill_bg <- FALSE
+
+       for(i in seq_along(lines)){
+         if ((i > length(x)) && (i - 2) %% length(x) == 0) {
+           fill_bg <- !fill_bg
+         }
+
+         if(fill_bg){
+           res[[i]] <- colt::clt_bg_subtle(res[[i]])
+         }
+      }
+    }
+  } else {
+    res <- lines
+  }
+
+  res
+}
+
 #' Printing Mashed Tables
 #'
 #' @param x a Mashed_table
@@ -291,43 +358,16 @@ print.Mashed_table <- function(
   id_vars = attr(x, 'id_vars'),
   ...
 ){
-  print_multi_headings <-
-    mash_method%identical% 'col' &&
-    length(names(x)) %identical% length(x)
-
-
-  if(print_multi_headings){
-    pdat <- as_Composite_table(x, meta = NULL)
-    lines <- utils::capture.output(print(pdat, ...))
-  } else {
-    lines <- utils::capture.output(print(
-      as.data.table(
-        x,
-        insert_blank_row = FALSE,
-        mash_method = mash_method,
-        id_vars = id_vars),
+  lapply(
+    as_lines(
+      x,
+      mash_method = mash_method,
+      insert_blank_row = insert_blank_row,
+      id_vars = id_vars,
       ...
-    ))
-  }
-
-
-  for(i in seq_along(lines)){
-    cat(lines[[i]], '\n')
-
-    if(insert_blank_row && mash_method %identical% 'row'){
-      insert_blank <-
-         i > length(x) &&
-        (i-1) %% length(x) == 0 &&
-        !identical(i, length(lines))
-
-      assert_that(is.flag(insert_blank))
-
-      if(insert_blank){
-        cat('\n')
-      }
-    }
-  }
-
+    ),
+    function(y) cat(y, "\n")
+  )
 
   invisible(x)
 }
@@ -389,7 +429,13 @@ as.data.frame.Mashed_table <- function(
   ...
 ){
   as.data.frame(
-    as.data.table.Mashed_table(x),
+    as.data.table.Mashed_table(
+      x,
+      mash_method = mash_method,
+      insert_blank_row = insert_blank_row,
+      id_vars = id_vars,
+      suffixes = suffixes
+    ),
     row.names = row.names,
     optional = optional,
     ...

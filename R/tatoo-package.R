@@ -26,3 +26,24 @@
 #' @name tatoo
 "_PACKAGE"
 
+
+
+
+.onLoad <- function(...) {
+  op <- options()
+
+  if(requireNamespace("crayon")){
+    tatoo.colors = c(c1 = crayon::yellow, c2 = crayon::silver)
+  } else {
+    tatoo.colors = c(c1 = identity, c2 = identity)
+  }
+
+  op.set <- list(
+    tatoo.colors = tatoo.colors
+  )
+
+  toset <- !(names(op.set) %in% names(op))
+  if(any(toset)) options(op.set[toset])
+
+  invisible()
+}
