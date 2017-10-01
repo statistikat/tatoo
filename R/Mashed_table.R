@@ -437,6 +437,10 @@ as.data.frame.Mashed_table <- function(
       suffixes = suffixes
     ),
     row.names = row.names,
+    mash_method = mash_method,
+    insert_blank_row = insert_blank_row,
+    id_vars = id_vars,
+    suffixes = suffixes,
     optional = optional,
     ...
   )
