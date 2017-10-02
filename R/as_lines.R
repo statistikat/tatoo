@@ -51,7 +51,7 @@ as_lines.Tagged_table <- function(x, ...){
   res <- character()
 
   if(!is.null(meta)){
-    res <- c(res, style_meta(as_lines(meta)))
+    res <- c(res, style_meta(make_tag_table_print_title(meta)))
   }
 
   res <- c(res, NextMethod(as_lines, dd, ...))
