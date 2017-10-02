@@ -1,13 +1,17 @@
-#' Title
+#* @testfile manual_tests/test_as_lines
+
+#' Create a line-by-line text representation of an R Object
 #'
-#' @param x
-#' @param color
-#' @param ...
+#' Creates a line-by-line representation of an \R Obeject (usually a
+#' `Tatoo_table`). This is the function pwers all `Tatoo_table` print methods.
 #'
-#' @return
+#' @template any_r
+#' @param color Use colors (via [colt])
+#' @param ... passed on methods.
+#'
+#' @return A character vector (one element per line).
 #' @export
 #'
-#' @examples
 as_lines <- function(x, color = TRUE, ...){
   UseMethod("as_lines")
 }
@@ -22,7 +26,6 @@ as_lines.data.frame <- function(
   color = TRUE,
   ...
 ){
-
   res <- rbind(
     t(as.matrix(names(x))),
     as.matrix(unname(x))
@@ -44,9 +47,10 @@ as_lines.data.frame <- function(
 
 #' @rdname as_lines
 #' @export
-as_lines.Tagged_table <- function(x, ...){
+as_lines.Tagged_table <- function(x, color = TRUE, ...){
   dd    <- data.table::copy(x)
   meta  <- attr(dd, 'meta')
+  if(!color) style_meta <- identity
 
   res <- character()
 
@@ -83,7 +87,7 @@ as_lines.Mashed_table <- function(
 
   if(print_multi_headings){
     pdat  <- as_Composite_table(x, meta = NULL)
-    lines <- as_lines(pdat, ...)
+    lines <- as_lines(pdat, color = color, ...)
   } else {
     lines <- as_lines(
       data.table::as.data.table(
@@ -123,8 +127,8 @@ as_lines.Mashed_table <- function(
           fill_bg <- !fill_bg
         }
 
-        if(fill_bg){
-          res[[i]] <- colt::clt_bg_subtle(res[[i]])
+        if(fill_bg && color){
+          res[[i]] <- style_bg_subtle(res[[i]])
         }
       }
     }
@@ -140,9 +144,10 @@ as_lines.Mashed_table <- function(
 
 #' @rdname as_lines
 #' @export
-as_lines.Stacked_table <- function(x, ...){
+as_lines.Stacked_table <- function(x, color = TRUE, ...){
   as_lines_several_tables(
     x,
+    color,
     indent = "`  ",
     sep1 = "`",
     sep2 = "_",
@@ -155,7 +160,12 @@ as_lines.Stacked_table <- function(x, ...){
 
 #' @rdname as_lines
 #' @export
-as_lines.Composite_table <- function(x, right = FALSE, color = TRUE, ...){
+as_lines.Composite_table <- function(
+  x,
+  right = FALSE,
+  color = TRUE,
+  ...
+){
   mutlicol_spacing = "  "
 
   if(!has_attr(x, 'multinames')){
@@ -238,7 +248,7 @@ as_lines.Composite_table <- function(x, right = FALSE, color = TRUE, ...){
 
 #' @rdname as_lines
 #' @export
-as_lines.Tatoo_report <- function(x, ...){
+as_lines.Tatoo_report <- function(x, color = TRUE, ...){
   make_table_heading <- function(y) {
     if ('Tagged_table' %in% class(y)){
       paste(class(y)[1:2], collapse = '> <')
@@ -249,14 +259,15 @@ as_lines.Tatoo_report <- function(x, ...){
 
   classes <- lapply(x, make_table_heading)
   classes <- sprintf('%s <%s>', names(x) %||% '', classes)
-  classes <- style_coltypes(classes)
+  if(color) classes <- style_colname(style_coltypes(classes))
 
   as_lines_several_tables(
     x,
+    color = color,
     indent = "::   ",
     sep1 = 0,
     sep2 = 2,
-    headings = style_colname(classes),
+    headings = classes,
     ...
   )
 }
@@ -266,7 +277,7 @@ as_lines.Tatoo_report <- function(x, ...){
 
 #' @rdname as_lines
 #' @export
-as_lines.TT_meta <- function(x){
+as_lines.TT_meta <- function(x, color = TRUE, ...){
   name_width   <- max(unlist(lapply(names(x), nchar))) + 1
   print_string <- paste0('%', name_width, 's: %s')
   padded_newline <- rep(' ', name_width + 2) %>%
@@ -284,5 +295,97 @@ as_lines.TT_meta <- function(x){
       stringi::stri_split_fixed('\n')
   }
 
+
+  if(!color) style_meta <- identity
   purrr::map_chr(unlist(res), style_meta)
+}
+
+
+
+
+# utils -------------------------------------------------------------------
+
+#' Print several tables
+#'
+#' Internal function used by `print.Stacked_table()` and
+#' `print.Tatoo_report()`
+#'
+#' @param dat A list of objects that can be printed, usually data.frames
+#'   or Tatoo_tables
+#' @param indent a scalar character specifying the indent symbols (e.g. `"  "`)
+#' @param sep1 character or numeric. Separator above the first and
+#'   below the last table.  If character a sep line is created using this
+#'   character (i.e. ------). If numeric, that many blank rows are inserted.
+#' @param sep2 \code{character} or \code{numeric}. Spacing between the tables.
+#'   Like \code{sep1}
+#' @param headings \code{character} vector of the same length as \code{dat},
+#'   specifying headings to be inserted above each table.
+#' @param ... passed on to \code{\link{print}}
+#'
+#' @return \code{dat} (invisibly)
+#'
+as_lines_several_tables <- function(
+  dat,
+  color,
+  indent,
+  sep1,
+  sep2,
+  colors = list(
+    indent = style_borders,
+    sep1 = style_borders,
+    sep2 = style_borders
+  ),
+
+  headings = NULL,
+  ...
+){
+  # Preconditions
+  assert_that(rlang::is_scalar_character(indent))
+  assert_that(
+    rlang::is_scalar_character(sep1) ||
+    rlang::is_scalar_integerish(sep1)
+  )
+  assert_that(
+    rlang::is_scalar_character(sep2) ||
+    rlang::is_scalar_integerish(sep2)
+  )
+  assert_that(is.null(headings) || identical(length(headings), length(dat)))
+
+
+  # Process arguments
+  tables_char  <- purrr::map(dat, as_lines, color = color)
+  tables_width <- max(nchar(unlist(tables_char)))
+  sepline1 <- make_sepline(sep1, width = tables_width, offset = nchar(indent))
+  sepline2 <- make_sepline(sep2, width = tables_width)
+
+  if(color){
+    indent   <- colors$indent(indent)
+    sepline1 <- colors$sep1(sepline1)
+    sepline2 <- colors$sep1(sepline2)
+  }
+
+
+  # Formatting
+  if(is.null(headings)){
+    res <- purrr::map(
+      tables_char,
+      function(.x) list(sepline2, paste0(indent, .x))
+    )
+  } else {
+    res <- purrr::map2(
+      headings, tables_char,
+      function(.x, .y) c(list(sepline2, .x, paste0(indent, .y)))
+    )
+  }
+
+  res[[1]][[1]] <- NULL  # remove unwanted initial sepline
+
+  res <- unlist(res)
+  res <- c(sepline1, res)
+
+  if(sep1 != 0 && sep1 != '') {
+    res <- c(res, indent, sepline1)
+  }
+
+  res
 }

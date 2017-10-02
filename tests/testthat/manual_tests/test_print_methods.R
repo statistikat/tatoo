@@ -29,6 +29,4 @@ test_that("Tatoo_report print method", {
 
   cat('\n\n\n\nprint(t_report)\n\n')
   print(t_report)
-
-
 })
