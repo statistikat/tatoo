@@ -91,28 +91,3 @@ print.Tatoo_report <- function(x, ...){
   print_lines(as_lines(x))
   invisible(x)
 }
-
-
-
-as_lines.Tatoo_report <- function(x, ...){
-  make_table_heading <- function(y) {
-    if ('Tagged_table' %in% class(y)){
-      paste(class(y)[1:2], collapse = '> <')
-    } else {
-      class(y)[[1]]
-    }
-  }
-
-  classes <- lapply(x, make_table_heading)
-  classes <- sprintf('%s <%s>', names(x) %||% '', classes)
-  classes <- style_coltypes(classes)
-
-  as_lines_several_tables(
-    x,
-    indent = "::   ",
-    sep1 = 0,
-    sep2 = 2,
-    headings = style_colname(classes),
-    ...
-  )
-}

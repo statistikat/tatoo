@@ -208,27 +208,6 @@ print.Tagged_table <- function(x, ...){
 
 
 
-as_lines.Tagged_table <- function(x, ...){
-  dd    <- data.table::copy(x)
-  meta  <- attr(dd, 'meta')
-
-  res <- character()
-
-  if(!is.null(meta)){
-    res <- c(res, style_meta(make_tag_table_print_title(meta)))
-  }
-
-  res <- c(res, NextMethod(as_lines, dd, ...))
-
-  if(!is.null(meta$footer)){
-    res <- c(res, style_meta(meta$footer))
-  }
-
-  res
-}
-
-
-
 #' @export
 is_valid.TT_meta <- function(dat){
   res <- list()
@@ -273,28 +252,6 @@ print.TT_meta <- function(x, ...){
 
 
 
-as_lines.TT_meta <- function(x){
-
-  name_width   <- max(unlist(lapply(names(x), nchar))) + 1
-  print_string <- paste0('%', name_width, 's: %s\n')
-  padded_newline <- rep(' ', name_width + 2) %>%
-    paste(collapse = '')
-
-  padded_newline <- paste0('\n', padded_newline)
-
-  for(i in seq_along(x)){
-    sprintf(
-      print_string,
-      names(x)[[i]], paste(x[[i]], collapse = padded_newline)
-    ) %>%
-      colt::clt_chr_accent() %>%
-      cat()
-  }
-  invisible(x)
-
-
-}
-
 
 # Setters -----------------------------------------------------------------
 
@@ -323,11 +280,16 @@ as_lines.TT_meta <- function(x){
 }
 
 
+
+
 #' @rdname tagged_set
 #' @export
 meta <- function(x){
   attr(x, 'meta')
 }
+
+
+
 
 #' @rdname tagged_set
 #' @export
@@ -336,12 +298,18 @@ meta <- function(x){
   assign_tt_meta(x, ass)
 }
 
+
+
+
 #' @rdname tagged_set
 #' @export
 `title<-` <- function(x, value){
   ass <- list(title = value)
   assign_tt_meta(x, ass)
 }
+
+
+
 
 #' @rdname tagged_set
 #' @export
@@ -350,12 +318,18 @@ meta <- function(x){
   assign_tt_meta(x, ass)
 }
 
+
+
+
 #' @rdname tagged_set
 #' @export
 `subtitle<-` <- function(x, value){
   ass <- list(subtitle = value)
   assign_tt_meta(x, ass)
 }
+
+
+
 
 #' @rdname tagged_set
 #' @export

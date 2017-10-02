@@ -162,19 +162,6 @@ print.Stacked_table <- function(x, ...){
 
 
 
-as_lines.Stacked_table <- function(x, ...){
-  as_lines_several_tables(
-    x,
-    indent = "`  ",
-    sep1 = "`",
-    sep2 = "_",
-    ...
-  )
-}
-
-
-
-
 # Setters -----------------------------------------------------------------
 
 #' Set the spacing of a Stacked_table
