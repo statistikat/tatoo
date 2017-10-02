@@ -1,7 +1,7 @@
 Package: tatoo
 Type: Package
 Title: Combine and Export Data Frames
-Version: 1.0.8.9002
+Version: 1.0.7
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description: 

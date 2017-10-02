@@ -1,5 +1,10 @@
 # tatoo 1.0.7
 
+* Support color themes for printing via colt and crayon
+
+
+# tatoo 1.0.7
+
 * Minor tweaks for compatibility with purrr 0.2.2
 * `as_Composite_table.data.table()` converts data.tables to Composite tables, 
   based  on separators in the column names (e.g fruit.apple, fruit.banana)
