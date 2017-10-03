@@ -1,4 +1,4 @@
-# tatoo 1.0.7
+# tatoo 1.0.8
 
 * Support color themes for printing via colt and crayon
 
