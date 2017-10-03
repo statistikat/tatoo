@@ -47,7 +47,11 @@ as_lines.data.frame <- function(
 
 #' @rdname as_lines
 #' @export
-as_lines.Tagged_table <- function(x, color = TRUE, ...){
+as_lines.Tagged_table <- function(
+  x,
+  color = TRUE,
+  ...
+){
   dd    <- data.table::copy(x)
   meta  <- attr(dd, 'meta')
   if(!color) style_meta <- identity
@@ -71,13 +75,14 @@ as_lines.Tagged_table <- function(x, color = TRUE, ...){
 
 
 #' @rdname as_lines
+#' @inheritParams mash_table
 #' @export
 as_lines.Mashed_table <- function(
   x,
+  color = TRUE,
   mash_method = attr(x, 'mash_method'),
   insert_blank_row = attr(x, 'insert_blank_row'),
   id_vars = attr(x, 'id_vars'),
-  color = TRUE,
   ...
 ){
   print_multi_headings <-
@@ -147,7 +152,7 @@ as_lines.Mashed_table <- function(
 as_lines.Stacked_table <- function(x, color = TRUE, ...){
   as_lines_several_tables(
     x,
-    color,
+    color = color,
     indent = "`  ",
     sep1 = "`",
     sep2 = "_",
@@ -162,7 +167,6 @@ as_lines.Stacked_table <- function(x, color = TRUE, ...){
 #' @export
 as_lines.Composite_table <- function(
   x,
-  right = FALSE,
   color = TRUE,
   ...
 ){
@@ -322,6 +326,7 @@ as_lines.TT_meta <- function(x, color = TRUE, ...){
 #'   specifying headings to be inserted above each table.
 #' @param ... passed on to \code{\link{print}}
 #'
+#' @noRd
 #' @return \code{dat} (invisibly)
 #'
 as_lines_several_tables <- function(
