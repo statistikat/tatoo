@@ -1,9 +1,10 @@
 ## Release summary
 
-Maintenance release for compatibilty with new purrr version
+Color support for print methods
 
 ## Test environments
-* ubuntu 17.04, R 3.4.0
+* Ubuntu 17.04, R 3.4.0
+* windows Vista, R 3.3.2
 * win-builder (devel and release)
 
 ## R CMD check results
