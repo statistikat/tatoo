@@ -1,6 +1,6 @@
 ## Release summary
 
-Maintenance release for compatibilty with new purrr version
+Color support for print methods
 
 ## Test environments
 * ubuntu 17.04, R 3.4.0
