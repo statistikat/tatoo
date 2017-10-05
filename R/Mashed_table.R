@@ -263,6 +263,7 @@ as_Mashed_table <- function(x, ...){
 
 
 
+
 #' @templateVar fun is_Mashed_table
 #' @templateVar class Mashed_table
 #' @template is_class
@@ -546,6 +547,9 @@ cmash <- function(
   return(res)
 }
 
+
+
+
 #' @rdname mashed_set
 #' @export
 `insert_blank_row<-` <- function(x, value){
@@ -557,6 +561,9 @@ cmash <- function(
   data.table::setattr(res, 'insert_blank_row', value)
   return(res)
 }
+
+
+
 
 #' @rdname mashed_set
 #' @export
@@ -570,6 +577,9 @@ cmash <- function(
   data.table::setattr(res, 'sep_height', value)
   return(res)
 }
+
+
+
 
 #' @rdname mashed_set
 #' @export
@@ -739,6 +749,7 @@ mash_cols <- function(
   data.table::setattr(res, 'id_vars', id_vars)
   return(res)
 }
+
 
 
 
