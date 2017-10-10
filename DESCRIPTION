@@ -1,10 +1,10 @@
 Package: tatoo
 Type: Package
 Title: Combine and Export Data Frames
-Version: 1.0.8
+Version: 1.0.8.9000
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
-Description: 
+Description:
   Functions to combine data.frames in ways that require additional effort in 
   base R, and to add metadata (id, title, ...) that can be used for printing and 
   xlsx export. The 'Tatoo_report' class is provided as a 
