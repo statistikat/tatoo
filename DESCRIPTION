@@ -31,5 +31,5 @@ RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr
-BugReports: https://bitbucket.org/s_fleck/tatoo/issues?status=new&status=open
-URL: https://bitbucket.org/s_fleck/tatoo
+BugReports: https://github.com/statistikat/tatoo/issues
+URL: https://github.com/statistikat/tatoo
