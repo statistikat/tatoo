@@ -3,7 +3,7 @@
 #' Create a line-by-line text representation of an R Object
 #'
 #' Creates a line-by-line representation of an \R Obeject (usually a
-#' `Tatoo_table`). This is the function pwers all `Tatoo_table` print methods.
+#' `Tatoo_table`). This is the function powers all `Tatoo_table` print methods.
 #'
 #' @template any_r
 #' @param color Use colors (via [colt])

@@ -4,7 +4,7 @@
 #'
 #' `mash_tables()` makes it easy to put together multidimensional
 #' tables from `data.frames` with the same number of rows and columns. You
-#' can mash tables together with either alernating rows or columns.
+#' can mash tables together with either alternating rows or columns.
 #'
 #' @param ... `mash_table()` only: `data.frames` with the same row and column
 #'   count. Elements of `(...)` can be named, but the name must differ from
