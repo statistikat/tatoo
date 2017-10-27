@@ -85,3 +85,9 @@ make_sepline <- function(x, width, offset = 0){
   }
   return(res)
 }
+
+
+
+require_knitr <- function(){
+  requireNamespace("knitr", quietly = TRUE)
+}
