@@ -1,9 +1,12 @@
----
-title: "Untitled"
-output: pdf_document
-header-includes:
- - \usepackage{booktabs}
- - \usepackage{longtable}
----
+\documentclass{article}
+\pagestyle{empty}
+\usepackage{geometry}
+\geometry{{PAPERSIZE}, {ORIENTATION}, margin=2in}
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\begin{document}
 
 {TABLE}
+
+\end{document}
