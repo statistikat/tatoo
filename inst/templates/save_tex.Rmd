@@ -4,6 +4,7 @@
 \geometry{{PAPERSIZE}, {ORIENTATION}, margin=2in}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{threeparttablex}
 
 \begin{document}
 

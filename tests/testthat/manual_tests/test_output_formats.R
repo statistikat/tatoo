@@ -36,7 +36,41 @@ test_that('save_tex mash_tablesk', {
   of <- file.path(outdir, 'mash_table.xlsx')
   save_xlsx(t_mash_1, of, overwrite = TRUE)
   expect_true(file.exists(of))
+})
+
+
+test_that('save_pdf works', {
+  outdir <- rprojroot::find_testthat_root_file("testout")
+
+  x <- save_pdf(
+    iris,
+    outfile = file.path(outdir, "iris.pdf"),
+    keep_source = TRUE
+  )
+
+  expect_true(file.exists(x))
+  # open_file(x)
+  unlink(x)
+})
 
 
 
+test_that('save_pdf works', {
+  outdir <- rprojroot::find_testthat_root_file("testout")
+  source(rprojroot::find_testthat_root_file('testdata', 'testdata.R'))
+
+  meta(t_tagged_1)$footer <- "This the footer bellow the table, let's se how it is formatted"
+
+  x <- save_pdf(
+    t_tagged_1,
+    outfile = file.path(outdir, "t_tagged_1.pdf"),
+    keep_source = TRUE,
+    overwrite = TRUE
+  )
+
+  cat(as_latex(t_tagged_1))
+
+  expect_true(file.exists(x))
+  open_file(x)
+  unlink(x)
 })
