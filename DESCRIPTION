@@ -23,9 +23,10 @@ Imports:
     colt
 Suggests:
     testthat,
+    rprojroot,
     knitr,
     rmarkdown
-RoxygenNote: 6.0.1
+RoxygenNote: 6.0.1.9000
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr

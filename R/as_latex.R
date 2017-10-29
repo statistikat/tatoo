@@ -2,6 +2,8 @@
 
 #' Convert an \R Object to Latex code
 #'
+#'
+#'
 #' @section Latex Packages:
 #' Code created with `as_latex` assumes that the following Latex packages are
 #' loaded:
@@ -14,13 +16,13 @@
 #'
 #' @param x
 #' @param ... passed on to methods
-#' @param .kable_options
+#' @param kable_options
 #'
 #' @return
 #' @export
 #'
 #' @examples
-as_latex <- function(x, ..., .kable_options){
+as_latex <- function(x, ..., kable_options){
   require_knitr()
   UseMethod("as_latex")
 }
@@ -31,7 +33,7 @@ as_latex <- function(x, ..., .kable_options){
 #' @param x
 #' @inheritParams tag_table
 #' @param ...
-#' @param .kable_options
+#' @param kable_options
 #'
 #' @return
 #' @export
@@ -40,7 +42,7 @@ as_latex <- function(x, ..., .kable_options){
 as_latex.Tagged_table <- function(
   x,
   ...,
-  .kable_options = default_kable_options
+  kable_options = default_kable_options
 ){
   meta  <- attr(x, 'meta')
 
@@ -49,12 +51,12 @@ as_latex.Tagged_table <- function(
       c(make_tag_table_print_title(meta)),
       collapse = " "
     )
-    ko = c(list(caption = caption), .kable_options)
+    ko = c(list(caption = caption), kable_options)
   } else {
-    ko <- .kable_options
+    ko <- kable_options
   }
 
-  res <- NextMethod(as_latex, dd, ..., .kable_options = ko)
+  res <- NextMethod(as_latex, dd, ..., kable_options = ko)
 
 
   res <- gsub(
@@ -116,11 +118,11 @@ as_latex.Mashed_table <- function(
 as_latex.data.frame <- function(
   x,
   ...,
-  .kable_options = default_kable_options
+  kable_options = default_kable_options
 ){
   do.call(
     knitr::kable,
-    args = c(list(x), .kable_options)
+    args = c(list(x), kable_options)
   ) %>%
     kableExtra::kable_styling(latex_options = c("repeat_header"))
 }
@@ -134,11 +136,11 @@ default_kable_options <- list(
 )
 
 
-#' Save Table as PDF
+
+#' `save_pdf()` is a convenience wrapper around [as_latex()] for directly saving
+#' an \R object to \file{.pdf}.
 #'
-#' A convenience wrapper around [as_latex()] for directly saving an \R object
-#' to \file{.pdf}.
-#'
+#' @rdname as_latex
 #' @param x
 #' @param outfile
 #' @oaram ... passed on to methods
@@ -186,6 +188,7 @@ save_pdf.default <- function(
   papersize = "a4paper",
   orientation = "portrait",
   keep_source = FALSE,
+  kable_options,
   template = system.file("templates", "save_tex.Rmd", package = "tatoo")
 ){
   temp <- readLines(template)
@@ -195,7 +198,7 @@ save_pdf.default <- function(
     else stop(sprintf("'%s' already exists."))
   }
 
-  tex <- as_latex(x, ...)
+  tex <- as_latex(x, ..., kable_options = kable_options)
   tex <- gsub("{TABLE}", tex, temp, fixed = TRUE)
   tex <- gsub("{PAPERSIZE}", papersize, tex, fixed = TRUE)
   tex <- gsub("{ORIENTATION}", orientation, tex, fixed = TRUE)

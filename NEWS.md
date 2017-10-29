@@ -1,5 +1,9 @@
 # tatoo 1.0.8.9000
 
+* Convert `Tatoo_table` objects to Latex code or save them directly to `.pdf`
+  with `as_latex()` and `save_pdf`.
+* Added `open_file()` utility to open files with external programs.
+
 # tatoo 1.0.8
 
 * Support color themes for printing via colt and crayon
