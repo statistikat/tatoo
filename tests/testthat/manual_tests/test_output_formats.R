@@ -74,3 +74,30 @@ test_that('save_pdf works', {
   open_file(x)
   unlink(x)
 })
+
+
+test_that('save_pdf works', {
+  outdir <- rprojroot::find_testthat_root_file("testout")
+  source(rprojroot::find_testthat_root_file('testdata', 'testdata.R'))
+
+  meta(t_tagged_1)$footer <- "This the footer bellow the table, let's se how it is formatted"
+
+  x <- save_pdf(
+    t_tagged_1,
+    outfile = file.path(outdir, "t_tagged_1.pdf"),
+    keep_source = TRUE,
+    overwrite = TRUE
+  )
+
+  cat(as_latex(t_tagged_1))
+
+  expect_true(file.exists(x))
+  open_file(x)
+  unlink(x)
+
+
+  x <- save_pdf(t_report_mash)
+  open_file(x)
+  unlink(x)
+
+})

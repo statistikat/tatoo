@@ -22,9 +22,15 @@
 #' @export
 #'
 #' @examples
-as_latex <- function(x, ..., kable_options){
+as_latex <- function(x, ..., kable_options = default_kable_options){
   require_knitr()
   UseMethod("as_latex")
+}
+
+
+
+as_latex.default <- function(...){
+  "not supported"
 }
 
 
@@ -80,6 +86,13 @@ as_latex.Tagged_table <- function(
 }
 
 
+as_latex.Tatoo_report <- function(x, ...){
+  x %>%
+    lapply(as_latex) %>%
+    unlist() %>%
+    paste(sep = "\n", collapse = "\n")
+}
+
 
 #' Title
 #'
@@ -97,18 +110,22 @@ as_latex.Mashed_table <- function(
   id_vars  = attr(x, 'id_vars'),
   insert_blank_row = attr(x, 'insert_blank_row'),
   sep_height = attr(x, 'sep_height'),
-  font_size = 12,
-  ...
+  ...,
+  kable_options = default_kable_options
 ){
+  assert_that(is.flag(insert_blank_row))
   sep_height = sep_height - 12 * !insert_blank_row
 
   res <- x %>%
-    as.data.table(id_vars = id_vars) %>%
+    as.data.table(
+      id_vars = id_vars,
+      insert_blank_row = insert_blank_row
+    ) %>%
     knitr::kable(
       format = "latex",
       booktabs = TRUE,
       longtable = TRUE,
-      linesep = c(rep('', length(x) - 1), sprintf("\\addlinespace[%spt]", sep_height))
+      linesep = c(rep('', length(x) - 1 + insert_blank_row), sprintf("\\addlinespace[%spt]", sep_height))
     ) %>%
     kableExtra::kable_styling(latex_options = c("repeat_header"))
 }
@@ -188,7 +205,7 @@ save_pdf.default <- function(
   papersize = "a4paper",
   orientation = "portrait",
   keep_source = FALSE,
-  kable_options,
+  kable_options = default_kable_options,
   template = system.file("templates", "save_tex.Rmd", package = "tatoo")
 ){
   temp <- readLines(template)
@@ -197,6 +214,7 @@ save_pdf.default <- function(
     if (overwrite) unlink(outfile)
     else stop(sprintf("'%s' already exists."))
   }
+
 
   tex <- as_latex(x, ..., kable_options = kable_options)
   tex <- gsub("{TABLE}", tex, temp, fixed = TRUE)
