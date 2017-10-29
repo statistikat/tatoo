@@ -4,11 +4,11 @@
 #'
 #' Convert a vector to valid excel sheet names by:
 #' * trimming names down to 31 characters,
-#' * ensuring each element of the vector is unique,
-#' * and removing the illegal characters \code{ \ / * [ ] : ?}.
+#' * ensuring each element of the vector is unique, and
+#' * removing the illegal characters `\ / * [ ] : ?`
 #'
 #' @param x a vector (or anything that can be coerced to one via
-#'   \code{as.character()}).
+#'   [as.character()]).
 #' @param replace a scalar character to replace illegal characters with
 #'
 #' @return a character vector of valid excel sheet names
@@ -46,6 +46,29 @@ sanitize_excel_sheet_names <- function(x, replace = '_'){
   return(res)
 }
 
+
+
+
+#' Open a file
+#'
+#' Open a file with the default associated program. Might behave differently
+#' depending on the operating system.
+#'
+#' @param x `character` scalar. Path to the file to open.
+#'
+#' @return `NULL` (invisibly)
+#' @export
+#'
+open_file <- function(x){
+  open_cmd <- switch(
+    Sys.info()[["sysname"]],
+    "Linux" = "xdg-open",
+    "Windows" = "start",
+    "macOS" = "open"
+  )
+  system(paste(open_cmd, x))
+  invisible()
+}
 
 
 
