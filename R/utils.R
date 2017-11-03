@@ -60,13 +60,18 @@ sanitize_excel_sheet_names <- function(x, replace = '_'){
 #' @export
 #'
 open_file <- function(x){
-  open_cmd <- switch(
-    Sys.info()[["sysname"]],
-    "Linux" = "xdg-open",
-    "Windows" = "start",
-    "macOS" = "open"
-  )
-  system(paste(open_cmd, x))
+  os <- Sys.info()[["sysname"]]
+
+  if (os == "Windows") {
+    cmd <- sprintf('start "" "%s"', x)
+    shell(cmd)
+  } else if (os == "Linux") {
+    system2("xdg-open", x)
+  } else {
+    system2("open", x)  # MacOS?
+  }
+
+
   invisible()
 }
 
