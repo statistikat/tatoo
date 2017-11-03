@@ -76,6 +76,8 @@ test_that('save_pdf works', {
 })
 
 
+
+
 test_that('save_pdf works', {
   outdir <- rprojroot::find_testthat_root_file("testout")
   source(rprojroot::find_testthat_root_file('testdata', 'testdata.R'))
@@ -96,7 +98,13 @@ test_that('save_pdf works', {
   unlink(x)
 
 
-  x <- save_pdf(t_report_mash)
+  x <- save_pdf(
+    t_report_mash,
+    outfile = rprojroot::find_testthat_root_file('testout', 't_report_mash.pdf'),
+    overwrite = TRUE,
+    keep_source = T
+  )
+
   open_file(x)
   unlink(x)
 
