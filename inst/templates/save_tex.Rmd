@@ -1,7 +1,7 @@
 \documentclass{article}
 \pagestyle{empty}
 \usepackage{geometry}
-\geometry{{PAPERSIZE}, {ORIENTATION}, margin=2in}
+\geometry{{PAPERSIZE}, {ORIENTATION}, margin=0.5in}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{threeparttablex}
