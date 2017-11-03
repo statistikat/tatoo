@@ -116,6 +116,14 @@ as_latex.Mashed_table <- function(
   assert_that(is.flag(insert_blank_row))
   sep_height = sep_height - 12 * !insert_blank_row
 
+
+  if (identical(mash_method, "row")){
+    linesep <- c(rep('', length(x) - 1 + insert_blank_row), sprintf("\\addlinespace[%spt]", sep_height))
+  } else {
+    linesep <- ""
+  }
+
+
   res <- x %>%
     as.data.table(
       id_vars = id_vars,
@@ -125,7 +133,7 @@ as_latex.Mashed_table <- function(
       format = "latex",
       booktabs = TRUE,
       longtable = TRUE,
-      linesep = c(rep('', length(x) - 1 + insert_blank_row), sprintf("\\addlinespace[%spt]", sep_height))
+      linesep = linesep
     ) %>%
     kableExtra::kable_styling(latex_options = c("repeat_header"))
 }
@@ -212,7 +220,7 @@ save_pdf.default <- function(
 
   if (file.exists(outfile)){
     if (overwrite) unlink(outfile)
-    else stop(sprintf("'%s' already exists."))
+    else stop(sprintf("'%s' already exists.", outfile))
   }
 
 
@@ -233,7 +241,7 @@ save_pdf.default <- function(
   assert_that(file.copy(from = tf[[2]], to = outfile, overwrite = overwrite))
 
   if (keep_source){
-    file.copy(tf[[1]], paste0(outfile, ".tex"), overwrite = overwrite)
+    file.copy(tf[[1]], paste0(outfile, ".tex"), overwrite = TRUE)
   }
 
   invisible(outfile)
