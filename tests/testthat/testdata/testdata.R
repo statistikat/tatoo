@@ -78,7 +78,7 @@ t_mash_3 <- mash_table(
 )
 
 t_mash_4 <- mash_table(
-  t_df1, t_df1, t_df1,
+  table1 = t_df1, table2 = t_df1, table3 = t_df1,
   mash_method = 'col',
   id_vars = 'factors',
   sep_height = 50,
