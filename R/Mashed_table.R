@@ -335,11 +335,13 @@ as.data.table.Mashed_table <- function(
   assert_that(is.null(suffixes) || is.character(suffixes) )
   assert_that(is.null(suffixes) || length(suffixes) %identical% length(x))
 
+  names(x) <- suffixes
+
   if(mash_method %in% c('c', 'col', 'column', 'columns')){
     res <- mash_cols(x, id_vars = id_vars)
   } else if(mash_method %in% c('r', 'row', 'rows')) {
     res <- mash_rows(x, insert_blank_row = insert_blank_row)
-  } else{
+  } else {
     stop('mash_method must be either "row" or "col".')
   }
 
