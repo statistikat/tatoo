@@ -510,3 +510,20 @@ save_xlsx.default <- function(
   openxlsx::saveWorkbook(wb, outfile, overwrite)
   invisible(wb)
 }
+
+
+
+
+view_xlsx <- function(
+  x,
+  ...
+){
+  tf <- tempfile()
+
+  save_xlsx(
+    x, outfile = tf, overwrite = TRUE, ...
+  )
+
+  openxlsx::openXL(tf)
+
+}
