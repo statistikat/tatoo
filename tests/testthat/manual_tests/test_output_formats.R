@@ -108,4 +108,15 @@ test_that('save_pdf works', {
   open_file(x)
   unlink(x)
 
+
+  x <- save_pdf(
+    t_report_comp,
+    outfile = rprojroot::find_testthat_root_file('testout', 't_report_comp.pdf'),
+    overwrite = TRUE,
+    keep_source = T
+  )
+
+  open_file(x)
+  unlink(x)
+
 })
