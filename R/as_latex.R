@@ -29,9 +29,12 @@ as_latex <- function(x, ..., kable_options = default_kable_options){
 
 
 
+
 as_latex.default <- function(...){
   "not supported"
 }
+
+
 
 
 #' Title
@@ -57,17 +60,16 @@ as_latex.Tagged_table <- function(
       c(make_tag_table_print_title(meta)),
       collapse = " "
     )
-    ko = c(list(caption = caption), kable_options)
+    ko <- c(list(caption = caption), kable_options)
   } else {
     ko <- kable_options
   }
 
-  res <- NextMethod(as_latex, dd, ..., kable_options = ko)
-
+  res <- NextMethod(as_latex, x, ..., kable_options = ko)
 
   res <- gsub(
-    "\\\\bottomrule.\\\\endlastfoot",
-    "\\\\bottomrule\n\\\\insertTableNotes\n\\\\endlastfoot",
+    "\\\\bottomrule.\\\\endlastfoot",  #nolint
+    "\\\\bottomrule\n\\\\insertTableNotes\n\\\\endlastfoot",  #nolint
     res
   )
 
@@ -86,12 +88,40 @@ as_latex.Tagged_table <- function(
 }
 
 
+
+
+#' @inheritParams tag_table
+#' @inheritParams tag_table as_latex
+#' @export
+#'
+as_latex.Composite_table <- function(
+  x,
+  ...,
+  kable_options = default_kable_options
+){
+  header <- multinames_to_colspans(multinames(x))
+
+  res <- x %>%
+    as.data.table(
+      id_vars = id_vars,
+      multinames = FALSE
+    ) %>%
+    {do.call(knitr::kable, c(list(.), kable_options))} %>%  #nolint
+    kableExtra::kable_styling(latex_options = c("repeat_header")) %>%
+    kableExtra::add_header_above(header = header)
+}
+
+
+
+
 as_latex.Tatoo_report <- function(x, ...){
   x %>%
     lapply(as_latex) %>%
     unlist() %>%
     paste(sep = "\n", collapse = "\n")
 }
+
+
 
 
 #' Title
@@ -114,29 +144,45 @@ as_latex.Mashed_table <- function(
   kable_options = default_kable_options
 ){
   assert_that(is.flag(insert_blank_row))
-  sep_height = sep_height - 12 * !insert_blank_row
+  sep_height <- sep_height - 12 * !insert_blank_row
 
 
   if (identical(mash_method, "row")){
-    linesep <- c(rep('', length(x) - 1 + insert_blank_row), sprintf("\\addlinespace[%spt]", sep_height))
+    linesep <- c(
+      rep('', length(x) - 1 + insert_blank_row),
+      sprintf("\\addlinespace[%spt]", sep_height)
+    )
   } else {
     linesep <- ""
   }
 
+  if(
+    identical(mash_method, "col") &&
+    identical(length(names(x)), length(x))
+  ){
+    return(as_latex(as_Composite_table(x)))
+  } else {
+    header <- NULL
+  }
+
+  kable_options <- c(list(linesep = linesep), kable_options)
 
   res <- x %>%
     as.data.table(
       id_vars = id_vars,
-      insert_blank_row = insert_blank_row
+      insert_blank_row = insert_blank_row,
+      suffixes = NULL
     ) %>%
-    knitr::kable(
-      format = "latex",
-      booktabs = TRUE,
-      longtable = TRUE,
-      linesep = linesep
-    ) %>%
+    {do.call(knitr::kable, c(list(.), kable_options))} %>%  #nolint
     kableExtra::kable_styling(latex_options = c("repeat_header"))
+
+  if (!is.null(header)){
+    res <- kableExtra::add_header_above(res, header)
+  }
+
+  res
 }
+
 
 
 
@@ -154,11 +200,13 @@ as_latex.data.frame <- function(
 
 
 
+
 default_kable_options <- list(
   format = "latex",
   booktabs = TRUE,
   longtable = TRUE
 )
+
 
 
 
@@ -245,4 +293,21 @@ save_pdf.default <- function(
   }
 
   invisible(outfile)
+}
+
+
+
+
+# utils -------------------------------------------------------------------
+
+#' Convert multinames to colspans
+#'
+#' @param x a [Composite_table] [multinames] attribute.
+#' @return A named character vector of colspans (for [kableExtra::add_header_above()])
+#' @export
+#'
+multinames_to_colspans <- function(x){
+  header <- diff(c(0, x))
+  names(header)[names(header) == ""] <- " "
+  header
 }
