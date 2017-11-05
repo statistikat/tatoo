@@ -297,6 +297,16 @@ save_pdf.default <- function(
 
 
 
+#' @rdname as_workbook
+#' @export
+view_pdf <- function(x, ...){
+  tf <- tempfile()
+  save_pdf(x, outfile = tf, overwrite = TRUE, ...)
+  open_file(tf)
+}
+
+
+
 
 # utils -------------------------------------------------------------------
 
