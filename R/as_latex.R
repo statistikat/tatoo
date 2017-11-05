@@ -1,12 +1,18 @@
 #* @testfile manual_tests/test_output_formats
 
-#' Convert an \R Object to Latex code
+#' Convert a Table to Latex Code
 #'
+#' `as_latex()` converts an \R Object (currently [`Tatoo_table`]s and
+#' `data.frame`s) to latex code.
 #'
+#' `as_latex()` and co. are designed to produce nice looking output with a
+#' minimum of user input required. This is useful if you want a quick preview
+#' or printout of a table.  If you need customized Latex the output, you
+#' should take a look at the packages [kableExtra], [xtable], or [huxtable].
 #'
 #' @section Latex Packages:
-#' Code created with `as_latex` assumes that the following Latex packages are
-#' loaded:
+#' `as_latex` requires that the following Latex packages are installed on your
+#' system:
 #'
 #' ```
 #' \usepackage{booktabs}
@@ -14,15 +20,26 @@
 #' \usepackage{threeparttablex}
 #'```
 #'
-#' @param x
+#' @param x a [`Tatoo_table`], `data.frame` or a list of `data.frame`s
 #' @param ... passed on to methods
-#' @param kable_options
+#' @param kable_options `list`. Options passed on to [knitr::kable()]. See
+#'   [default_kable_options()] for details.
 #'
-#' @return
+#'
+#' @return `as_latex()`returns a `character` scalar of Latex code
 #' @export
+#' @family as_latex methods
 #'
 #' @examples
-as_latex <- function(x, ..., kable_options = default_kable_options){
+#'
+#' as_latex(iris)
+#' view_pdf(iris)
+#'
+as_latex <- function(
+  x,
+  ...,
+  kable_options = default_kable_options()
+){
   require_knitr()
   UseMethod("as_latex")
 }
@@ -30,28 +47,19 @@ as_latex <- function(x, ..., kable_options = default_kable_options){
 
 
 
-as_latex.default <- function(...){
-  "not supported"
-}
-
-
-
-
-#' Title
+#' Convert a Tagged Table to Latex Code
 #'
-#' @param x
 #' @inheritParams tag_table
-#' @param ...
-#' @param kable_options
+#' @inheritParams as_latex
+#' @inherit as_latex return
 #'
-#' @return
 #' @export
+#' @family as_latex methods
 #'
-#' @examples
 as_latex.Tagged_table <- function(
   x,
   ...,
-  kable_options = default_kable_options
+  kable_options = default_kable_options()
 ){
   meta  <- attr(x, 'meta')
 
@@ -90,14 +98,19 @@ as_latex.Tagged_table <- function(
 
 
 
-#' @inheritParams tag_table
-#' @inheritParams tag_table as_latex
+#' Convert a Composite Table to Latex Code
+#'
+#' @inheritParams comp_table
+#' @inheritParams as_latex
+#' @inherit as_latex return
+#'
 #' @export
+#' @family as_latex methods
 #'
 as_latex.Composite_table <- function(
   x,
   ...,
-  kable_options = default_kable_options
+  kable_options = default_kable_options()
 ){
   header <- multinames_to_colspans(multinames(x))
 
@@ -114,6 +127,15 @@ as_latex.Composite_table <- function(
 
 
 
+#' Convert a Tatoo Report to Latex Code
+#'
+#' @inheritParams compile_report
+#' @inheritParams as_latex
+#' @inherit as_latex return
+#'
+#' @export
+#' @family as_latex methods
+#'
 as_latex.Tatoo_report <- function(x, ...){
   x %>%
     lapply(as_latex) %>%
@@ -124,16 +146,15 @@ as_latex.Tatoo_report <- function(x, ...){
 
 
 
-#' Title
+#' Convert a Mashed Table to Latex Code
 #'
-#' @param x
 #' @inheritParams mash_table
-#' @param ...
+#' @inheritParams as_latex
+#' @inherit as_latex return
 #'
-#' @return
 #' @export
+#' @family as_latex methods
 #'
-#' @examples
 as_latex.Mashed_table <- function(
   x,
   mash_method = attr(x, 'mash_method'),
@@ -141,7 +162,7 @@ as_latex.Mashed_table <- function(
   insert_blank_row = attr(x, 'insert_blank_row'),
   sep_height = attr(x, 'sep_height'),
   ...,
-  kable_options = default_kable_options
+  kable_options = default_kable_options()
 ){
   assert_that(is.flag(insert_blank_row))
   sep_height <- sep_height - 12 * !insert_blank_row
@@ -186,10 +207,36 @@ as_latex.Mashed_table <- function(
 
 
 
+#' @export
+as_latex.list <- function(
+  x,
+  ...,
+  kable_options = default_kable_options()
+){
+  assert_that(all(purrr::map_lgl(x, is.data.frame)))
+
+  as_latex(
+    compile_report(x),
+    ...,
+    kable_options = kable_options
+  )
+}
+
+
+
+
+#' Convert a Data Frame to Latex Code
+#'
+#' @inheritParams as_latex
+#' @inherit as_latex return
+#'
+#' @export
+#' @family as_latex methods
+#'
 as_latex.data.frame <- function(
   x,
   ...,
-  kable_options = default_kable_options
+  kable_options = default_kable_options()
 ){
   do.call(
     knitr::kable,
@@ -201,24 +248,14 @@ as_latex.data.frame <- function(
 
 
 
-default_kable_options <- list(
-  format = "latex",
-  booktabs = TRUE,
-  longtable = TRUE
-)
-
-
-
-
-#' `save_pdf()` is a convenience wrapper around [as_latex()] for directly saving
+#' @description `save_pdf()` is a wrapper around `as_latex()` for directly saving
 #' an \R object to \file{.pdf}.
 #'
 #' @rdname as_latex
-#' @param x
-#' @param outfile
-#' @oaram ... passed on to methods
-#' @param overwrite
-#' @param template
+#' @param outfile `character` scalar. Path to the output file
+#' @template overwrite
+#' @param template Latex template for the desired output. Use the template
+#'   file supplied in this package if you want to create your own.
 #' @param papersize `character` scalar. Passed on to the latex command
 #'   `\\geometry` from the 'geometry' package. Valid values are: `a0paper,
 #'   a1paper, a2paper, a3paper, a4paper, a5paper, a6paper, b0paper, b1paper,
@@ -229,12 +266,13 @@ default_kable_options <- list(
 #' @param orientation `character` scalar. Passed on to the latex command
 #'   `\\geometry` from the 'geometry' package. Valid values are:
 #'   `portrait`, `landscape`
-#' @param keep_source
+#' @param keep_source When saving a \file{pdf}, also put the Latex source
+#'   in the same directory.
 #'
-#' @return
+#' @return `save_pdf()` returns a the path to the saved file as `character`
+#'   scalar.
 #' @export
 #'
-#' @examples
 save_pdf <- function(
   x,
   outfile = paste0(paste(substitute(x), collapse = "_"), ".pdf"),
@@ -252,7 +290,6 @@ save_pdf <- function(
 
 
 #' @export
-#' @rdname save_pdf
 save_pdf.default <- function(
   x,
   outfile = paste0(make.names(paste(substitute(x), collapse = "_")), ".pdf"),
@@ -261,7 +298,7 @@ save_pdf.default <- function(
   papersize = "a4paper",
   orientation = "portrait",
   keep_source = FALSE,
-  kable_options = default_kable_options,
+  kable_options = default_kable_options(),
   template = system.file("templates", "save_tex.Rmd", package = "tatoo")
 ){
   temp <- readLines(template)
@@ -297,12 +334,19 @@ save_pdf.default <- function(
 
 
 
-#' @rdname as_workbook
+
+#' @description `view_pdf()` is another wrapper for directly viewing an \R
+#'   Object's pdf representation on a pdf viewer (powered by [open_file()]).
+#'
+#' @return `view_pdf()` returns `NULL` (invisibly)
+#'
+#' @rdname as_latex
 #' @export
 view_pdf <- function(x, ...){
   tf <- tempfile()
   save_pdf(x, outfile = tf, overwrite = TRUE, ...)
   open_file(tf)
+  invisible()
 }
 
 
@@ -320,4 +364,34 @@ multinames_to_colspans <- function(x){
   header <- diff(c(0, x))
   names(header)[names(header) == ""] <- " "
   header
+}
+
+
+
+
+# default_kable_options ---------------------------------------------------
+
+#' Default Kable options for as_latex and co
+#'
+#' `default_kable_options()` returns a list of the default options that are
+#' required for [`as_latex()`] to work correclty. Those defaults should not be
+#' modified, but you can pass additional [knitr::kable()] options to
+#' `as_latex()` to modify the output a bit.
+#'
+#' @param ... additional arguments added to the options list
+#'
+#' @export
+#' @examples
+#'
+#' default_kable_options
+#'
+#' as_latex(iris, kable_options = default_kable_options(digits = 0))
+#'
+default_kable_options <- function(...){
+  list(
+    format = "latex",
+    booktabs = TRUE,
+    longtable = TRUE,
+    ...
+  )
 }
