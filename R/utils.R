@@ -71,9 +71,9 @@ open_file <- function(x){
     system2("open", x)  # MacOS?
   }
 
-
   invisible()
 }
+
 
 
 
@@ -113,6 +113,7 @@ make_sepline <- function(x, width, offset = 0){
   }
   return(res)
 }
+
 
 
 
