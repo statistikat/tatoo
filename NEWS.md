@@ -3,6 +3,11 @@
 * Convert `Tatoo_table` objects to Latex code or save them directly to `.pdf`
   with `as_latex()` and `save_pdf`.
 * Added `open_file()` utility to open files with external programs.
+* Added `view_pdf()` and `view_xlsx()` for directly viewing tables in a .pdf
+  viewer or spreadsheet program
+* `save_xlsx()` now returns the path to the saved workbook, raher than the
+  workbook object
+
 
 # tatoo 1.0.8
 
@@ -21,9 +26,11 @@
 * `flip_names()` can flip names and multinames of a composite table (at the cost 
   of reordering the columns)
 
+
 # tatoo 1.0.6
 
 * Removed dplyr dependency
+
 
 # tatoo 1.0.5
 
