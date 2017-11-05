@@ -16,7 +16,7 @@
 #'   or [`Tatoo_table`]s
 #'
 #' @rdname Tatoo_report
-#' @aliases Tatoo_report tatoo_report compile_report
+#' @aliases Tatoo_report tatoo_report
 #' @export
 compile_report <- function(...){
   compile_report_list(list(...))
