@@ -4,7 +4,7 @@
 
 #' Convert a Tatoo Table Object to an Excel Workbook
 #'
-#' This function converts [`Tatoo_table`] or [`Tatoo_report`] objects directly
+#' `as_workbook()` converts [`Tatoo_table`] or [`Tatoo_report`] objects directly
 #' to [openxlsx] `Workbook` objects. For information about additional parameters
 #' please refer to the documentation of [write_worksheet()], for which
 #' `as_workbook()` is just a wrapper. Additional possible function arguments way
@@ -14,7 +14,8 @@
 #' @param ... Additional arguments passed on to `write_worksheet()`
 #'
 #' @family xlsx exporters
-#' @return an openxlsx openxlsx `Workbook` object (invisibly for `save_xlsx()`)
+#' @return `as_workbook()` returns an openxlsx `Workbook` object.
+#'
 #' @export
 #'
 #' @examples
@@ -320,7 +321,7 @@ write_worksheet.Composite_table <- function(
 
   ## merge subtable heading cells
   for(i in seq_along(multinames)){
-    merge_start <- ifelse(i == 1L, 1, multinames[[i-1]] + 1)
+    merge_start <- ifelse(i == 1L, 1, multinames[[i-1]] + 1)  #nolint
     merge_end   <- multinames[[i]]
     openxlsx::mergeCells(
       wb,
@@ -474,13 +475,13 @@ write_worksheet.Stacked_table <- function(
 
 # save_xlsx ---------------------------------------------------------------
 
-#' `save_xlsx()` is a shortcut to save a `Tatoo_table` directly to local xlsx
-#' file.
+#' @description `save_xlsx()` is a wrapper for saving a `Tatoo_table` directly
+#'   to an \file{xlsx} file.
 #'
 #' @template outfile
 #' @template overwrite
 #'
-#' @return `TRUE` on success
+#' @return `save_xlsx()` returns the path to the saved \file{.xlsx} (invisibly).
 #' @export
 #' @rdname as_workbook
 #'
@@ -508,22 +509,26 @@ save_xlsx.default <- function(
 ){
   wb <- as_workbook(x, ...)
   openxlsx::saveWorkbook(wb, outfile, overwrite)
-  invisible(wb)
+  invisible(outfile)
 }
 
 
 
 
+#' @description  `view_xlsx()` is another wrapper for viewing a `Tatoo_table`'s
+#' \file{xlsx} representation in your favourite spreadsheet program (powered by
+#' [openxlsx::openXL()]).
+#'
+#' @return `view_xlsx()` opens an external program and returns `NULL` (invisibly).
+#'
+#' @rdname as_workbook
+#' @export
 view_xlsx <- function(
   x,
   ...
 ){
   tf <- tempfile()
-
-  save_xlsx(
-    x, outfile = tf, overwrite = TRUE, ...
-  )
-
+  save_xlsx(x, outfile = tf, overwrite = TRUE, ...)
   openxlsx::openXL(tf)
-
+  invisible()
 }
