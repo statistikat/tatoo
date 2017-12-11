@@ -42,7 +42,7 @@ as_workbook <- function(
   x,
   ...
 ){
-  assert_that(requireNamespace("openxlsx"))
+  assert_that(requireNamespace("openxlsx", silent = TRUE))
   UseMethod('as_workbook')
 }
 
@@ -106,6 +106,10 @@ as_workbook.Tatoo_report <- function(x, ...){
 }
 
 
+
+
+#' @export
+as_workbook.Workbook <- identity
 
 
 # write_worksheet ---------------------------------------------------------
@@ -527,8 +531,6 @@ view_xlsx <- function(
   x,
   ...
 ){
-  tf <- tempfile()
-  save_xlsx(x, outfile = tf, overwrite = TRUE, ...)
-  openxlsx::openXL(tf)
+  openxlsx::openXL(as_workbook(x, ...))
   invisible()
 }

@@ -1,5 +1,8 @@
 context('Saving xlsx files')
 
+
+
+
 test_that('save_xlsx saves files to disc for manual check', {
   # Setup
     source(rprojroot::find_testthat_root_file('testdata', 'testdata.R'))
@@ -18,6 +21,8 @@ test_that('save_xlsx saves files to disc for manual check', {
     expect_silent(save_xlsx(t_report_stack, of, overwrite = TRUE))
     expect_true(file.exists(of))
 })
+
+
 
 
 test_that('save_tex mash_tablesk', {
@@ -39,6 +44,8 @@ test_that('save_tex mash_tablesk', {
 })
 
 
+
+
 test_that('save_pdf works', {
   outdir <- rprojroot::find_testthat_root_file("testout")
 
@@ -52,6 +59,7 @@ test_that('save_pdf works', {
   # open_file(x)
   unlink(x)
 })
+
 
 
 
