@@ -42,7 +42,7 @@ as_workbook <- function(
   x,
   ...
 ){
-  assert_that(requireNamespace("openxlsx", silent = TRUE))
+  require_openxlsx()
   UseMethod('as_workbook')
 }
 
@@ -150,7 +150,7 @@ write_worksheet <- function(
   assert_that(is.scalar(sheet))
   assert_that(is.flag(append))
   assert_that(rlang::is_scalar_integerish(start_row))
-  assert_that(requireNamespace("openxlsx"))
+  require_openxlsx()
 
   UseMethod('write_worksheet')
 }
@@ -497,6 +497,7 @@ save_xlsx <- function(
 ){
   assert_that(rlang::is_scalar_character(outfile))
   assert_that(is.flag(overwrite))
+  require_openxlsx()
 
   UseMethod('save_xlsx')
 }

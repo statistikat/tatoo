@@ -118,5 +118,12 @@ make_sepline <- function(x, width, offset = 0){
 
 
 require_knitr <- function(){
-  requireNamespace("knitr", quietly = TRUE)
+  assert_that(requireNamespace("knitr", quietly = TRUE))
 }
+
+
+
+require_openxlsx <- function(){
+  assert_that(requireNamespace("openxlsx", quietly = TRUE))
+}
+
