@@ -20,7 +20,8 @@ Imports:
     purrr,
     rlang,
     stringi,
-    colt
+    colt,
+    crayon
 Suggests:
     testthat,
     rprojroot,

@@ -32,7 +32,7 @@ as_lines.data.frame <- function(
   )
 
   res[is.na(res)] <- "NA"
-  res <- apply(res, 2, function(x) stringi::stri_pad_left(x, max(nchar(x), na.rm = TRUE)))
+  res <- apply(res, 2, function(x) stringi::stri_pad_left(x, max(crayon::col_nchar(x), na.rm = TRUE)))
   res <- apply(res, 1, paste, collapse = " ")
 
   if(color){
@@ -191,7 +191,7 @@ as_lines.Composite_table <- function(
     x[i_na]  <- 'NA'
     x <- c(colname, x)
 
-    pad_width <- max(nchar(x))
+    pad_width <- max(crayon::col_nchar(x))
     stringi::stri_pad_left(as.character(x), pad_width)
   }
 
@@ -224,13 +224,13 @@ as_lines.Composite_table <- function(
 
   for(i in seq_along(res)){
     title  <- stringi::stri_pad_both(
-      names(multinames)[[i]], max(nchar(res[[i]])),
+      names(multinames)[[i]], max(crayon::col_nchar(res[[i]])),
       '.'
     )
 
     column <- stringi::stri_pad_both(
       res[[i]],
-      nchar(title)
+      crayon::col_nchar(title)
     )
 
     tmp[[i]] <- c(title, column)
@@ -282,7 +282,7 @@ as_lines.Tatoo_report <- function(x, color = TRUE, ...){
 #' @rdname as_lines
 #' @export
 as_lines.TT_meta <- function(x, color = TRUE, ...){
-  name_width   <- max(unlist(lapply(names(x), nchar))) + 1
+  name_width   <- max(unlist(lapply(names(x), crayon::col_nchar))) + 1
   print_string <- paste0('%', name_width, 's: %s')
   padded_newline <- rep(' ', name_width + 2) %>%
     paste(collapse = '')
@@ -359,8 +359,8 @@ as_lines_several_tables <- function(
 
   # Process arguments
   tables_char  <- purrr::map(dat, as_lines, color = color)
-  tables_width <- max(nchar(unlist(tables_char)))
-  sepline1 <- make_sepline(sep1, width = tables_width, offset = nchar(indent))
+  tables_width <- max(crayon::col_nchar(unlist(tables_char)))
+  sepline1 <- make_sepline(sep1, width = tables_width, offset = crayon::col_nchar(indent))
   sepline2 <- make_sepline(sep2, width = tables_width)
 
   if(color){

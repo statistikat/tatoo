@@ -231,7 +231,7 @@ assertthat::on_failure(is_col_classes) <- function(call, env){
   }
 
   if(length(wrong) > 0){
-    wrong <- substr(wrong, 1, nchar(wrong) - 2)
+    wrong <- substr(wrong, 1, crayon::col_nchar(wrong) - 2)
     msg = paste0(msg, 'Wrong classes: ', wrong)
   }
 

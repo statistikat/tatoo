@@ -36,7 +36,7 @@ sanitize_excel_sheet_names <- function(x, replace = '_'){
 
     if(length(res[res == el]) > 1L){
       res[res == el] <- paste0(
-        strtrim(res[res == el], 31 - max(nchar(suffix))),
+        strtrim(res[res == el], 31 - max(crayon::col_nchar(suffix))),
         suffix)
     }
   }
