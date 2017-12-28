@@ -31,8 +31,8 @@ as_lines.data.frame <- function(
     as.matrix(unname(x))
   )
 
-
-  res <- apply(res, 2, function(x) stringi::stri_pad_left(x, max(nchar(x))))
+  res[is.na(res)] <- "NA"
+  res <- apply(res, 2, function(x) stringi::stri_pad_left(x, max(nchar(x), na.rm = TRUE)))
   res <- apply(res, 1, paste, collapse = " ")
 
   if(color){
