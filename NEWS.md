@@ -1,12 +1,13 @@
 # tatoo 1.0.8.9000
 
 * Convert `Tatoo_table` objects to Latex code or save them directly to `.pdf`
-  with `as_latex()` and `save_pdf`.
+  with `as_latex()` and `save_pdf()` (experimental).
 * Added `open_file()` utility to open files with external programs.
 * Added `view_pdf()` and `view_xlsx()` for directly viewing tables in a .pdf
   viewer or spreadsheet program
 * `save_xlsx()` now returns the path to the saved workbook, raher than the
   workbook object
+* Various small fixes related to `print()` methods
 
 
 # tatoo 1.0.8

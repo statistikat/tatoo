@@ -188,4 +188,3 @@ test_that("print does not fail on invalid composite tables without multinames", 
     'is not a valid composite table'
   )
 })
-
