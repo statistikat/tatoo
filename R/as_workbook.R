@@ -109,7 +109,9 @@ as_workbook.Tatoo_report <- function(x, ...){
 
 
 #' @export
-as_workbook.Workbook <- identity
+as_workbook.Workbook <- function(x, ...){
+  x
+}
 
 
 # write_worksheet ---------------------------------------------------------

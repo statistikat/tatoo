@@ -1,4 +1,4 @@
-# tatoo 1.0.8.9000
+# tatoo 1.0.9
 
 * Convert `Tatoo_table` objects to Latex code or save them directly to `.pdf`
   with `as_latex()` and `save_pdf()` (experimental).

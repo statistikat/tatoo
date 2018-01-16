@@ -8,7 +8,7 @@
 #' `as_latex()` and co. are designed to produce nice looking output with a
 #' minimum of user input required. This is useful if you want a quick preview
 #' or printout of a table.  If you need customized Latex the output, you
-#' should take a look at the packages [kableExtra], [xtable], or [huxtable].
+#' should take a look at the packages [kableExtra::kableExtra], **xtable**, or **huxtable**.
 #'
 #' @section Latex Packages:
 #' `as_latex` requires that the following Latex packages are installed on your
@@ -109,6 +109,7 @@ as_latex.Tagged_table <- function(
 #'
 as_latex.Composite_table <- function(
   x,
+  id_vars = id_vars(x),
   ...,
   kable_options = default_kable_options()
 ){

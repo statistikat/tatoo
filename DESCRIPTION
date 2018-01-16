@@ -1,7 +1,7 @@
 Package: tatoo
 Type: Package
 Title: Combine and Export Data Frames
-Version: 1.0.8.9001
+Version: 1.0.9
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description:
@@ -21,10 +21,12 @@ Imports:
     rlang,
     stringi,
     colt,
-    crayon
+    crayon,
+    withr
 Suggests:
     testthat,
     rprojroot,
+    kableExtra,
     knitr,
     rmarkdown
 RoxygenNote: 6.0.1.9000

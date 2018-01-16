@@ -1,11 +1,12 @@
 ## Release summary
 
-Color support for print methods
+Various small bugfixes and improvements. Added experimental latex output 
+support.
+
 
 ## Test environments
-* Ubuntu 17.04, R 3.4.0
-* windows Vista, R 3.3.2
-* win-builder (devel and release)
+* Windows 7, R 3.4.2
+
 
 ## R CMD check results
 
