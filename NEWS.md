@@ -1,3 +1,5 @@
+# tatoo 1.0.9.9000
+
 # tatoo 1.0.9
 
 * Convert `Tatoo_table` objects to Latex code or save them directly to `.pdf`
