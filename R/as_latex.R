@@ -31,9 +31,12 @@
 #' @family as_latex methods
 #'
 #' @examples
+#'   as_latex(iris)
 #'
-#' as_latex(iris)
-#' view_pdf(iris)
+#' \dontrun{
+#'   view_pdf(iris)  # Not supported on all systems
+#' }
+#'
 #'
 as_latex <- function(
   x,
