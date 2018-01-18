@@ -68,7 +68,7 @@ open_file <- function(x){
   } else if (os == "Linux") {
     system2("xdg-open", x)
   } else {
-    system2("open", x)  # MacOS?
+    stop("OS not supported")
   }
 
   invisible()
