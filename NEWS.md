@@ -1,4 +1,6 @@
-# tatoo 1.0.9.9000
+# tatoo 1.0.10
+
+* Bugfix release (faulty example code for open_file)
 
 # tatoo 1.0.9
 
