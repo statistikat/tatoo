@@ -1,7 +1,9 @@
 ## Release summary
 
-Build was failing on some systems due to faulty example code in the 
-documentation of `open_file()`
+I removed the default output file arguments for functions that write to the
+hard disk. I could not find any examples that wrote to the hard disk, but there 
+was one possible offender that I commented out in the vignette.
+
 
 
 ## Test environments

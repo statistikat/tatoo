@@ -81,20 +81,22 @@ print_tex <- function(dat, ...){
 #' @export
 #'
 #' @examples
-print_tex.Mashed_table <- function(dat,
-                                 mash_method = 'row',
-                                 insert_blank_row = (mash_method == 'row'),
-                                 .align = paste0('lX',
-                                                 paste(rep('X',
-                                                           ncol(dat[[1]]) - 1),
-                                                       collapse = '')),
-                                 .include.rownames=FALSE,
-                                 .floating = FALSE,
-                                 .booktabs = TRUE,
-                                 .sanitize.text.function = identity,
-                                 .width = '\\textwidth',
-                                 .caption = NULL,
-                                 ...){
+print_tex.Mashed_table <- function(
+  dat,
+  mash_method = 'row',
+  insert_blank_row = (mash_method == 'row'),
+  .align = paste0(
+    'lX',
+    paste(rep('X', ncol(dat[[1]]) - 1),
+    collapse = '')),
+  .include.rownames=FALSE,
+  .floating = FALSE,
+  .booktabs = TRUE,
+  .sanitize.text.function = identity,
+  .width = '\\textwidth',
+  .caption = NULL,
+  ...
+){
 
   # Preconditions
   mash_method %assert_class% 'character'
@@ -104,9 +106,11 @@ print_tex.Mashed_table <- function(dat,
 
 
   # Stacking
-  res <- switch(mash_method,
-                'row' = mash_rows_tex(dat, insert_blank_row = FALSE),
-                'col' = mash_cols_tex(dat))
+  res <- switch(
+    mash_method,
+    'row' = mash_rows_tex(dat, insert_blank_row = FALSE),
+    'col' = mash_cols_tex(dat)
+  )
 
   # format latex
   xtable::xtable(
@@ -122,8 +126,3 @@ print_tex.Mashed_table <- function(dat,
       width = .width,
       ...)
 }
-
-
-
-
-

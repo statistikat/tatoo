@@ -295,8 +295,8 @@ wb <- as_workbook(tatoo_report)
 ```
 
 For direct xlsx export
-```{r}
-save_xlsx(tatoo_report, 'report_example.xlsx', overwrite = TRUE)
+```{r, eval = FALSE}
+# save_xlsx(tatoo_report, paste(tempfile(), ".xlsx"), overwrite = TRUE)
 ```
 
 
