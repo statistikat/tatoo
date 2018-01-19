@@ -1,5 +1,3 @@
-#* @testfile test_save_xlsx
-
 # as_workbook -------------------------------------------------------------
 
 #' Convert a Tatoo Table Object to an Excel Workbook
@@ -416,6 +414,7 @@ write_worksheet.Mashed_table <- function(
 
     assert_that(!is_Mashed_table(res))  # prevent infinite loop
 
+
   # Write data
     wb <- write_worksheet(
       res,
@@ -429,8 +428,27 @@ write_worksheet.Mashed_table <- function(
       wb = wb,
       sheet = sheet,
       cols = seq_along(res),
-      rows = seq(start_row, start_row + nrow(res) + !is.null(attr(res, "multinames"))),
+      rows = seq(start_row, start_row + nrow(res) + as.integer(!is.null(attr(res, "multinames")))),
       name = region_name("table")
+    )
+
+    openxlsx::createNamedRegion(
+      wb = wb,
+      sheet = sheet,
+      cols = seq_along(res),
+      rows = seq(start_row, start_row + as.integer(!is.null(attr(res, "multinames")))),
+      name = region_name("table.colnames")
+    )
+
+    openxlsx::createNamedRegion(
+      wb = wb,
+      sheet = sheet,
+      cols = seq_along(res),
+      rows = seq(
+        start_row + as.integer(!is.null(attr(res, "multinames"))) + 1L,
+        start_row + as.integer(!is.null(attr(res, "multinames"))) + nrow(res)
+      ),
+      name = region_name("table.body")
     )
 
 
