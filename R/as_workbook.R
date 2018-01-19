@@ -242,6 +242,16 @@ write_worksheet.Tagged_table <- function(
     startRow = crow
   )
 
+  if(length(header) > 0){
+    openxlsx::createNamedRegion(
+      wb,
+      sheet = sheet,
+      cols  = 1L,
+      rows  = seq(crow, crow + length(header) - 1L),
+      name  = region_name("header")
+    )
+  }
+
 
   # write data
   crow <- crow + length(header) + 1
@@ -270,6 +280,15 @@ write_worksheet.Tagged_table <- function(
       startRow = crow,
       meta$footer
     )
+
+    openxlsx::createNamedRegion(
+      wb,
+      sheet = sheet,
+      cols  = 1L,
+      rows  = seq(crow, crow + length(meta$footer) - 1L),
+      name  = region_name("footer")
+    )
+
   }
 
 
@@ -406,6 +425,15 @@ write_worksheet.Mashed_table <- function(
       start_row = start_row
     )
 
+    openxlsx::createNamedRegion(
+      wb = wb,
+      sheet = sheet,
+      cols = seq_along(res),
+      rows = seq(start_row, start_row + nrow(res) + !is.null(attr(res, "multinames"))),
+      name = region_name("table")
+    )
+
+
   # Modify row heights
     row_off          <- start_row - 1
     sep_height_start <- length(x) + 2  # +2 because of header
@@ -536,4 +564,10 @@ view_xlsx <- function(
 ){
   openxlsx::openXL(as_workbook(x, ...))
   invisible()
+}
+
+
+
+region_name <- function(...){
+  paste0(..., ".", stringi::stri_rand_strings(1, 16))
 }
