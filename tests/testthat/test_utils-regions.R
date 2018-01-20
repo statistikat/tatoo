@@ -9,10 +9,12 @@ test_that("utils-regions works as expected", {
   )
 
   td <- attr(tdat, "position")
+  tres <- excel_range_to_indices(td)
 
-  excel_range_to_indices(td)
-
-
+  expect_identical(
+    vapply(tres, nrow, integer(1)),
+    c(3L, 70L, 1L)
+  )
 })
 
 
@@ -23,6 +25,9 @@ test_that("utils-regions works as expected", {
     position = c("A1:A3",  "A5:J11", "A13:A13")
   )
 
-  excel_regions_to_dt(tdat)
+  eres <- testthis::read_testdata("utils_regions_expected.rds")
+  tres <- excel_regions_to_dt(tdat)
+
+  expect_equal(eres, tres)
 })
 
