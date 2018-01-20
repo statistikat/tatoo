@@ -78,7 +78,10 @@ as_workbook.default <- function(
 #'
 #' @rdname as_workbook
 #' @export
-as_workbook.Tatoo_report <- function(x, ...){
+as_workbook.Tatoo_report <- function(
+  x,
+  ...
+){
   wb <- openxlsx::createWorkbook()
 
   for(i in seq_along(x)){
@@ -133,6 +136,12 @@ as_workbook.Workbook <- function(x, ...){
 #' @inheritParams mash_table
 #' @inheritParams stack_table
 #' @inheritParams as_workbook
+#' @param named_regions `logical`. If `TRUE` (default) named regions are created
+#'   in the target excel file to identify different parts of the tables
+#'   (header, body, column names, etc...). These named regions can, for example,
+#'   be used for applying formats. Creating named regions can be switched of
+#'   as this might impact perfomance of the excel conversion and writing of
+#'   excel files for workbooks with large numbers of tables.
 #'
 #' @return an [openxlsx] Workbook object
 #' @family xlsx exporters
@@ -144,7 +153,8 @@ write_worksheet <- function(
   sheet,
   append = FALSE,
   start_row = 1L,
-  ...
+  ...,
+  named_regions = TRUE
 ){
   wb %assert_class% 'Workbook'
   assert_that(is.scalar(sheet))
@@ -165,7 +175,8 @@ write_worksheet.default <- function(
   sheet,
   append = FALSE,
   start_row = 1L,
-  ...
+  ...,
+  named_regions = TRUE
 ){
   if(!append){
     openxlsx::addWorksheet(wb, sheet)
@@ -192,7 +203,8 @@ write_worksheet.Tagged_table <- function(
   sheet = sanitize_excel_sheet_names(attr(x, 'meta')$table_id),
   append = FALSE,
   start_row = 1L,
-  ...
+  ...,
+  named_regions = TRUE
 ){
   wb %assert_class% 'Workbook'
   assert_that(has_attr(x, 'meta'))
@@ -240,7 +252,8 @@ write_worksheet.Tagged_table <- function(
     startRow = crow
   )
 
-  if(length(header) > 0){
+
+  if(named_regions && length(header) > 0){
     openxlsx::createNamedRegion(
       wb,
       sheet = sheet,
@@ -263,7 +276,8 @@ write_worksheet.Tagged_table <- function(
     sheet = sheet,
     append = TRUE,
     start_row = crow,
-    ...
+    ...,
+    named_regions = named_regions
   )
 
 
@@ -279,16 +293,16 @@ write_worksheet.Tagged_table <- function(
       meta$footer
     )
 
-    openxlsx::createNamedRegion(
-      wb,
-      sheet = sheet,
-      cols  = 1L,
-      rows  = seq(crow, crow + length(meta$footer) - 1L),
-      name  = region_name("footer")
-    )
-
+    if (named_regions){
+      openxlsx::createNamedRegion(
+        wb,
+        sheet = sheet,
+        cols  = 1L,
+        rows  = seq(crow, crow + length(meta$footer) - 1L),
+        name  = region_name("footer")
+      )
+    }
   }
-
 
   return(wb)
 }
@@ -304,7 +318,8 @@ write_worksheet.Composite_table <- function(
   sheet,
   append = FALSE,
   start_row = 1L,
-  ...
+  ...,
+  named_regions = TRUE
 ){
   # Pre-condtions
   assert_that(has_attr(x, 'multinames'))
@@ -382,7 +397,8 @@ write_worksheet.Mashed_table <- function(
   id_vars  = attr(x, 'id_vars'),
   insert_blank_row = attr(x, 'insert_blank_row'),
   sep_height = attr(x, 'sep_height'),
-  ...
+  ...,
+  named_regions = TRUE
 ){
   # Preconditions
     assert_that(mash_method %identical% 'col' || mash_method %identical% 'row')
@@ -424,32 +440,32 @@ write_worksheet.Mashed_table <- function(
       start_row = start_row
     )
 
-    openxlsx::createNamedRegion(
-      wb = wb,
-      sheet = sheet,
-      cols = seq_along(res),
-      rows = seq(start_row, start_row + nrow(res) + as.integer(!is.null(attr(res, "multinames")))),
-      name = region_name("table")
-    )
-
-    openxlsx::createNamedRegion(
-      wb = wb,
-      sheet = sheet,
-      cols = seq_along(res),
-      rows = seq(start_row, start_row + as.integer(!is.null(attr(res, "multinames")))),
-      name = region_name("table.colnames")
-    )
-
-    openxlsx::createNamedRegion(
-      wb = wb,
-      sheet = sheet,
-      cols = seq_along(res),
-      rows = seq(
-        start_row + as.integer(!is.null(attr(res, "multinames"))) + 1L,
-        start_row + as.integer(!is.null(attr(res, "multinames"))) + nrow(res)
-      ),
-      name = region_name("table.body")
-    )
+    if (named_regions){
+      openxlsx::createNamedRegion(
+        wb = wb,
+        sheet = sheet,
+        cols = seq_along(res),
+        rows = seq(start_row, start_row + nrow(res) + as.integer(!is.null(attr(res, "multinames")))),
+        name = region_name("table")
+      )
+      openxlsx::createNamedRegion(
+        wb = wb,
+        sheet = sheet,
+        cols = seq_along(res),
+        rows = seq(start_row, start_row + as.integer(!is.null(attr(res, "multinames")))),
+        name = region_name("table.colnames")
+      )
+      openxlsx::createNamedRegion(
+        wb = wb,
+        sheet = sheet,
+        cols = seq_along(res),
+        rows = seq(
+          start_row + as.integer(!is.null(attr(res, "multinames"))) + 1L,
+          start_row + as.integer(!is.null(attr(res, "multinames"))) + nrow(res)
+        ),
+        name = region_name("table.body")
+      )
+    }
 
 
   # Modify row heights
