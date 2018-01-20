@@ -445,14 +445,20 @@ write_worksheet.Mashed_table <- function(
         wb = wb,
         sheet = sheet,
         cols = seq_along(res),
-        rows = seq(start_row, start_row + nrow(res) + as.integer(!is.null(attr(res, "multinames")))),
+        rows = seq(
+          start_row,
+          start_row + nrow(res) + as.integer(!is.null(attr(res, "multinames")))
+        ),
         name = region_name("table")
       )
       openxlsx::createNamedRegion(
         wb = wb,
         sheet = sheet,
         cols = seq_along(res),
-        rows = seq(start_row, start_row + as.integer(!is.null(attr(res, "multinames")))),
+        rows = seq(
+          start_row,
+          start_row + as.integer(!is.null(attr(res, "multinames")))
+        ),
         name = region_name("table.colnames")
       )
       openxlsx::createNamedRegion(

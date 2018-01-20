@@ -38,6 +38,7 @@ excel_regions_to_dt.character <- function(x){
 
 
 
+
 #' @export
 excel_regions_to_dt.Workbook <- function(x){
   excel_regions_to_dt.character(openxlsx::getNamedRegions(x))
