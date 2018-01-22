@@ -2,7 +2,7 @@
 
 [![CRAN status](http://www.r-pkg.org/badges/version/tatoo)](https://cran.r-project.org/package=tatoo)
 
-There were some minor issues with the last tatoo version that CRAN didn't like, so it is currently offline on CRAN. I hope to get it back up asap.
+There were some minor issues with the last tatoo version that CRAN didn't like. I hope to get it back up asap.
 
 ## Overview
 
