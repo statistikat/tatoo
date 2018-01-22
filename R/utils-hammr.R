@@ -108,9 +108,7 @@ is_class <- function(dat, class){
 
 
 on_failure(is_class) <- function(call, env){
-  #print(call)
-  #class = eval(env$class)
-  class = env$class
+  class <- env$class
   paste("Requires an object of class", class, "as input")
 }
 
@@ -148,7 +146,7 @@ is_any_class <- function(dat, choices){
 
 
 on_failure(is_any_class) <- function(call, env){
-  choices = paste(eval(call$choices), collapse=", ")
+  choices <- paste(eval(call$choices), collapse = ", ")
   paste("Input must be an object of any of the following classes:", choices)
 }
 
@@ -210,9 +208,9 @@ assertthat::on_failure(is_col_classes) <- function(call, env){
   wrong   <- character()
 
   for(i in present){
-    col    = i
-    is     = class(dat[[i]])
-    should = classes[[i]]
+    col    <- i
+    is     <- class(dat[[i]])
+    should <- classes[[i]]
 
     if (any(is != should)){
       is_str     <- paste(is, collapse = ', ')
@@ -224,15 +222,15 @@ assertthat::on_failure(is_col_classes) <- function(call, env){
 
   missing <- paste(missing, collapse = ', ')
 
-  msg = character()
+  msg <- character()
 
   if(length(missing) > 0){
-    msg = paste0('Missing from dat: ', missing, '.\n')
+    msg <- paste0('Missing from dat: ', missing, '.\n')
   }
 
   if(length(wrong) > 0){
     wrong <- substr(wrong, 1, crayon::col_nchar(wrong) - 2)
-    msg = paste0(msg, 'Wrong classes: ', wrong)
+    msg <- paste0(msg, 'Wrong classes: ', wrong)
   }
 
   return(msg)

@@ -1,3 +1,7 @@
+# tatoo 1.1.0
+
+* Add Named Regions to Excel Sheet to make formatting easier
+
 # tatoo 1.0.10
 
 * Bugfix release 

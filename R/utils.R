@@ -123,7 +123,7 @@ require_knitr <- function(){
 
 
 
+
 require_openxlsx <- function(){
   assert_that(requireNamespace("openxlsx", quietly = TRUE))
 }
-

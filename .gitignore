@@ -6,6 +6,7 @@
 .directory
 Thumbs.db
 *.xlsx
+*.rds
 man
 inst/doc
 rsconnect
