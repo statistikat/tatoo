@@ -72,14 +72,10 @@ test_that("Mashed_table named regions are created correctly", {
 
   wb  <- as_workbook(t_mash_4)
   res <- openxlsx::getNamedRegions(wb)
-
   expect_identical(
     attr(res, "position"),
-    c("A1:A3", "A5:J11", "A5:J6", "A7:J11", "A13:A13")
+    c("A1:A3", "A5:J5", "A6:J6", "A7:J11", "A13:A13")
   )
-
-  outdir <- rprojroot::find_testthat_root_file("testout")
-  save_xlsx(wb, file.path(outdir, "test.xlsx"), overwrite = TRUE)
 })
 
 
@@ -88,23 +84,19 @@ test_that("Mashed_table named regions are created correctly", {
 test_that("Composite_table named regions are created correctly", {
   source(file.path(test_path(), 'testdata', 'testdata.R'))
 
-  wb  <- as_workbook(t_mash_1)
+  wb  <- as_workbook(t_comp_1)
   res <- openxlsx::getNamedRegions(wb)
   expect_identical(
     attr(res, "position"),
-    c("A1:D21", "A1:D1", "A2:D21")
+    c("A1:I1", "A2:I2", "A3:I8")
   )
 
-  wb  <- as_workbook(t_mash_4)
+  wb  <- as_workbook(t_comp_3)
   res <- openxlsx::getNamedRegions(wb)
-
   expect_identical(
     attr(res, "position"),
-    c("A1:A3", "A5:J11", "A5:J6", "A7:J11", "A13:A13")
+    c("A1:A3", "A5:G5", "A6:G6", "A7:G12", "A14:A14")
   )
-
-  outdir <- rprojroot::find_testthat_root_file("testout")
-  save_xlsx(wb, file.path(outdir, "test.xlsx"), overwrite = TRUE)
 })
 
 

@@ -346,6 +346,7 @@ write_worksheet.Composite_table <- function(
     }
   }
 
+
   # Write "subtable" headings
   openxlsx::writeData(
     wb,
@@ -354,6 +355,16 @@ write_worksheet.Composite_table <- function(
     colNames = FALSE,
     startRow = crow
   )
+
+  if (named_regions){
+    openxlsx::createNamedRegion(
+      wb,
+      sheet = sheet,
+      rows = crow,
+      cols = seq_along(x),
+      name = region_name("table.multinames")
+    )
+  }
 
   crow <- crow + 1
 
@@ -378,6 +389,25 @@ write_worksheet.Composite_table <- function(
     as.data.frame(x, multinames = FALSE),
     colNames = TRUE
   )
+
+  if (named_regions){
+    openxlsx::createNamedRegion(
+      wb,
+      sheet = sheet,
+      rows = crow,
+      cols = seq_along(x),
+      name = region_name("table.colnames")
+    )
+
+    openxlsx::createNamedRegion(
+      wb,
+      sheet = sheet,
+      rows = seq(crow + 1, crow + nrow(x)),
+      cols = seq_along(x),
+      name = region_name("table.body")
+    )
+  }
+
 
   return(wb)
 }
@@ -440,7 +470,8 @@ write_worksheet.Mashed_table <- function(
       start_row = start_row
     )
 
-    if (named_regions){
+
+    if (!is_Composite_table(res) && named_regions){
       openxlsx::createNamedRegion(
         wb = wb,
         sheet = sheet,
