@@ -1,8 +1,7 @@
 ## Release summary
 
-I removed the default output file arguments for functions that write to the
-hard disk. I could not find any examples that wrote to the hard disk, but there 
-was one possible offender that I commented out in the vignette.
+Also examples for functions that write to disk and are wrapped in `\dontrun{}` 
+save to tempdirs now.
 
 
 

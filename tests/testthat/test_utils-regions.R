@@ -30,4 +30,3 @@ test_that("utils-regions works as expected", {
 
   expect_equal(eres, tres)
 })
-
