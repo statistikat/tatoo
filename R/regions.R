@@ -6,14 +6,14 @@
 #' @return A `data.table`
 #' @export
 #'
-named_regions <- function(x) {
-  UseMethod("named_regions")
+regions <- function(x) {
+  UseMethod("regions")
 }
 
 
 
 
-named_regions.character <- function(x){
+regions.character <- function(x){
   msg <- paste(
     "Expecting a character vector with attributes 'position' and 'sheet'",
     "as returned by openxlsx::getNamedRegions()"
@@ -40,8 +40,8 @@ named_regions.character <- function(x){
 
 
 #' @export
-named_regions.Workbook <- function(x){
-  named_regions.character(openxlsx::getNamedRegions(x))
+regions.Workbook <- function(x){
+  regions.character(openxlsx::getNamedRegions(x))
 }
 
 

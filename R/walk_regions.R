@@ -19,14 +19,14 @@
 #' wb <- as_workbook(iris)
 #'
 #' # Display named regions in target workbook
-#' named_regions(wb)
+#' regions(wb)
 #'
 #'
 #' # Apply a style
 #' # Keep in mind that openxlsx functions modify worksheets by reference.
-#' # If you do not want this behaviour you can use map_named_regions instead.
+#' # If you do not want this behaviour you can use map_regions instead.
 #' style <- openxlsx::createStyle(textDecoration = "bold")
-#' walk_named_regions(
+#' walk_regions(
 #'   wb,
 #'   .pattern = "header.*",
 #'   .fun = openxlsx::addStyle,
@@ -35,7 +35,7 @@
 #'
 #' openxlsx::openXL(wb)
 #'
-walk_named_regions <- function(
+walk_regions <- function(
   .wb,
   .pattern = ".*",
   .fun,
@@ -54,7 +54,7 @@ walk_named_regions <- function(
       "'openxlsx::addFilter()', 'openxlsx::setRowHeights()'"
   ))
 
-  rgs <- named_regions(.wb)
+  rgs <- regions(.wb)
   rgs <- rgs[grep(.pattern, rgs$region)]
 
   for (s in rgs$sheet){
@@ -75,13 +75,13 @@ walk_named_regions <- function(
 
 
 
-#' @rdname walk_named_regions
-map_named_regions<- function(
+#' @rdname walk_regions
+map_regions<- function(
   .wb,
   .pattern = ".*",
   .fun,
   ...
 ){
   wb <- openxlsx::copyWorkbook(.wb)
-  walk_named_regions(.wb = wb, .pattern = .pattern, .fun = .fun, ...)
+  walk_regions(.wb = wb, .pattern = .pattern, .fun = .fun, ...)
 }
