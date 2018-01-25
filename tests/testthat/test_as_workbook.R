@@ -28,23 +28,23 @@ test_that("as_workbook works as expected", {
 
 
 
-test_that("Tagged_table named regions are created correctly", {
+test_that("Tagged_table and default named regions are created correctly", {
   source(file.path(test_path(), 'testdata', 'testdata.R'))
 
   footer(t_tagged_1) <- c("blah", "blubb")
   wb  <- as_workbook(t_tagged_1)
   res <- openxlsx::getNamedRegions(wb)
-  expect_identical(
+  expect_setequal(
     attr(res, "position"),
-    c("A1:A3", "A12:A13")
+    c("A1:A3", "A5:D10", "A5:D5", "A6:D10", "A12:A13")
   )
 
   footer(t_tagged_1) <- NULL
   wb  <- as_workbook(t_tagged_1)
   res <- openxlsx::getNamedRegions(wb)
-  expect_identical(
+  expect_setequal(
     attr(res, "position"),
-    c("A1:A3")
+    c("A1:A3", "A5:D10", "A5:D5", "A6:D10")
   )
 
   title(t_tagged_1) <- NULL
@@ -54,7 +54,11 @@ test_that("Tagged_table named regions are created correctly", {
 
   wb  <- as_workbook(t_tagged_1)
   res <- openxlsx::getNamedRegions(wb)
-  expect_true(is.null(res))
+
+  expect_setequal(
+    attr(res, "position"),
+    c("A2:D7", "A2:D2", "A3:D7")
+  )
 })
 
 
@@ -86,14 +90,14 @@ test_that("Composite_table named regions are created correctly", {
 
   wb  <- as_workbook(t_comp_1)
   res <- openxlsx::getNamedRegions(wb)
-  expect_identical(
+  expect_setequal(
     attr(res, "position"),
     c("A1:I1", "A2:I2", "A3:I8")
   )
 
   wb  <- as_workbook(t_comp_3)
   res <- openxlsx::getNamedRegions(wb)
-  expect_identical(
+  expect_setequal(
     attr(res, "position"),
     c("A1:A3", "A5:G5", "A6:G6", "A7:G12", "A14:A14")
   )

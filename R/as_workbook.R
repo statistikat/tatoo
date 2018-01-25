@@ -186,7 +186,34 @@ write_worksheet.default <- function(
     wb = wb,
     sheet = sheet,
     x = x,
-    startRow = start_row)
+    startRow = start_row
+  )
+
+  if (named_regions){
+    openxlsx::createNamedRegion(
+      wb,
+      sheet = sheet,
+      rows = seq(start_row, start_row + nrow(x)),
+      cols = seq_len(ncol(x)),
+      name = make_region_name("table")
+    )
+
+    openxlsx::createNamedRegion(
+      wb,
+      sheet = sheet,
+      rows = start_row,
+      cols = seq_len(ncol(x)),
+      name = make_region_name("table", "colnames")
+    )
+
+    openxlsx::createNamedRegion(
+      wb,
+      sheet = sheet,
+      rows = seq(start_row + 1, start_row + nrow(x)),
+      cols = seq_len(ncol(x)),
+      name = make_region_name("table", "body")
+    )
+  }
 
   wb %assert_class% 'Workbook'
   return(wb)
@@ -471,40 +498,6 @@ write_worksheet.Mashed_table <- function(
     )
 
 
-    if (!is_Composite_table(res) && named_regions){
-      openxlsx::createNamedRegion(
-        wb = wb,
-        sheet = sheet,
-        cols = seq_along(res),
-        rows = seq(
-          start_row,
-          start_row + nrow(res) + as.integer(!is.null(attr(res, "multinames")))
-        ),
-        name = make_region_name("table")
-      )
-      openxlsx::createNamedRegion(
-        wb = wb,
-        sheet = sheet,
-        cols = seq_along(res),
-        rows = seq(
-          start_row,
-          start_row + as.integer(!is.null(attr(res, "multinames")))
-        ),
-        name = make_region_name("table", "colnames")
-      )
-      openxlsx::createNamedRegion(
-        wb = wb,
-        sheet = sheet,
-        cols = seq_along(res),
-        rows = seq(
-          start_row + as.integer(!is.null(attr(res, "multinames"))) + 1L,
-          start_row + as.integer(!is.null(attr(res, "multinames"))) + nrow(res)
-        ),
-        name = make_region_name("table", "body")
-      )
-    }
-
-
   # Modify row heights
     row_off          <- start_row - 1
     sep_height_start <- length(x) + 2  # +2 because of header
@@ -633,7 +626,7 @@ view_xlsx <- function(
   x,
   ...
 ){
-  openxlsx::openXL(as_workbook(x, ...))
+  openxlsx::openXL(as_workbook(x, ...,  named_regions = FALSE))
   invisible()
 }
 

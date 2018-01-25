@@ -12,6 +12,7 @@
 * Removed default arguments of `save_*()` functions (they wrote to the users
   home directory by default)
 
+
 # tatoo 1.0.9
 
 * Convert `Tatoo_table` objects to Latex code or save them directly to `.pdf`
