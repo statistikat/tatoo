@@ -259,7 +259,7 @@ write_worksheet.Tagged_table <- function(
       sheet = sheet,
       cols  = 1L,
       rows  = seq(crow, crow + length(header) - 1L),
-      name  = region_name("header")
+      name  = make_region_name("header")
     )
   }
 
@@ -299,7 +299,7 @@ write_worksheet.Tagged_table <- function(
         sheet = sheet,
         cols  = 1L,
         rows  = seq(crow, crow + length(meta$footer) - 1L),
-        name  = region_name("footer")
+        name  = make_region_name("footer")
       )
     }
   }
@@ -362,7 +362,7 @@ write_worksheet.Composite_table <- function(
       sheet = sheet,
       rows = crow,
       cols = seq_along(x),
-      name = region_name("table.multinames")
+      name = make_region_name("table", "multinames")
     )
   }
 
@@ -396,7 +396,7 @@ write_worksheet.Composite_table <- function(
       sheet = sheet,
       rows = crow,
       cols = seq_along(x),
-      name = region_name("table.colnames")
+      name = make_region_name("table", "colnames")
     )
 
     openxlsx::createNamedRegion(
@@ -404,7 +404,7 @@ write_worksheet.Composite_table <- function(
       sheet = sheet,
       rows = seq(crow + 1, crow + nrow(x)),
       cols = seq_along(x),
-      name = region_name("table.body")
+      name = make_region_name("table", "body")
     )
   }
 
@@ -480,7 +480,7 @@ write_worksheet.Mashed_table <- function(
           start_row,
           start_row + nrow(res) + as.integer(!is.null(attr(res, "multinames")))
         ),
-        name = region_name("table")
+        name = make_region_name("table")
       )
       openxlsx::createNamedRegion(
         wb = wb,
@@ -490,7 +490,7 @@ write_worksheet.Mashed_table <- function(
           start_row,
           start_row + as.integer(!is.null(attr(res, "multinames")))
         ),
-        name = region_name("table.colnames")
+        name = make_region_name("table", "colnames")
       )
       openxlsx::createNamedRegion(
         wb = wb,
@@ -500,7 +500,7 @@ write_worksheet.Mashed_table <- function(
           start_row + as.integer(!is.null(attr(res, "multinames"))) + 1L,
           start_row + as.integer(!is.null(attr(res, "multinames"))) + nrow(res)
         ),
-        name = region_name("table.body")
+        name = make_region_name("table", "body")
       )
     }
 
@@ -639,6 +639,7 @@ view_xlsx <- function(
 
 
 
-region_name <- function(...){
-  paste0(..., ".", stringi::stri_rand_strings(1, 16))
+
+make_region_name <- function(...){
+  paste(..., stringi::stri_rand_strings(1, 8), sep = "_")
 }
