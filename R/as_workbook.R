@@ -476,7 +476,8 @@ write_worksheet.Mashed_table <- function(
       wb = wb,
       sheet = sheet,
       append = TRUE,
-      start_row = start_row
+      start_row = start_row,
+      named_regions_prefix = c(mash_method, "mashed")
     )
 
 
