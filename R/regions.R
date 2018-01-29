@@ -13,6 +13,7 @@ regions <- function(x) {
 
 
 
+#' @export
 regions.character <- function(x){
   msg <- paste(
     "Expecting a character vector with attributes 'position' and 'sheet'",
