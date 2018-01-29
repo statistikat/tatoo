@@ -498,6 +498,26 @@ write_worksheet.Mashed_table <- function(
     )
 
 
+  # Set named regions
+    if (named_regions){
+      rows <- cumsum(rep(nrow(x[[1]]), length(x) + 1))
+
+      for (i in seq_along(x)){
+        rn <- make_region_name("table", "mash", i)
+
+        if (identical(mash_method, "row")){
+          openxlsx::createNamedRegion(
+            wb = wb,
+            sheet = sheet,
+            rows = start_row + rows + i,
+            cols = seq_along(x[[1]]),
+            name = rn
+          )
+        }
+      }
+    }
+
+
   # Modify row heights
     row_off          <- start_row - 1
     sep_height_start <- length(x) + 2  # +2 because of header
