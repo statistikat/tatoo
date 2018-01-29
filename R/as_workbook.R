@@ -176,7 +176,8 @@ write_worksheet.default <- function(
   append = FALSE,
   start_row = 1L,
   ...,
-  named_regions = TRUE
+  named_regions = TRUE,
+  named_regions_prefix = NA_character_
 ){
   if(!append){
     openxlsx::addWorksheet(wb, sheet)
@@ -195,7 +196,7 @@ write_worksheet.default <- function(
       sheet = sheet,
       rows = seq(start_row, start_row + nrow(x)),
       cols = seq_len(ncol(x)),
-      name = make_region_name("table")
+      name = make_region_name(named_regions_prefix, "table")
     )
 
     openxlsx::createNamedRegion(
@@ -203,7 +204,7 @@ write_worksheet.default <- function(
       sheet = sheet,
       rows = start_row,
       cols = seq_len(ncol(x)),
-      name = make_region_name("table", "colnames")
+      name = make_region_name(named_regions_prefix, "table", "colnames")
     )
 
     openxlsx::createNamedRegion(
@@ -211,7 +212,7 @@ write_worksheet.default <- function(
       sheet = sheet,
       rows = seq(start_row + 1, start_row + nrow(x)),
       cols = seq_len(ncol(x)),
-      name = make_region_name("table", "body")
+      name = make_region_name(named_regions_prefix, "table", "body")
     )
   }
 
@@ -346,7 +347,8 @@ write_worksheet.Composite_table <- function(
   append = FALSE,
   start_row = 1L,
   ...,
-  named_regions = TRUE
+  named_regions = TRUE,
+  named_regions_prefix = "composite"
 ){
   # Pre-condtions
   assert_that(has_attr(x, 'multinames'))
@@ -389,7 +391,7 @@ write_worksheet.Composite_table <- function(
       sheet = sheet,
       rows = crow,
       cols = seq_along(x),
-      name = make_region_name("table", "multinames")
+      name = make_region_name(named_regions_prefix, "table", "multinames")
     )
   }
 
@@ -407,34 +409,14 @@ write_worksheet.Composite_table <- function(
     )
   }
 
-
-  # Write data
-  openxlsx::writeData(
+  write_worksheet(
+    as.data.frame(x, multinames = FALSE),
     wb,
     sheet = sheet,
-    startRow = crow,
-    as.data.frame(x, multinames = FALSE),
-    colNames = TRUE
+    start_row = crow,
+    append = TRUE,
+    named_regions_prefix = "composite"
   )
-
-  if (named_regions){
-    openxlsx::createNamedRegion(
-      wb,
-      sheet = sheet,
-      rows = crow,
-      cols = seq_along(x),
-      name = make_region_name("table", "colnames")
-    )
-
-    openxlsx::createNamedRegion(
-      wb,
-      sheet = sheet,
-      rows = seq(crow + 1, crow + nrow(x)),
-      cols = seq_along(x),
-      name = make_region_name("table", "body")
-    )
-  }
-
 
   return(wb)
 }
@@ -634,5 +616,7 @@ view_xlsx <- function(
 
 
 make_region_name <- function(...){
-  paste(..., stringi::stri_rand_strings(1, 8), sep = "_")
+  x <- c(...)
+  x <- c(x[!is.na(x)], stringi::stri_rand_strings(1, 8))
+  paste(x, collapse = "_")
 }

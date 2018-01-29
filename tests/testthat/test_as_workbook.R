@@ -68,7 +68,6 @@ test_that("Mashed_table named regions are created correctly", {
   source(file.path(test_path(), 'testdata', 'testdata.R'))
 
   wb  <- as_workbook(t_mash_1)
-  openxlsx::openXL(wb)
   res <- openxlsx::getNamedRegions(wb)
   expect_identical(
     attr(res, "position"),
@@ -79,7 +78,7 @@ test_that("Mashed_table named regions are created correctly", {
   res <- openxlsx::getNamedRegions(wb)
   expect_identical(
     attr(res, "position"),
-    c("A1:A3", "A5:J5", "A6:J6", "A7:J11", "A13:A13")
+    c("A1:A3", "A5:J5", "A6:J11", "A6:J6", "A7:J11", "A13:A13")
   )
 })
 
@@ -93,14 +92,14 @@ test_that("Composite_table named regions are created correctly", {
   res <- openxlsx::getNamedRegions(wb)
   expect_setequal(
     attr(res, "position"),
-    c("A1:I1", "A2:I2", "A3:I8")
+    c("A1:I1", "A2:I8", "A2:I2", "A3:I8")
   )
 
   wb  <- as_workbook(t_comp_3)
   res <- openxlsx::getNamedRegions(wb)
   expect_setequal(
     attr(res, "position"),
-    c("A1:A3", "A5:G5", "A6:G6", "A7:G12", "A14:A14")
+    c("A1:A3", "A5:G5", "A6:G12", "A6:G6", "A7:G12", "A14:A14")
   )
 })
 
