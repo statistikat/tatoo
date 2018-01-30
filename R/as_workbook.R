@@ -196,7 +196,7 @@ write_worksheet.default <- function(
       sheet = sheet,
       rows = seq(start_row, start_row + nrow(x)),
       cols = seq_len(ncol(x)),
-      name = make_region_name(named_regions_prefix, "table")
+      name = make_region_name(table_id(x), named_regions_prefix, "table")
     )
 
     openxlsx::createNamedRegion(
@@ -204,7 +204,7 @@ write_worksheet.default <- function(
       sheet = sheet,
       rows = start_row,
       cols = seq_len(ncol(x)),
-      name = make_region_name(named_regions_prefix, "table", "colnames")
+      name = make_region_name(table_id(x), named_regions_prefix, "table", "colnames")
     )
 
     openxlsx::createNamedRegion(
@@ -212,7 +212,7 @@ write_worksheet.default <- function(
       sheet = sheet,
       rows = seq(start_row + 1, start_row + nrow(x)),
       cols = seq_len(ncol(x)),
-      name = make_region_name(named_regions_prefix, "table", "body")
+      name = make_region_name(table_id(x), named_regions_prefix, "table", "body")
     )
   }
 
@@ -287,7 +287,7 @@ write_worksheet.Tagged_table <- function(
       sheet = sheet,
       cols  = 1L,
       rows  = seq(crow, crow + length(header) - 1L),
-      name  = make_region_name("header")
+      name  = make_region_name(table_id(x), "header")
     )
   }
 
@@ -327,7 +327,7 @@ write_worksheet.Tagged_table <- function(
         sheet = sheet,
         cols  = 1L,
         rows  = seq(crow, crow + length(meta$footer) - 1L),
-        name  = make_region_name("footer")
+        name  = make_region_name(table_id(x), "footer")
       )
     }
   }
@@ -391,7 +391,7 @@ write_worksheet.Composite_table <- function(
       sheet = sheet,
       rows = crow,
       cols = seq_along(x),
-      name = make_region_name(named_regions_prefix, "table", "multinames")
+      name = make_region_name(table_id(x), named_regions_prefix, "table", "multinames")
     )
   }
 
@@ -617,7 +617,9 @@ view_xlsx <- function(
 
 
 make_region_name <- function(...){
-  x <- c(...)
+  x <- list(...)
+  x <- x[sapply(x, Negate(is.null))]
+  x <- unlist(x)
   x <- c(x[!is.na(x)], stringi::stri_rand_strings(1, 8))
   paste(x, collapse = "_")
 }
