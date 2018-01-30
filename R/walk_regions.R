@@ -1,6 +1,13 @@
 #' Apply a function to all named regions on an openxlsx Workbook
 #'
-#' @param .wb
+#' This applies a `.fun` to all named regions in a workbook names match
+#' `.pattern`. This is especially usefull since [as_workbook()] methods for
+#' `Tatoo_tables` add named regions for certain parts of the Table. See also
+#' `vignette("named_regions")` for how the names of named regions are
+#' constructed by tatoo.
+#'
+#'
+#' @param .wb an [openxlsx::Workbook]
 #' @param .pattern `character` scalar. A regex filter pattern for named region
 #'   names (passed on to [grep()])
 #' @param .fun A function with the formal arguments `wb`, `sheet` and either
@@ -9,7 +16,8 @@
 #'   [openxlsx::setRowHeights()], [openxlsx::setColWidths()]
 #' @param ... passed on to `.fun`
 #'
-#' @return
+#' @return `walk_regions` returns `.wb`. `map_regions` returns a modified copy
+#'   of `.wb`
 #' @export
 #'
 #' @examples
@@ -18,22 +26,26 @@
 #' title(iris) <- "Iris example table"
 #' wb <- as_workbook(iris)
 #'
-#' # Display named regions in target workbook
-#' regions(wb)
+#' regions(wb)  # display regions
 #'
 #'
 #' # Apply a style
 #' # Keep in mind that openxlsx functions modify worksheets by reference.
 #' # If you do not want this behaviour you can use map_regions instead.
+#'
 #' style <- openxlsx::createStyle(textDecoration = "bold")
 #' walk_regions(
 #'   wb,
-#'   .pattern = "header.*",
+#'   .pattern = "colnames.*",
 #'   .fun = openxlsx::addStyle,
 #'   style = style
 #' )
 #'
-#' openxlsx::openXL(wb)
+#' \dontrun{
+#'   openxlsx::openXL(wb)
+#' }
+#'
+#'
 #'
 walk_regions <- function(
   .wb,
@@ -75,6 +87,9 @@ walk_regions <- function(
 
 
 
+#' `map_regions()` is a wrapper for `walk_regions()` for people who prefer
+#' standard R copy-on-modify semantics over openxlsx's pass-by-reference.
+#'
 #' @rdname walk_regions
 map_regions<- function(
   .wb,

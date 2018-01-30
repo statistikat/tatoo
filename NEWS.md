@@ -2,7 +2,7 @@
 
 * Add Named Regions for table parts Excel Sheets to make formatting easier
 * Added `walk_regions()` and `map_regions()` to mainuplate cells in named
-  regions within a `Workbook`
+  regions within a `Workbook` (e.g. apply formatting to them)
   
 
 # tatoo 1.0.10
