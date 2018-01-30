@@ -303,6 +303,15 @@ meta <- function(x){
 
 #' @rdname tagged_set
 #' @export
+table_id <- function(x){
+  attr(x, 'meta')$table_id
+}
+
+
+
+
+#' @rdname tagged_set
+#' @export
 `title<-` <- function(x, value){
   ass <- list(title = value)
   assign_tt_meta(x, ass)
