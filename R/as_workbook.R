@@ -415,6 +415,7 @@ write_worksheet.Composite_table <- function(
     sheet = sheet,
     start_row = crow,
     append = TRUE,
+    named_regions = named_regions,
     named_regions_prefix = "composite"
   )
 
@@ -477,6 +478,7 @@ write_worksheet.Mashed_table <- function(
       sheet = sheet,
       append = TRUE,
       start_row = start_row,
+      named_regions = named_regions,
       named_regions_prefix = c(mash_method, "mashed")
     )
 
