@@ -26,7 +26,7 @@ test_that("utils-regions works as expected", {
   )
 
   eres <- testthis::read_testdata("utils_regions_expected.rds")
-  tres <- excel_regions_to_dt(tdat)
+  tres <- regions(tdat)
 
   expect_equal(eres, tres)
 })

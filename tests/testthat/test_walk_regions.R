@@ -58,7 +58,7 @@ test_that("map_region works as expected", {
   # Correct number of cells has been colored
   expect_identical(
     length(openxlsx::getStyles(x)),
-    870L
+    1066L
   )
 
   # openxlsx::openXL(x)
