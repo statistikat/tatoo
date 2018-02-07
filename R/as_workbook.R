@@ -183,12 +183,17 @@ write_worksheet.default <- function(
     openxlsx::addWorksheet(wb, sheet)
   }
 
-  openxlsx::writeData(
-    wb = wb,
-    sheet = sheet,
-    x = x,
-    startRow = start_row
+  dots <- list(...)
+  wd_args <- intersect(names(dots), names(formals(openxlsx::writeData)))
+
+  do.call(
+    openxlsx::writeData,
+    args = c(
+      list(wb = wb, sheet = sheet, x = x, startRow = start_row),
+      dots[wd_args]
+    )
   )
+
 
   if (named_regions){
     openxlsx::createNamedRegion(
@@ -416,7 +421,8 @@ write_worksheet.Composite_table <- function(
     start_row = crow,
     append = TRUE,
     named_regions = named_regions,
-    named_regions_prefix = "composite"
+    named_regions_prefix = "composite",
+    ...
   )
 
   return(wb)
@@ -479,7 +485,8 @@ write_worksheet.Mashed_table <- function(
       append = TRUE,
       start_row = start_row,
       named_regions = named_regions,
-      named_regions_prefix = c(mash_method, "mashed")
+      named_regions_prefix = c(mash_method, "mashed"),
+      ...
     )
 
 
@@ -547,7 +554,8 @@ write_worksheet.Stacked_table <- function(
       sheet = sheet,
       start_row = crow,
       append = TRUE,
-      ...)
+      ...
+    )
   }
 
   return(wb)

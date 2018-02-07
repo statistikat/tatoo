@@ -11,4 +11,4 @@ man
 inst/doc
 rsconnect
 testout
-
+.build.timestamp
