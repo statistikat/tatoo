@@ -5,8 +5,88 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Named Regions}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
+
+
+# Named region names
+
+The names of the named regions associated with a table are constructed from the 
+following elements:
+
+* The table_id (`table_id<-()`), if the table has one
+* The type of the table, possible values:
+   * row_mashed_table
+   * col_mahsed_table
+   * composite_table
+   * table (for a simple data.frame)
+* The metadata of a table
+  * header
+  * footer
+* The part of the table
+  * colnames
+  * multinames (only composite table)
+  * body (everything but the colnames and multinames)
+* A random string
+  
+examples:
+
+
+```{r, eval=FALSE}
+mytabl1_row_mashed_table_RtVRceae 
+mytabl1_row_mashed_table_colnames_jBDLO0AP 
+mytabl1_row_mashed_table_body_WpfAmWxJ 
+
+col_mashed_table_dje8kNRN 
+col_mashed_table_colnames_QHS6bQPt 
+col_mashed_table_body_bd2PJCkq 
+col_mashed_table_jxXfWaxe 
+col_mashed_table_colnames_mmwnrFov 
+col_mashed_table_body_qZ7ZSHPA 
+col_mashed_table_multinames_wsM2wEVJ 
+
+```
+
+
+# walk regions
+
+```{r}
+
+x <- mash_table(
+  iris[1:2, ], 
+  iris[1:2, ],
+  meta = tt_meta(table_id = "iris", title = "example table")
+) 
+
+
+style_iris     <- openxlsx::createStyle(fgFill = "pink")
+style_header   <- openxlsx::createStyle(textDecoration = "italic")
+style_colnames <- openxlsx::createStyle(textDecoration = "bold", valign = "top")
+style_body     <- openxlsx::createStyle(textRotation = 10)
+
+
+wb <- as_workbook(x)
+unique(regions(wb)$region)
+
+
+# Warning: stacking styles can be pretty slow
+walk_regions(wb, "iris", openxlsx::addStyle, style = style_iris)
+walk_regions(wb, "header", openxlsx::addStyle, style = style_header, stack = TRUE)
+walk_regions(wb, "colnames", openxlsx::addStyle, style = style_colnames, stack = TRUE)
+walk_regions(wb, "body", openxlsx::addStyle, style = style_body, stack = TRUE)
+
+
+# You can also use functions that have *either* the rows or cols argument,
+# so the following works:
+walk_regions(wb, "table", openxlsx::setColWidths, width = 20)
+walk_regions(wb, "colnames", openxlsx::setRowHeights, height = 34)
+
+
+save_xlsx(wb, gvtool::output_path("blah.xlsx"), overwrite = TRUE)
+
+```
 
 

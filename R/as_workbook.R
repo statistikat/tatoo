@@ -485,7 +485,7 @@ write_worksheet.Mashed_table <- function(
       append = TRUE,
       start_row = start_row,
       named_regions = named_regions,
-      named_regions_prefix = c(mash_method, "mashed"),
+      named_regions_prefix = c(table_id(x), mash_method, "mashed"),
       ...
     )
 
@@ -540,6 +540,7 @@ write_worksheet.Stacked_table <- function(
     sheet = sheet,
     start_row = crow,
     append = append,
+    named_regions_prefix = table_id(x),
     ...
   )
 
@@ -554,6 +555,7 @@ write_worksheet.Stacked_table <- function(
       sheet = sheet,
       start_row = crow,
       append = TRUE,
+      named_regions_prefix = table_id(x),
       ...
     )
   }
