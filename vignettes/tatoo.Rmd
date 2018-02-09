@@ -18,11 +18,13 @@ library(tatoo)
 
 # Introduction
 
-tatoo ("table tools") functions to combine data.frames in ways that require 
+tatoo is designed for creating excel reports from lists of `data.frame`s
+with minimal effort, while still providing some basic formatting capabillities.
+tatoo functions can combine data.frames in ways that require 
 additional effort in base R, and to add metadata (id, title, ...) that can be 
 used for printing and xlsx export. The Tatoo_report class is provided as a 
 convenient helper to write several such tables to a workbook, one table per 
-worksheet.
+worksheet. 
 
 Tatoo tables and reports can directly be saved to .xlsx files, or convert to
 `Workbook` objects with `as_workbook()` so that you can process them further

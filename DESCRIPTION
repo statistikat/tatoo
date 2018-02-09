@@ -1,7 +1,7 @@
 Package: tatoo
 Type: Package
 Title: Combine and Export Data Frames
-Version: 1.1.0.9003
+Version: 1.1.0.9004
 Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
 Description:
@@ -9,7 +9,8 @@ Description:
   base R, and to add metadata (id, title, ...) that can be used for printing and 
   xlsx export. The 'Tatoo_report' class is provided as a 
   convenient helper to write several such tables to a workbook, one table per 
-  worksheet.
+  worksheet. Tatoo is built on top of 'openxlsx', but intimate knowledge of 
+  that package is not required to use tatoo.
 License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
