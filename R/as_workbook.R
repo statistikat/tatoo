@@ -237,7 +237,8 @@ write_worksheet.Tagged_table <- function(
   append = FALSE,
   start_row = 1L,
   ...,
-  named_regions = TRUE
+  named_regions = TRUE,
+  named_regions_prefix = NA_character_
 ){
   wb %assert_class% 'Workbook'
   assert_that(has_attr(x, 'meta'))
@@ -292,7 +293,7 @@ write_worksheet.Tagged_table <- function(
       sheet = sheet,
       cols  = 1L,
       rows  = seq(crow, crow + length(header) - 1L),
-      name  = make_region_name(table_id(x), "header")
+      name  = make_region_name(named_regions_prefix, table_id(x), "header")
     )
   }
 
@@ -310,7 +311,8 @@ write_worksheet.Tagged_table <- function(
     append = TRUE,
     start_row = crow,
     ...,
-    named_regions = named_regions
+    named_regions = named_regions,
+    named_regions_prefix = named_regions_prefix
   )
 
 
@@ -353,7 +355,7 @@ write_worksheet.Composite_table <- function(
   start_row = 1L,
   ...,
   named_regions = TRUE,
-  named_regions_prefix = "composite"
+  named_regions_prefix = NA_character_
 ){
   # Pre-condtions
   assert_that(has_attr(x, 'multinames'))
@@ -396,7 +398,7 @@ write_worksheet.Composite_table <- function(
       sheet = sheet,
       rows = crow,
       cols = seq_along(x),
-      name = make_region_name(table_id(x), named_regions_prefix, "table", "multinames")
+      name = make_region_name(named_regions_prefix, table_id(x), "composite", "table", "multinames")
     )
   }
 
@@ -421,7 +423,7 @@ write_worksheet.Composite_table <- function(
     start_row = crow,
     append = TRUE,
     named_regions = named_regions,
-    named_regions_prefix = "composite",
+    named_regions_prefix = c(named_regions_prefix, "composite"),
     ...
   )
 
@@ -444,7 +446,8 @@ write_worksheet.Mashed_table <- function(
   insert_blank_row = attr(x, 'insert_blank_row'),
   sep_height = attr(x, 'sep_height'),
   ...,
-  named_regions = TRUE
+  named_regions = TRUE,
+  named_regions_prefix = NA_character_
 ){
   # Preconditions
     assert_that(mash_method %identical% 'col' || mash_method %identical% 'row')
@@ -485,7 +488,7 @@ write_worksheet.Mashed_table <- function(
       append = TRUE,
       start_row = start_row,
       named_regions = named_regions,
-      named_regions_prefix = c(table_id(x), mash_method, "mashed"),
+      named_regions_prefix = c(named_regions_prefix, table_id(x), mash_method, "mashed"),
       ...
     )
 
@@ -530,7 +533,9 @@ write_worksheet.Stacked_table <- function(
   append = FALSE,
   start_row = 1L,
   spacing = attr(x, 'spacing'),
-  ...
+  ...,
+  named_regions = TRUE,
+  named_regions_prefix = NA_character_
 ){
   crow    <- start_row
 
@@ -540,8 +545,9 @@ write_worksheet.Stacked_table <- function(
     sheet = sheet,
     start_row = crow,
     append = append,
-    named_regions_prefix = table_id(x),
-    ...
+    ...,
+    named_regions = named_regions,
+    named_regions_prefix = c(table_id(x), "stacked")
   )
 
 
@@ -555,7 +561,7 @@ write_worksheet.Stacked_table <- function(
       sheet = sheet,
       start_row = crow,
       append = TRUE,
-      named_regions_prefix = table_id(x),
+      named_regions_prefix = c(table_id(x), "stacked"),
       ...
     )
   }
