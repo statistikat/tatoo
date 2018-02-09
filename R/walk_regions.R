@@ -7,7 +7,7 @@
 #' constructed by tatoo.
 #'
 #'
-#' @param .wb an [openxlsx::Workbook]
+#' @param .wb an openxlsx `Workbook` Object
 #' @param .pattern `character` scalar. A regex filter pattern for named region
 #'   names (passed on to [grep()])
 #' @param .fun A function with the formal arguments `wb`, `sheet` and either

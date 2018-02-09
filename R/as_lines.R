@@ -6,7 +6,7 @@
 #' `Tatoo_table`). This is the function powers all `Tatoo_table` print methods.
 #'
 #' @template any_r
-#' @param color Use colors (via [colt])
+#' @param color Use colors (via \pkg{colt})
 #' @param ... passed on methods.
 #'
 #' @return A character vector (one element per line).
