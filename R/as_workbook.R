@@ -126,22 +126,25 @@ as_workbook.Workbook <- function(x, ...){
 #'
 #' @param x A `Tatoo_table`.
 #' @param wb An [openxlsx] `Workbook` object
-#' @param append Logical. Whether or not to append to an existing worksheet or
+#' @param append `logical` Whether or not to append to an existing worksheet or
 #'   create a new one
 #' @param start_row A scalar integer specifying the starting row to write to.
 #' @param ... Additional arguments passed on to methods for overriding the
 #'   styling attributes of the `Tatoo_tables` you want to export.
-#'
-#' @inheritParams comp_table
-#' @inheritParams mash_table
-#' @inheritParams stack_table
-#' @inheritParams as_workbook
 #' @param named_regions `logical`. If `TRUE` (default) named regions are created
 #'   in the target excel file to identify different parts of the tables
 #'   (header, body, column names, etc...). These named regions can, for example,
 #'   be used for applying formats. Creating named regions can be switched of
 #'   as this might impact perfomance of the excel conversion and writing of
 #'   excel files for workbooks with large numbers of tables.
+#' @param named_regions_prefix `character` scalar. Prefix to write in front
+#'   of all named regions created by `write_worksheet`
+#'
+#' @inheritParams comp_table
+#' @inheritParams mash_table
+#' @inheritParams stack_table
+#' @inheritParams as_workbook
+
 #'
 #' @return an [openxlsx] Workbook object
 #' @family xlsx exporters
@@ -154,7 +157,8 @@ write_worksheet <- function(
   append = FALSE,
   start_row = 1L,
   ...,
-  named_regions = TRUE
+  named_regions = TRUE,
+  named_regions_prefix = NA_character_
 ){
   wb %assert_class% 'Workbook'
   assert_that(is.scalar(sheet))
