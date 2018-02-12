@@ -1,8 +1,8 @@
 #* @testfile manual_tests/test_as_lines
 
-#' Create a line-by-line text representation of an R Object
+#' Create a line-by-line text representation of an \R object
 #'
-#' Creates a line-by-line representation of an \R Obeject (usually a
+#' Creates a line-by-line representation of an \R object (usually a
 #' `Tatoo_table`). This is the function powers all `Tatoo_table` print methods.
 #'
 #' @template any_r

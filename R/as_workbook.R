@@ -135,7 +135,7 @@ as_workbook.Workbook <- function(x, ...){
 #'   in the target excel file to identify different parts of the tables
 #'   (header, body, column names, etc...). These named regions can, for example,
 #'   be used for applying formats. Creating named regions can be switched of
-#'   as this might impact perfomance of the excel conversion and writing of
+#'   as this might impact performance of the excel conversion and writing of
 #'   excel files for workbooks with large numbers of tables.
 #' @param named_regions_prefix `character` scalar. Prefix to write in front
 #'   of all named regions created by `write_worksheet`

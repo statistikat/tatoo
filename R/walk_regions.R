@@ -1,7 +1,7 @@
 #' Apply a function to all named regions on an openxlsx Workbook
 #'
 #' This applies a `.fun` to all named regions in a workbook names match
-#' `.pattern`. This is especially usefull since [as_workbook()] methods for
+#' `.pattern`. This is especially useful since [as_workbook()] methods for
 #' `Tatoo_tables` add named regions for certain parts of the Table. See also
 #' `vignette("named_regions")` for how the names of named regions are
 #' constructed by tatoo.

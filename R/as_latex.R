@@ -378,7 +378,7 @@ multinames_to_colspans <- function(x){
 #' Default Kable options for as_latex and co
 #'
 #' `default_kable_options()` returns a list of the default options that are
-#' required for [`as_latex()`] to work correclty. Those defaults should not be
+#' required for [`as_latex()`] to work correctly. Those defaults should not be
 #' modified, but you can pass additional [knitr::kable()] options to
 #' `as_latex()` to modify the output a bit.
 #'

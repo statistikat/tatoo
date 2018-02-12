@@ -20,7 +20,7 @@
 #'   blank rows between mash-groups. *Warning: this converts all columns to
 #'   character.* Use with care.
 #' @param sep_height Only has an effect when exporting to `xlsx`. if
-#'   `insert_blank_row == TRUE`, hight of the inserted row, else height of the
+#'   `insert_blank_row == TRUE`, height of the inserted row, else height of the
 #'   top row of each mash-group.
 #' @param meta A  [TT_meta] object. if supplied, output will also be a
 #'   [Tagged_table].
