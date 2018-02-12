@@ -20,8 +20,8 @@ library(tatoo)
 # Introduction
 
 As of v.1.1.0 **tatoo** assigns *named regions* when writing .xlsx files. 
-**tatoo** can use these named regions to painlessly apply formatting to Excel
-workbooks in bulk.
+**tatoo** can use these named regions to painlessly apply formatting to tables
+inside Excel workbooks in bulk.
 
 
 
@@ -110,6 +110,13 @@ following arguments:
    and `openxlsx::setColWidths()`, but you can also write your own functions,
    as long as they have the correct arguments.
 * `...` passed on as additional arguments to `.fun`
+
+
+
+**Examples**
+
+The following examples show how `walk_regions()` can be used to format column
+names, table captions (headers) and the values inside a table (body).
 
 
 ```{r, results = "hide"}
