@@ -4,7 +4,7 @@ author: "Stefan Fleck"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Named Regions}
+  %\VignetteIndexEntry{named regions}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -35,8 +35,8 @@ wb <- as_workbook(iris[1:5, ])
 ![a plain table](plain_table.png)
 
 ```{r, eval = FALSE}
-style_colnames <- openxlsx::createStyle(textDecoration = "bold", valign = "top")
-style_body     <- openxlsx::createStyle(textRotation = 10)
+style_colnames <- openxlsx::createStyle(textDecoration = "bold")
+
 walk_regions(wb, "colnames", openxlsx::addStyle, style_colnames)
 walk_regions(wb, "table",    openxlsx::setColWidths, widths = 14)
 
