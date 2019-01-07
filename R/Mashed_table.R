@@ -292,16 +292,17 @@ print.Mashed_table <- function(
   id_vars = attr(x, 'id_vars'),
   ...
 ){
-  lapply(
-    as_lines(
-      x,
-      mash_method = mash_method,
-      insert_blank_row = insert_blank_row,
-      id_vars = id_vars,
-      ...
-    ),
-    function(y) cat(y, "\n")
+
+  lines <- as_lines(
+    x,
+    mash_method = mash_method,
+    insert_blank_row = insert_blank_row,
+    id_vars = id_vars,
+    ...
   )
+
+  lines <- strip_newlines(lines)
+  cat(lines, sep = "\n")
 
   invisible(x)
 }

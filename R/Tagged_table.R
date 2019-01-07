@@ -194,13 +194,9 @@ is_Tagged_table <- function(x){
 #'
 #' @export
 print.Tagged_table <- function(x, ...){
-  lapply(
-    as_lines(
-      x,
-      ...
-    ),
-    function(y) cat(y, "\n")
-  )
+  lines <- as_lines(x, ...)
+  lines <- strip_newlines(lines)
+  cat(lines, sep = "\n")
 
   invisible(x)
 }

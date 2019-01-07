@@ -64,8 +64,8 @@ is_Tatoo_report <- function(x){
 is_valid.Tatoo_report <- function(x){
   res <- list()
 
-  is_valid_elclass <- function(x) {
-    is_any_class(x, c('Tatoo_table', 'data.frame'))
+  is_valid_elclass <- function(.x) {
+    inherits(.x, c('Tatoo_table', 'data.frame'))
   }
 
   res$class <- is.list(x)
@@ -88,6 +88,9 @@ is_valid.Tatoo_report <- function(x){
 #'
 #' @export
 print.Tatoo_report <- function(x, ...){
-  print_lines(as_lines(x))
+  lines <- as_lines(x, ...)
+  lines <- strip_newlines(lines)
+  cat(lines, sep = "\n")
+
   invisible(x)
 }

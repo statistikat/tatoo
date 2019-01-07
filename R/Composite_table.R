@@ -372,7 +372,10 @@ print.Composite_table <- function(
   right = FALSE,
   ...
 ){
-  lapply(as_lines(x), function(y) cat(y, sep = "\n"))
+  lines <- as_lines(x, ...)
+  lines <- strip_newlines(lines)
+  cat(lines, sep = "\n")
+
   invisible(x)
 }
 

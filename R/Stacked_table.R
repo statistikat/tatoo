@@ -150,7 +150,9 @@ is_Stacked_table <- function(x){
 #'
 #' @export
 print.Stacked_table <- function(x, ...){
-  print_lines(as_lines(x, ...))
+  lines <- as_lines(x, ...)
+  lines <- strip_newlines(lines)
+  cat(lines, sep = "\n")
   invisible(x)
 }
 
