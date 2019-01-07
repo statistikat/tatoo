@@ -19,7 +19,6 @@
 #'
 #' @import assertthat
 #' @importFrom magrittr %>%
-#' @importFrom purrr %||%
 #' @importFrom data.table data.table as.data.table
 #'
 #' @docType package

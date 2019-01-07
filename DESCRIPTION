@@ -18,8 +18,6 @@ Imports:
     magrittr,
     data.table,
     openxlsx (>= 4.0.0),
-    purrr,
-    rlang,
     stringi,
     colt,
     crayon,
@@ -30,7 +28,7 @@ Suggests:
     kableExtra,
     knitr,
     rmarkdown
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 Encoding: UTF-8
 VignetteBuilder: knitr

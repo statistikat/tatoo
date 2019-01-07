@@ -94,7 +94,7 @@ Stacked_table <- function(
   assert_that(is.list(dat))
   valid_classes <- c('Tatoo_table', 'data.table')
   assert_that(all(unlist(lapply(dat, is_any_class, valid_classes))))
-  assert_that(is.scalar(spacing) && rlang::is_scalar_integerish(spacing))
+  assert_that(is.scalar(spacing) && is_scalar_integerish(spacing))
 
 
   res <- data.table::copy(dat) %>%
@@ -114,7 +114,7 @@ Stacked_table <- function(
 is_valid.Stacked_table <- function(x){
   res <- list(
     is_list     <- is.list(x),
-    has_spacing <- rlang::is_scalar_integer(attr(x, 'spacing'))
+    has_spacing <- is_scalar_integer(attr(x, 'spacing'))
   )
   all_with_warning(res)
 }
@@ -172,7 +172,7 @@ print.Stacked_table <- function(x, ...){
 #' @export
 `spacing<-` <- function(x, value){
   x %assert_class% 'Stacked_table'
-  assert_that(rlang::is_scalar_integerish(value) && is.scalar(value))
+  assert_that(is_scalar_integerish(value) && is.scalar(value))
 
   value <- as.integer(value)
   res <- data.table::copy(x)

@@ -57,7 +57,7 @@ as_workbook.default <- function(
   ...
 ){
   assert_that(is.scalar(sheet))
-  assert_that(is.character(sheet) || rlang::is_integerish(sheet))
+  assert_that(is.character(sheet) || is_integerish(sheet))
 
   wb <- openxlsx::createWorkbook()
   wb <- write_worksheet(
@@ -163,7 +163,7 @@ write_worksheet <- function(
   wb %assert_class% 'Workbook'
   assert_that(is.scalar(sheet))
   assert_that(is.flag(append))
-  assert_that(rlang::is_scalar_integerish(start_row))
+  assert_that(is_scalar_integerish(start_row))
   require_openxlsx()
 
   UseMethod('write_worksheet')
@@ -456,7 +456,7 @@ write_worksheet.Mashed_table <- function(
   # Preconditions
     assert_that(mash_method %identical% 'col' || mash_method %identical% 'row')
     assert_that(is.flag(insert_blank_row))
-    assert_that(rlang::is_scalar_integerish(sep_height))
+    assert_that(is_scalar_integerish(sep_height))
     assert_that(is.null(id_vars) || is.character(id_vars))
 
 
@@ -594,8 +594,10 @@ save_xlsx <- function(
   overwrite = FALSE,
   ...
 ){
-  assert_that(rlang::is_scalar_character(outfile))
-  assert_that(is.flag(overwrite))
+  assert_that(
+    is_scalar_character(outfile),
+    is.flag(overwrite)
+  )
   require_openxlsx()
 
   UseMethod('save_xlsx')

@@ -218,7 +218,7 @@ as_latex.list <- function(
   ...,
   kable_options = default_kable_options()
 ){
-  assert_that(all(purrr::map_lgl(x, is.data.frame)))
+  assert_that(all(vapply(x, is.data.frame, logical(1))))
 
   as_latex(
     compile_report(x),

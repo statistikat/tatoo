@@ -104,8 +104,8 @@ comp_table_list <- function(
 
   } else {
     id_vars_in_colnames <- tables %>%
-      purrr::map(names) %>%
-      purrr::map_lgl(function (x) id_vars %in% x)
+      lapply(names) %>%
+      vapply(function (x) id_vars %in% x, logical(1))
 
     assert_that(all(id_vars_in_colnames))
 
@@ -176,7 +176,7 @@ Composite_table <- function(
 ){
   assert_that(is.data.frame(dat))
   assert_that(is.numeric(multinames))
-  assert_that(all(rlang::is_integerish(multinames)))
+  assert_that(all(is_integerish(multinames)))
 
   multinames <- structure(
     as.integer(multinames),
@@ -312,7 +312,7 @@ as_Composite_table.data.table <- function(
   reverse = FALSE,
   ...
 ){
-  assert_that(rlang::is_scalar_character(sep))
+  assert_that(is_scalar_character(sep))
   assert_that(is.flag(reverse))
 
   # Process inputs
@@ -407,7 +407,7 @@ as.data.table.Composite_table <- function(
 ){
   # Preconditions
     assert_that(is.flag(multinames))
-    assert_that(rlang::is_scalar_character(sep))
+    assert_that(is_scalar_character(sep))
 
 
   # Process arguments

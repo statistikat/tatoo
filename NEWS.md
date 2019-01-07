@@ -1,5 +1,8 @@
 # tatoo 1.1.0.9000
 
+* removed **purrr** and **rlang** dependencies
+
+
 # tatoo 1.1.0
 
 * Add Named Regions for table parts Excel Sheets to make formatting easier
