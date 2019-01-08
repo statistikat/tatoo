@@ -84,6 +84,7 @@ as_workbook.Tatoo_report <- function(
 ){
   wb <- openxlsx::createWorkbook()
 
+
   for(i in seq_along(x)){
     if(is.null(names(x))){
       sheet_name <- i
@@ -248,6 +249,7 @@ write_worksheet.Tagged_table <- function(
   assert_that(has_attr(x, 'meta'))
   meta <- attr(x, 'meta')
 
+
   wb <- wb$copy()
 
   if(!append){
@@ -259,7 +261,7 @@ write_worksheet.Tagged_table <- function(
   # Construct header
   header <- list()
 
-  if (!is.null(meta$table_id) && !is.null(meta$title)){
+  if (!is.null(meta$table_id) && !is.null(meta$title) && isTRUE(meta$.print_table_id)){
     header$title <- paste(meta$table_id, meta$title, sep = ': ')
 
   } else if (!is.null(meta$title)){

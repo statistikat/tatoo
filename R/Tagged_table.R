@@ -131,7 +131,8 @@ tt_meta <- function(
   title = NULL,
   longtitle = title,
   subtitle = NULL,
-  footer = NULL
+  footer = NULL,
+  .print_table_id = FALSE
 ){
   assert_that(is_scalar_atomic(table_id) || is.null(table_id))
   assert_that(is_scalar_atomic(title) || is.null(title))
