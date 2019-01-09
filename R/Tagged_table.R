@@ -134,19 +134,22 @@ tt_meta <- function(
   footer = NULL,
   .print_table_id = FALSE
 ){
-  assert_that(is_scalar_atomic(table_id) || is.null(table_id))
-  assert_that(is_scalar_atomic(title) || is.null(title))
+  assert_that(
+    is_scalar_atomic(table_id) || is.null(table_id),
+    is_scalar_atomic(title) || is.null(title),
 
-  assert_that(is.null(longtitle) || is.atomic(longtitle))
-  assert_that(is.null(subtitle)  || is.atomic(subtitle))
-  assert_that(is.null(footer)    || is.atomic(footer))
+    is.null(longtitle) || is.atomic(longtitle),
+    is.null(subtitle)  || is.atomic(subtitle),
+    is.null(footer)    || is.atomic(footer),
+    is_scalar_bool(.print_table_id)
+  )
 
   if(all(
-      is.null(table_id),
-      is.null(title),
-      is.null(longtitle),
-      is.null(subtitle),
-      is.null(footer))
+    is.null(table_id),
+    is.null(title),
+    is.null(longtitle),
+    is.null(subtitle),
+    is.null(footer))
   ){
     stop(
       'Tagged_tables must at least contain one of the following:
