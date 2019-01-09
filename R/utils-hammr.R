@@ -13,19 +13,19 @@ all_are_distinct <- function(x, empty_value = FALSE, silent = FALSE){
   assert_that(length(empty_value) <= 1)
 
 
-  if(length(x) <= 1L){
-    if(identical(length(x), 1L)){
+  if (length(x) <= 1L){
+    if (identical(length(x), 1L)){
       res <- TRUE
-      if(!silent) warning("'x' consists of only one element")
+      if (!silent) warning("`x` consists of only one element")
 
 
     } else if (identical(length(x), 0L)){
       res <- empty_value
-      if(!silent){
-        if(is.null(x)){
-          warning("'x' is NULL")
+      if (!silent){
+        if (is.null(x)){
+          warning("`x` is NULL")
         } else {
-          warning("'x' is an empty vector")
+          warning("`x` is an empty vector")
         }
       }
     }
@@ -51,7 +51,7 @@ all_are_distinct <- function(x, empty_value = FALSE, silent = FALSE){
 
 is_valid <- function(x, ...) {
   UseMethod("is_valid")
-  print('test')
+  print("test")
 }
 
 
@@ -60,7 +60,7 @@ is_valid <- function(x, ...) {
 assert_valid <- function(x, ...){
   v <- is_valid(x)
 
-  if(v){
+  if (v){
     return(TRUE)
   } else {
     stop(assert_valid_error(x))
@@ -72,11 +72,11 @@ assert_valid <- function(x, ...){
 
 assert_valid_error  <- function(obj) {
   msg <- sprintf(
-    'A validity check failed for object of class: %s.',
-    paste(class(obj), collapse = ', ')
+    "A validity check failed for object of class: %s.",
+    paste(class(obj), collapse = ", ")
   )
 
-  condition(c('assert_valid_error', 'error'),
+  condition(c("assert_valid_error", "error"),
             message = msg)
 }
 
@@ -90,18 +90,18 @@ assert_valid_error  <- function(obj) {
 #' These functions are designed to be used in combination with the assertthat
 #' package
 #'
-#' is_class returns TRUE/FALSE. It comes with a on_failure function and
+#' `is_class returns()` `TRUE`/`FALSE`. It comes with a on_failure function and
 #' is designed to be used in conjunction with the assertthat package.
-#' assert_class() and its infix version %assert_class% fail with an error message
+#' `assert_class()` and its infix version %assert_class% fail with an error message
 #'
 #' @param dat any R object
 #' @param class the class to be checked for
 #'
-#' @return is_class returns TRUE/FALSE, assert_class returns TRUE or fails with
-#'         an error message.
+#' @return `is_class()` returns `TRUE`/`FALSE`, `assert_class()` returns `TRUE`
+#'   or fails with an error message.
 #' @noMd
 is_class <- function(dat, class){
-  class %in% class(dat)
+  inherits(dat, class)
 }
 
 
@@ -166,30 +166,32 @@ on_failure(is_any_class) <- function(call, env){
 #'         if \code{any}, ensure that any of the  columns named in \code{classes} are present in \code{dat},
 #'         if \code{identical}, ensure that the names of dat and classes are identical
 #' @noMd
-is_col_classes <- function(dat, classes, method = 'identical'){
-  classes %assert_class% 'list'
-  assert_that(length(classes) > 0)
-  assert_that(length(names(classes)) %identical% length(classes))
-  assert_that(is.scalar(method))
-  assert_that(method %in% c('all', 'any', 'identical'))
+is_col_classes <- function(dat, classes, method = "identical"){
+  classes %assert_class% "list"
+  assert_that(
+    length(classes) > 0,
+    length(names(classes)) %identical% length(classes),
+    is.scalar(method),
+    method %in% c("all", "any", "identical")
+  )
 
   dat <- as.list(dat)
 
-  if(method %identical% 'all'){
+  if (method %identical% "all"){
     assert_that(all(names(classes) %in% names(dat)))
-  } else if (method %identical% 'any'){
+  } else if (method %identical% "any"){
     assert_that(any(names(classes) %in% names(dat)))
     classes <- classes[names(classes) %in% names(dat)]
-  } else if (method %identical% 'identical'){
+  } else if (method %identical% "identical"){
     assert_that(identical(names(classes), names(dat)))
   } else{
-    stop('method must be "all", "any" or "identical"')
+    stop("method must be 'all', 'any' or 'identical'")
   }
 
   res <- rep(FALSE, length(names(classes)))
   names(res) <- names(classes)
 
-  for(i in names(classes)){
+  for (i in names(classes)){
     res[i] <- i %in% names(dat) && classes[[i]] == class(dat[[i]])
   }
 
@@ -207,30 +209,30 @@ assertthat::on_failure(is_col_classes) <- function(call, env){
   missing <- names(classes)[!names(classes) %in% names(dat)]
   wrong   <- character()
 
-  for(i in present){
+  for (i in present){
     col    <- i
     is     <- class(dat[[i]])
     should <- classes[[i]]
 
     if (any(is != should)){
-      is_str     <- paste(is, collapse = ', ')
-      should_str <- paste(should, collapse = ', ')
+      is_str     <- paste(is, collapse = ", ")
+      should_str <- paste(should, collapse = ", ")
 
-      wrong <- paste0(wrong, col, ' (', is_str, '->', should_str, '), ')
+      wrong <- paste0(wrong, col, " (", is_str, "->", should_str, "), ")
     }
   }
 
-  missing <- paste(missing, collapse = ', ')
+  missing <- paste(missing, collapse = ", ")
 
   msg <- character()
 
-  if(length(missing) > 0){
-    msg <- paste0('Missing from dat: ', missing, '.\n')
+  if (length(missing) > 0){
+    msg <- paste0("Missing from dat: ", missing, ".\n")
   }
 
-  if(length(wrong) > 0){
+  if (length(wrong) > 0){
     wrong <- substr(wrong, 1, crayon::col_nchar(wrong) - 2)
-    msg <- paste0(msg, 'Wrong classes: ', wrong)
+    msg <- paste0(msg, "Wrong classes: ", wrong)
   }
 
   return(msg)
@@ -240,17 +242,17 @@ assertthat::on_failure(is_col_classes) <- function(call, env){
 
 
 cfun <- function(x){
-  msg <- paste('Input must be any of "numeric", integer", "factor"',
-               '"character", "POSIXct", "Date", but is', x)
+  msg <- paste("Input must be any of `numeric`, `integer`, `factor`",
+               "`character`, `POSIXct`, `Date`, but is", x)
 
   res <- switch(x,
-                'logical'   = as.logical,
-                'integer'   = as.integer2,
-                'factor'    = as.factor,
-                'numeric'   = as.numeric2,
-                'character' = as.character,
-                'POSIXct'   = as.POSIXct,
-                'Date'      = as.Date,
+                "logical"   = as.logical,
+                "integer"   = as.integer2,
+                "factor"    = as.factor,
+                "numeric"   = as.numeric2,
+                "character" = as.character,
+                "POSIXct"   = as.POSIXct,
+                "Date"      = as.Date,
                 stop(msg)
   )
   return(res)
@@ -273,24 +275,24 @@ as.integer2   <- function(x) as.integer(as.character(x))
 
 all_with_warning <- function(dat){
   dat <- as.list(dat)
-  dat %assert_class% 'list'
-  assert_that(unlist(unique(lapply(dat, class))) %identical% 'logical')
+  dat %assert_class% "list"
+  assert_that(unlist(unique(lapply(dat, class))) %identical% "logical")
 
   datl <- as.logical(dat)
-  if(any(is.na(datl))){
-    warning("Treating NAs as 'FALSE'")
+  if (any(is.na(datl))){
+    warning("Treating `NA`s as `FALSE`")
   }
 
   dat[which(is.na(datl))] <- FALSE
   datl[is.na(datl)]       <- FALSE
 
-  if(all(datl)){
+  if (all(datl)){
     return(TRUE)
   } else {
     failed      <- dat[as.logical(lapply(dat, identical, FALSE))]
     warn        <- paste(
-      'FALSE, but should be TRUE:\n',
-      paste(names(failed), collapse = ', ')
+      "`FALSE`, but should be `TRUE`:\n",
+      paste(names(failed), collapse = ", ")
     )
     warning(warn)
     return(FALSE)
@@ -304,7 +306,7 @@ df_round <- function(dat, digits = 0){
   assert_that(is.number(digits))
   numcols <- names(dat)[unlist(lapply(dat, is.numeric))]
 
-  for(i in numcols){
+  for (i in numcols){
     dat[[i]] <- round(dat[[i]], digits = digits)
   }
 
@@ -326,13 +328,13 @@ df_round <- function(dat, digits = 0){
 #' @return a data frame with all columns of class from converted to class to
 #'
 #' @noMd
-df_typecast_all <- function(dat, from = 'factor', to = 'character'){
+df_typecast_all <- function(dat, from = "factor", to = "character"){
   dat   <- as.data.frame(dat)
   tofun <- cfun(to)
 
   vars <- names(dat)[unlist(lapply(dat, class) == from)]
 
-  for(i in vars){
+  for (i in vars){
     dat[[i]] <- tofun(dat[[i]])
   }
 
@@ -350,7 +352,7 @@ df_typecast_all <- function(dat, from = 'factor', to = 'character'){
 #' @noMd
 str_nobreak <- function(x){
   y <- gsub("\r?\n|\r", " ", x)
-  gsub('[ ]{2,}', ' ', y)
+  gsub("[ ]{2,}", " ", y)
 }
 
 
@@ -381,15 +383,15 @@ vec_prioritise <- function(x, high = NULL, low = NULL){
   low_not_x  <- low[!low %in% x]
   high_not_x <- high[!high %in% x]
 
-  if(!all(low  %in% x)) {
+  if (!all(low  %in% x)) {
     warning(
-      'Not all "low" are present in "x": ',
-      paste(low_not_x, collapse = ' '))
+      "Not all `low` are present in `x`: ",
+      paste(low_not_x, collapse = " "))
   }
-  if(!all(high %in% x)){
+  if (!all(high %in% x)){
     warning(
-      'Not all "high" are present in "x": ',
-      paste(high_not_x, collapse = ' '))
+      "Not all `high` are present in `x`: ",
+      paste(high_not_x, collapse = " "))
   }
 
   low      <- low[low %in% x]

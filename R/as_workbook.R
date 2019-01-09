@@ -405,7 +405,8 @@ write_worksheet.Composite_table <- function(
       sheet = sheet,
       rows = crow,
       cols = seq_along(x),
-      name = make_region_name(named_regions_prefix, table_id(x), "composite", "table", "multinames")
+      name = make_region_name(
+        named_regions_prefix, table_id(x), "composite", "table", "multinames")
     )
   }
 
