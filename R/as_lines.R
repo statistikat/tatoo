@@ -188,8 +188,7 @@ as_lines.Composite_table <- function(
     i_na  <- is.na(x)
     x     <- format(x)
     x     <- c(colname, x)
-    pad_width <- max(crayon::col_nchar(x))
-    stringi::stri_pad_left(as.character(x), pad_width)
+    pad_left(x, max(crayon::col_nchar(x)))
   }
 
   dd <- vector('list', ncol(x))
