@@ -31,9 +31,8 @@ as_lines.data.frame <- function(
     as.matrix(unname(x))
   )
 
-  res[is.na(res)] <- "NA"
   res <- apply(res, 2, function(x) {
-    stringi::stri_pad_left(x, max(crayon::col_nchar(x), na.rm = TRUE))
+    format(x)
   })
   res <- apply(res, 1, paste, collapse = " ")
 
@@ -184,19 +183,14 @@ as_lines.Composite_table <- function(
   }
 
   # Pad columns
-
   prep_col <- function(x, colname){
     i_nan <- is.nan(x)
     i_na  <- is.na(x)
-    x <- as.character(x)
-    x[i_nan] <- 'NAN'
-    x[i_na]  <- 'NA'
-    x <- c(colname, x)
-
+    x     <- format(x)
+    x     <- c(colname, x)
     pad_width <- max(crayon::col_nchar(x))
     stringi::stri_pad_left(as.character(x), pad_width)
   }
-
 
   dd <- vector('list', ncol(x))
 

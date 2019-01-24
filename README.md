@@ -1,7 +1,7 @@
 # tatoo
 
 [![CRAN status](http://www.r-pkg.org/badges/version/tatoo)](https://cran.r-project.org/package=tatoo)
-
+[![lifecycle](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 
 ## Overview
 
@@ -40,3 +40,13 @@ None of the examples are particularily hard to do in base R, but tatoo provides
 functions with a clean interface and nice print and export methods for the 
 created objects. Please refer to the package 
 [vignette](http://rpubs.com/hoelk/261807) for more examples.
+
+
+
+## Development Status
+
+tatoo is stable and in maintenance mode. While tatoo is effective
+at what it does once you figure out how it works, the API is not as nice and
+intuitive as I intended it to be. It will continue to receive small updates and 
+bugfixes, but it is not planned to implement new features (though if you have
+sensible feature requests you are still encouraged to file an issue).
