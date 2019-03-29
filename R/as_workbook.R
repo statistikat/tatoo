@@ -234,6 +234,9 @@ write_worksheet.default <- function(
 
 
 #' @export
+#' @param print_table_id `logical` vector. Whether or not `table_id` should be
+#'   added to the title of the table. It is recommended to use table_ids only
+#'   internally (i.e. for [walk_regions()]).
 #' @rdname write_worksheet
 write_worksheet.Tagged_table <- function(
   x,

@@ -1,13 +1,13 @@
 ## Release summary
 
-Added workbook formatting capabilities
+Fixes for compat with data.table 1.12.2 version & general maintenance
 
 
 ## Test environments
-* Windows 7, R 3.4.2
-* Ubuntu 17.10, R 3.4.2.
-* Ubuntu 16.04, R 3.4.3
-* Winbuilder, R Under development (unstable) (2018-02-08 r74238)
+* ubuntu 18.04, R 3.5.2
+* ubuntu 14.04 (remote RStudio server), R 3.5.2
+* win-builder (devel and release)
+* rhub (rhub::check_for_cran())
 
 
 ## R CMD check results

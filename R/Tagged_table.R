@@ -113,12 +113,15 @@ Tagged_table <- function(
 #'
 #' @param table_id A scalar (will be coerced to `character`)
 #' @param title A scalar (will be coerced to `character`)
-#' @param longtitle A vector. If `length > 1` the title will be displayed
-#'   in several rows
-#' @param subtitle A vector. If `length > 1` the title will be displayed
-#'   in several rows
-#' @param footer A vector. If `length > 1` the title will be displayed
-#'   in several rows
+#' @param longtitle A vector. If `length > 1` the title will be displayed in
+#'   several rows
+#' @param subtitle A vector. If `length > 1` the title will be displayed in
+#'   several rows
+#' @param footer A vector. If `length > 1` the title will be displayed in
+#'   several rows
+#' @param .print_table_id `logical` vector. Whether or not `table_id` should be
+#'   added to the title of the table in the various output formats. It is
+#'   recommended to use table_ids only internally (i.e. for [walk_regions()]).
 #'
 #' @return a TT_meta object.
 #' @seealso [Tagged_table]

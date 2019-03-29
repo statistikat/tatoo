@@ -1,6 +1,10 @@
-# tatoo 1.1.0.9000
+# tatoo 1.1.1
 
 * removed **purrr** and **rlang** dependencies
+* `table_id` is no longer pasted to the title when creating excel output. If you
+  require the old behaviour set `.print_table_id = TRUE`
+* small updates to some tests for compat with data.table 1.12.2 
+  (https://github.com/statistikat/tatoo/pull/5)
 
 
 # tatoo 1.1.0
@@ -8,7 +12,7 @@
 * Add Named Regions for table parts Excel Sheets to make formatting easier
 * Added `walk_regions()` and `map_regions()` to mainuplate cells in named
   regions within a `Workbook` (e.g. apply formatting to them)
-  
+
 
 # tatoo 1.0.10
 

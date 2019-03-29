@@ -57,9 +57,8 @@ walk_regions <- function(
 
   .formals <- names(formals(.fun))
   assert_that(
-    all(c("wb", "sheet")  %in% .formals &&
-    any(c("rows", "cols") %in% .formals
-  )),
+    all(c("wb", "sheet")  %in% .formals) &&
+    any(c("rows", "cols") %in% .formals),
     msg = paste(
       ".fun must be a function with formal arguments 'wb', 'sheet', and either",
       "'rows', 'cols' or both. For example: 'openxlsx::addStyle()',",

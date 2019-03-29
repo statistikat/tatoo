@@ -34,7 +34,7 @@ regions.character <- function(x){
     )
   }
 
-  data.table::rbindlist(res, use.names=FALSE)
+  data.table::rbindlist(res, use.names = FALSE)
 }
 
 

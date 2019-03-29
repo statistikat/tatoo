@@ -616,9 +616,9 @@ mash_rows <- function(dat, insert_blank_row = FALSE){
 
     dl <- c(dd, list(blank_rowks))
 
-    res <- data.table::rbindlist(dl, use.names=FALSE)   
+    res <- data.table::rbindlist(dl, use.names = FALSE)
   } else {
-    res <- data.table::rbindlist(dd, use.names=FALSE)
+    res <- data.table::rbindlist(dd, use.names = FALSE)
   }
 
 
