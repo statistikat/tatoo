@@ -131,3 +131,14 @@ require_openxlsx <- function(){
 strip_newlines <- function(x){
   gsub("\r?\n|\r", " ", x)
 }
+
+
+
+
+assert_rownames_is_null <- function(x){
+  if (!is.null(x)){
+    stop("Detected non-NULL keep.rownames argument. Please name all arguments explicitely.")
+  }
+
+  TRUE
+}

@@ -629,7 +629,7 @@ save_xlsx.default <- function(
 
 
 #' @description  `view_xlsx()` is another wrapper for viewing a `Tatoo_table`"s
-#' \file{xlsx} representation in your favourite spreadsheet program (powered by
+#' \file{xlsx} representation in your favorite spreadsheet program (powered by
 #' [openxlsx::openXL()]).
 #'
 #' @return `view_xlsx()` opens an external program and returns `NULL` (invisibly).

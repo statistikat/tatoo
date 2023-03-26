@@ -18,11 +18,6 @@
 #'
 #' @return a `character` scalar
 #' @noRd
-#'
-#' @example
-#'   ptrunc(month.abb)
-#'   ptrunc(month.abb, month.name)
-#'
 ptrunc <- function(
   ...,
   width = 40L,

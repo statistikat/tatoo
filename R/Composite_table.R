@@ -390,6 +390,7 @@ print.Composite_table <- function(
 #' the column names
 #'
 #' @param x a \code{Composite_table}
+#' @param keep.rownames ignored
 #' @param multinames logical. Whether to prepend multinames before the column
 #'   names
 #' @param sep separator between multinames and individual column names
@@ -401,13 +402,16 @@ print.Composite_table <- function(
 #' @export
 as.data.table.Composite_table <- function(
   x,
+  keep.rownames = NULL,
+  ...,
   multinames = TRUE,
-  sep = '.',
-  ...
+  sep = '.'
 ){
   # Preconditions
     assert_that(is.flag(multinames))
     assert_that(is_scalar_character(sep))
+    assert_that(is_scalar_character(sep))
+    assert_rownames_is_null(keep.rownames)
 
 
   # Process arguments
@@ -456,10 +460,11 @@ as.data.frame.Composite_table <- function(
   x,
   row.names = NULL,
   optional = FALSE,
+  ...,
   multinames = TRUE,
-  sep = '.',
-  ...
+  sep = '.'
 ){
+  assert(is.null(row.names), "row.names argument must be null. Please name all arguments to as.data.frame.Composite_table explictely")
   as.data.frame(
     as.data.table.Composite_table(
       x = x,

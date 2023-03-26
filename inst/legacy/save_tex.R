@@ -52,7 +52,7 @@ print_tex <- function(dat, ...){
 
 #' print a Mashed_table as latex
 #'
-#' Stacked rows are sepparated by \code{\\newline}, therefor this only works
+#' Stacked rows are separated by \code{\\newline}, therefor this only works
 #' correctly for columns that have an 'X' column type (see documentation of
 #' the tabularx latex package). If you want each stack element in a proper
 #' tabular row, use \code{xtable::xtable(as.data.frame(dat))} instead.

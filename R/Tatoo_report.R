@@ -61,7 +61,7 @@ is_Tatoo_report <- function(x){
 
 
 #' @export
-is_valid.Tatoo_report <- function(x){
+is_valid.Tatoo_report <- function(x, ...){
   res <- list()
 
   is_valid_elclass <- function(.x) {

@@ -1,8 +1,15 @@
+# tatoo 1.1.2
+
+* **breaking** add required arguments of the generic to tatoo specific 
+  `as.data.frame` and `as.data.table` methods to make them compatible with new 
+  R-devel. This means you have to call these functions with named arguments now.
+
+
 # tatoo 1.1.1
 
 * removed **purrr** and **rlang** dependencies
 * `table_id` is no longer pasted to the title when creating excel output. If you
-  require the old behaviour set `.print_table_id = TRUE`
+  require the old behavior set `.print_table_id = TRUE`
 * small updates to some tests for compat with data.table 1.12.2 
   (https://github.com/statistikat/tatoo/pull/5)
 
@@ -10,7 +17,7 @@
 # tatoo 1.1.0
 
 * Add Named Regions for table parts Excel Sheets to make formatting easier
-* Added `walk_regions()` and `map_regions()` to mainuplate cells in named
+* Added `walk_regions()` and `map_regions()` to manipulate cells in named
   regions within a `Workbook` (e.g. apply formatting to them)
 
 
@@ -29,7 +36,7 @@
 * Added `open_file()` utility to open files with external programs.
 * Added `view_pdf()` and `view_xlsx()` for directly viewing tables in a .pdf
   viewer or spreadsheet program
-* `save_xlsx()` now returns the path to the saved workbook, raher than the
+* `save_xlsx()` now returns the path to the saved workbook, rather than the
   workbook object
 * Various small fixes related to `print()` methods
 
@@ -47,7 +54,7 @@
 * Improved README / vignette / documentation
 * Changed how `as.data.table.Composite_table()` constructs column names. The new 
   format is colname.multiname instead of multiname.colname. This is to emulate
-  the behaviour of `base::merge()`
+  the behavior of `base::merge()`
 * `flip_names()` can flip names and multinames of a composite table (at the cost 
   of reordering the columns)
 

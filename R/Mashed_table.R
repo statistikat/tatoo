@@ -231,7 +231,7 @@ Mashed_table <- function(
 # Methods -----------------------------------------------------------------
 
 #' @export
-is_valid.Mashed_table <- function(x){
+is_valid.Mashed_table <- function(x, ...){
   res <- list(
     is_list          = is.list(x),
     mash_method      = identical(attr(x, 'mash_method'), 'row') ||
@@ -313,11 +313,13 @@ print.Mashed_table <- function(
 #' Convert a Mashed Table to a data.table or data.frame
 #'
 #' @param x a [Mashed_table]
+#' @param keep.rownames ignored
 #' @inheritParams mash_table
 #' @inheritParams base::as.data.frame
 #' @param suffixes a character vector of length 2 specifying the suffixes to be
 #'   used for making unique the names of columns.
-#' @param ... passed on to `as.data.frame.data.table()`
+#'
+#' @param ... passed on to [as.data.table()] or [as.data.frame()] respectively
 #'
 #' @method as.data.table Mashed_table
 #'
@@ -325,6 +327,8 @@ print.Mashed_table <- function(
 #' @export
 as.data.table.Mashed_table <- function(
   x,
+  keep.rownames = NULL,
+  ...,
   mash_method = attr(x, 'mash_method'),
   insert_blank_row = attr(x, 'insert_blank_row'),
   id_vars = attr(x, 'id_vars'),
@@ -335,6 +339,7 @@ as.data.table.Mashed_table <- function(
   assert_that(is.null(id_vars) || is.character(id_vars))
   assert_that(is.null(suffixes) || is.character(suffixes) )
   assert_that(is.null(suffixes) || length(suffixes) %identical% length(x))
+  assert_rownames_is_null(keep.rownames)
 
   names(x) <- suffixes
 
@@ -346,12 +351,13 @@ as.data.table.Mashed_table <- function(
     stop('mash_method must be either "row" or "col".')
   }
 
-  return(as.data.table(res))
+  return(as.data.table(res, ...))
 }
 
 
 
 
+#' @param row.names ignored
 #' @rdname as.data.table.Mashed_table
 #' @method as.data.frame Mashed_table
 #' @export
@@ -359,11 +365,11 @@ as.data.frame.Mashed_table <- function(
   x,
   row.names = NULL,
   optional = FALSE,
+  ...,
   mash_method = attr(x, 'mash_method'),
   insert_blank_row = attr(x, 'insert_blank_row'),
   id_vars = attr(x, 'id_vars'),
-  suffixes = names(x),
-  ...
+  suffixes = names(x)
 ){
   as.data.frame(
     as.data.table.Mashed_table(
@@ -373,7 +379,7 @@ as.data.frame.Mashed_table <- function(
       id_vars = id_vars,
       suffixes = suffixes
     ),
-    row.names = row.names,
+    row.names = NULL,
     mash_method = mash_method,
     insert_blank_row = insert_blank_row,
     id_vars = id_vars,

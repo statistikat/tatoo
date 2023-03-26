@@ -111,7 +111,7 @@ Stacked_table <- function(
 
 
 #' @export
-is_valid.Stacked_table <- function(x){
+is_valid.Stacked_table <- function(x, ...){
   res <- list(
     is_list     <- is.list(x),
     has_spacing <- is_scalar_integer(attr(x, 'spacing'))

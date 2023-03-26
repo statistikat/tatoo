@@ -212,14 +212,8 @@ print.Tagged_table <- function(x, ...){
 
 
 #' @export
-is_valid.TT_meta <- function(dat){
-  res <- list()
-
-  res$elements_are_scalars <- all(unlist(
-    lapply(res, function(x) assertthat::is.scalar(x) || is.null(x))
-  ))
-
-  all_with_warning(res)
+is_valid.TT_meta <- function(x, ...){
+  TRUE # not implemented
 }
 
 

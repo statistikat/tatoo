@@ -19,7 +19,7 @@ library(tatoo)
 # Introduction
 
 tatoo is designed for creating excel reports from lists of `data.frame`s
-with minimal effort, while still providing some basic formatting capabillities.
+with minimal effort, while still providing some basic formatting capabilities.
 tatoo functions can combine data.frames in ways that require 
 additional effort in base R, and to add metadata (id, title, ...) that can be 
 used for printing and xlsx export. The Tatoo_report class is provided as a 
@@ -76,7 +76,7 @@ tagged_table <- tag_table(
 print(tagged_table)
 ```
 
-Metadata cann also be assigned an modified via set function.
+Metadata can also be assigned an modified via set function.
 
 ```{r}
 meta(df1)  <- ex_meta # df1 gets automatically converted to a Tagged_table
@@ -172,8 +172,8 @@ as_workbook(mashed_table)
 ```
 
 
-## Convience functions
-`rmash()` and `cmash()` are convient shortcut functions if you just need to quickly
+## Convenience functions
+`rmash()` and `cmash()` are convenient shortcut functions if you just need to quickly
 mash together a data.frame (similar to `rbind()` and `cbind()`). Note that the
 result is a data.table and not a data.frame, so if you are not familiar with
 the data.table package you might want to manually convert the result to a
@@ -181,7 +181,7 @@ data.frame to prevent headaches.
 
 ### rmash
 
-`rmash()` can be used on several data.frames or on an existing Mahed table.
+`rmash()` can be used on several data.frames or on an existing Mashed table.
 
 ```{r eval = FALSE}
 rmash(df1, df2) 
@@ -273,7 +273,7 @@ print(stacked_table)
 ![one excel sheet per table](tatoo_report.png)
 
 A tatoo report is a list of an arbitrary number of Tatoo tables. When exported
-to xlsx, a sepparate worksheet will be created for each element table.
+to xlsx, a separate worksheet will be created for each element table.
 
 ```{r}
 tatoo_report <- compile_report(
