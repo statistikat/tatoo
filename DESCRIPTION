@@ -1,36 +1,38 @@
-Package: tatoo
 Type: Package
+Package: tatoo
 Title: Combine and Export Data Frames
-Version: 1.1.2
-Authors@R: person("Stefan", "Fleck", email = "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
+Version: 1.1.3
+Authors@R: 
+    person("Stefan", "Fleck", , "stefan.b.fleck@gmail.com", role = c("aut", "cre"))
 Maintainer: Stefan Fleck <stefan.b.fleck@gmail.com>
-Description:
-  Functions to combine data.frames in ways that require additional effort in 
-  base R, and to add metadata (id, title, ...) that can be used for printing and 
-  xlsx export. The 'Tatoo_report' class is provided as a 
-  convenient helper to write several such tables to a workbook, one table per 
-  worksheet. Tatoo is built on top of 'openxlsx', but intimate knowledge of 
-  that package is not required to use tatoo.
+Description:Functions to combine data.frames in ways that require
+    additional effort in base R, and to add metadata (id, title, ...) that
+    can be used for printing and xlsx export. The 'Tatoo_report' class is
+    provided as a convenient helper to write several such tables to a
+    workbook, one table per worksheet. Tatoo is built on top of
+    'openxlsx', but intimate knowledge of that package is not required to
+    use tatoo.
 License: MIT + file LICENSE
-LazyData: TRUE
+URL: https://github.com/statistikat/tatoo
+BugReports: https://github.com/statistikat/tatoo/issues
 Imports:
     assertthat,
-    magrittr,
-    data.table,
-    openxlsx (>= 4.0.0),
-    stringi,
     colt,
     crayon,
+    data.table,
+    magrittr,
+    openxlsx (>= 4.0.0),
+    stringi,
     withr
 Suggests:
-    testthat,
-    rprojroot,
     kableExtra,
     knitr,
-    rmarkdown
-RoxygenNote: 7.2.3
-Roxygen: list(markdown = TRUE)
+    rmarkdown,
+    rprojroot,
+    testthat
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
-VignetteBuilder: knitr
-BugReports: https://github.com/statistikat/tatoo/issues
-URL: https://github.com/statistikat/tatoo
+LazyData: TRUE
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

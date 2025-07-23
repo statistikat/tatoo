@@ -1,3 +1,8 @@
+# tatoo 1.1.3
+
+* Maintenance: update docs for new CRAN guidelines
+
+
 # tatoo 1.1.2
 
 * **breaking** add required arguments of the generic to tatoo specific 

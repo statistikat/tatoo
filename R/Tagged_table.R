@@ -8,7 +8,7 @@
 #' or [`save_xlsx()`].
 #'
 #' @param dat A `Tatto_table` object or anything that can be coerced to a
-#' [`data.table`].
+#' [data.table::data.table()].
 #' @param meta a [`tt_meta`] object. Metadata can also be set and modified
 #'   using setters (see [meta()])
 #'

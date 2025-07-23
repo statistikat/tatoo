@@ -319,11 +319,11 @@ print.Mashed_table <- function(
 #' @param suffixes a character vector of length 2 specifying the suffixes to be
 #'   used for making unique the names of columns.
 #'
-#' @param ... passed on to [as.data.table()] or [as.data.frame()] respectively
+#' @param ... passed on to [data.table::as.data.table()] or [base::as.data.frame()] respectively
 #'
 #' @method as.data.table Mashed_table
 #'
-#' @return a [data.table] or \code{data.frame}
+#' @return a [data.table::data.table()] or \code{data.frame}
 #' @export
 as.data.table.Mashed_table <- function(
   x,
@@ -405,7 +405,7 @@ as.data.frame.Mashed_table <- function(
 #' @inheritParams mash_table
 #' @inheritParams as.data.table.Mashed_table
 #'
-#' @return A [data.table] if
+#' @return A `data.table` if
 #'   any element of `(...)` is a data.table
 #'   or [Tatoo_table],
 #'   or if `meta` is supplied;

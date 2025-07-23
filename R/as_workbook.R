@@ -3,7 +3,7 @@
 #' Convert a Tatoo Table Object to an Excel Workbook
 #'
 #' `as_workbook()` converts [`Tatoo_table`] or [`Tatoo_report`] objects directly
-#' to [openxlsx] `Workbook` objects. For information about additional parameters
+#' to `openxlsx` `Workbook` objects. For information about additional parameters
 #' please refer to the documentation of [write_worksheet()], for which
 #' `as_workbook()` is just a wrapper. Additional possible function arguments way
 #' vary depending on which `Tatoo_table` you want to export.
@@ -126,7 +126,7 @@ as_workbook.Workbook <- function(x, ...){
 #'  [`Tatoo_table`] subclasses.
 #'
 #' @param x A `Tatoo_table`.
-#' @param wb An [openxlsx] `Workbook` object
+#' @param wb An `openxlsx` Workbook` object
 #' @param append `logical` Whether or not to append to an existing worksheet or
 #'   create a new one
 #' @param start_row A scalar integer specifying the starting row to write to.
@@ -147,7 +147,7 @@ as_workbook.Workbook <- function(x, ...){
 #' @inheritParams as_workbook
 
 #'
-#' @return an [openxlsx] Workbook object
+#' @return an `openxlsx` Workbook object
 #' @family xlsx exporters
 #'
 #' @export
